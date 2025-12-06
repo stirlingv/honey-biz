@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Review Your Order - Bear Creek Apiaries{% endblock %}
+
+{% block content %}
+<section class="checkout-section">
+    <div class="container">
+        <h2>Review Your Order</h2>
+        
+        <div class="checkout-grid">
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                
+                <div class="order-item">
+                    <div class="item-details">
+                        <h4>{{ order.product.name }}</h4>
+                        <p class="item-size">{{ order.product.size }}</p>
+                        <p class="item-quantity">Quantity: {{ order.quantity }}</p>
+                    </div>
+                    <div class="item-price">
+                        <p class="unit-price">${{ order.product.price }} each</p>
+                        <p class="line-total">${{ order.total_price }}</p>
+                    </div>
+                </div>
+                
+                <div class="order-total">
+                    <span>Total:</span>
+                    <span class="total-amount">${{ order.total_price }}</span>
+                </div>
+                
+                {% if order.notes %}
+                <div class="order-notes">
+                    <h4>Order Notes</h4>
+                    <p>{{ order.notes }}</p>
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="customer-info">
+                <h3>Shipping Information</h3>
+                
+                <div class="info-group">
+                    <p class="customer-name">{{ order.first_name }} {{ order.last_name }}</p>
+                    <p>{{ order.address }}</p>
+                    <p>{{ order.city }}, {{ order.state }} {{ order.zip_code }}</p>
+                </div>
+                
+                <div class="info-group">
+                    <p><strong>Email:</strong> {{ order.email }}</p>
+                    <p><strong>Phone:</strong> {{ order.phone }}</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="checkout-actions">
+            <a href="{% url 'order_honey' %}" class="btn btn-secondary">← Edit Order</a>
+            
+            {% if quickbooks_configured %}
+            <form action="{% url 'checkout_process' order.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">
+                    Proceed to Payment →
+                </button>
+            </form>
+            {% else %}
+            <form action="{% url 'checkout_process' order.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-primary">
+                    Submit Order →
+                </button>
+            </form>
+            <p class="payment-note">
+                <small>We'll contact you with payment instructions after reviewing your order.</small>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

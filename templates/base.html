@@ -6,6 +6,20 @@
     <title>{% block title %}Bear Creek Apiaries & Honey LLC{% endblock %}</title>
     <meta name="description" content="Bear Creek Apiaries & Honey LLC - Local, artisanal honey and bee starter kits">
     {% load static %}
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="{% static 'images/favicon_io/favicon.ico' %}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon_io/favicon-32x32.png' %}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon_io/favicon-16x16.png' %}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon_io/apple-touch-icon.png' %}">
+    <link rel="manifest" href="{% static 'images/favicon_io/site.webmanifest' %}">
+    
+    <!-- Open Graph / Social Media Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{% block og_title %}Bear Creek Apiaries & Honey LLC{% endblock %}">
+    <meta property="og:description" content="Local, artisanal honey and bee starter kits from Bear Creek Apiaries">
+    <meta property="og:image" content="{% static 'images/favicon_io/android-chrome-512x512.png' %}">
+    
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -15,7 +29,8 @@
             <div class="container">
                 <div class="nav-brand">
                     <a href="{% url 'home' %}">
-                        <h1>🐝 Bear Creek Apiaries</h1>
+                        <img src="{% static 'images/logo.png' %}" alt="Bear Creek Apiaries & Honey LLC" class="nav-logo">
+                        <span class="nav-title">Bear Creek Apiaries</span>
                     </a>
                 </div>
                 <ul class="nav-menu">
@@ -47,6 +62,7 @@
         <div class="container">
             <div class="footer-content">
                 <div class="footer-section">
+                    <img src="{% static 'images/logo.png' %}" alt="Bear Creek Apiaries & Honey LLC" class="footer-logo">
                     <h3>Bear Creek Apiaries & Honey LLC</h3>
                     <p>Locally owned and operated</p>
                     <p>Providing pure, natural honey from our hives to your home</p>
@@ -68,6 +84,10 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2024 Bear Creek Apiaries & Honey LLC. All rights reserved.</p>
+                <p class="footer-legal">
+                    <a href="{% url 'privacy_policy' %}">Privacy Policy</a> | 
+                    <a href="{% url 'terms_of_service' %}">Terms of Service</a>
+                </p>
             </div>
         </div>
     </footer>

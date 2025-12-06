@@ -40,9 +40,19 @@ header {
 .nav-brand a {
     text-decoration: none;
     color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.nav-brand h1 {
+.nav-logo {
+    height: 55px;
+    width: auto;
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.nav-title {
     font-size: 1.8rem;
     font-weight: bold;
 }
@@ -80,22 +90,30 @@ header {
 
 /* Hero Section */
 .hero {
-    background: linear-gradient(rgba(246, 163, 38, 0.1), rgba(244, 185, 66, 0.1)),
+    background: linear-gradient(rgba(246, 163, 38, 0.15), rgba(244, 185, 66, 0.15)),
                 url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400"><rect fill="%23f4b942" opacity="0.1" width="1200" height="400"/></svg>');
-    padding: 5rem 0;
+    padding: 3rem 0;
     text-align: center;
 }
 
-.hero h2 {
-    font-size: 3rem;
-    color: #333;
+.hero-logo {
+    width: 280px;
+    height: auto;
     margin-bottom: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+}
+
+.hero h2 {
+    font-size: 2.5rem;
+    color: #333;
+    margin-bottom: 0.5rem;
 }
 
 .hero p {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: #666;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .btn {
@@ -353,6 +371,15 @@ header {
     margin: 0 auto;
 }
 
+.about-logo {
+    display: block;
+    width: 180px;
+    height: auto;
+    margin: 0 auto 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
 .about-content h2 {
     font-size: 2.5rem;
     margin-bottom: 1.5rem;
@@ -399,6 +426,14 @@ footer {
     margin-bottom: 2rem;
 }
 
+.footer-logo {
+    width: 100px;
+    height: auto;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
 .footer-section h3 {
     color: #f6a326;
     margin-bottom: 1rem;
@@ -435,13 +470,30 @@ footer {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .nav-brand a {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    .nav-logo {
+        height: 40px;
+    }
+
+    .nav-title {
+        font-size: 1.2rem;
+    }
+
     .nav-menu {
         flex-wrap: wrap;
         gap: 1rem;
     }
 
+    .hero-logo {
+        width: 200px;
+    }
+
     .hero h2 {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     .hero p {
@@ -460,3 +512,364 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/* Checkout Styles */
+.checkout-section {
+    padding: 3rem 0;
+}
+
+.checkout-section h2 {
+    text-align: center;
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.checkout-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.order-summary, .customer-info {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.order-summary h3, .customer-info h3 {
+    color: #f6a326;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #f6a326;
+}
+
+.order-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.item-details h4 {
+    margin-bottom: 0.25rem;
+    color: #333;
+}
+
+.item-size, .item-quantity {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.item-price {
+    text-align: right;
+}
+
+.unit-price {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.line-total {
+    font-weight: bold;
+    font-size: 1.1rem;
+    color: #333;
+}
+
+.order-total {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    margin-top: 1rem;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: #333;
+}
+
+.total-amount {
+    color: #f6a326;
+}
+
+.order-notes {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #eee;
+}
+
+.order-notes h4 {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.info-group {
+    margin-bottom: 1rem;
+}
+
+.customer-name {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.checkout-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: #f9f9f9;
+    border-radius: 10px;
+}
+
+.checkout-actions form {
+    display: inline;
+}
+
+.btn-primary {
+    background-color: #f6a326;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #e59315;
+}
+
+.payment-note {
+    color: #666;
+    margin-top: 0.5rem;
+}
+
+/* Order Status Styles */
+.order-status-section {
+    padding: 3rem 0;
+}
+
+.order-status-section h2 {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.status-card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.status-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.status-badge.status-pending,
+.status-badge.status-unpaid {
+    background-color: #ffeaa7;
+    color: #856404;
+}
+
+.status-badge.status-awaiting_payment,
+.status-badge.status-pending {
+    background-color: #bee5eb;
+    color: #0c5460;
+}
+
+.status-badge.status-paid,
+.status-badge.status-completed {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.status-processing {
+    background-color: #cce5ff;
+    color: #004085;
+}
+
+.status-badge.status-cancelled,
+.status-badge.status-failed {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.order-date {
+    color: #666;
+}
+
+.status-details {
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+}
+
+.detail-row .label {
+    color: #666;
+}
+
+.order-details-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.order-items, .shipping-info {
+    background: #fff;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.order-items h3, .shipping-info h3 {
+    color: #f6a326;
+    margin-bottom: 1rem;
+}
+
+.item-card {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+.shipping-info .name {
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.shipping-info .contact {
+    margin-top: 0.5rem;
+    color: #666;
+}
+
+.payment-actions {
+    text-align: center;
+    margin: 2rem 0;
+}
+
+.payment-instructions {
+    color: #666;
+    font-size: 1.1rem;
+}
+
+.help-section {
+    text-align: center;
+    padding: 2rem;
+    background: #f9f9f9;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+}
+
+.help-section h3 {
+    margin-bottom: 0.5rem;
+}
+
+.back-link {
+    text-align: center;
+}
+
+.back-link a {
+    color: #f6a326;
+    text-decoration: none;
+}
+
+.back-link a:hover {
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .checkout-grid,
+    .order-details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .checkout-actions {
+        flex-direction: column;
+    }
+    
+    .status-header {
+        flex-direction: column;
+        gap: 0.5rem;
+        text-align: center;
+    }
+}
+
+/* Legal Pages (Privacy Policy, Terms) */
+.legal-section {
+    padding: 3rem 0;
+}
+
+.legal-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.legal-content h2 {
+    font-size: 2.2rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+    text-align: center;
+}
+
+.legal-content .last-updated {
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 2rem;
+}
+
+.legal-content h3 {
+    font-size: 1.4rem;
+    color: #333;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.legal-content p {
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 1rem;
+}
+
+.legal-content ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.legal-content li {
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 0.5rem;
+}
+
+.footer-legal {
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.footer-legal a {
+    color: #ccc;
+    text-decoration: none;
+}
+
+.footer-legal a:hover {
+    color: #f6a326;
+}
+

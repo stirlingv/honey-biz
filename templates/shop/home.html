@@ -2,9 +2,12 @@
 
 {% block title %}Home - Bear Creek Apiaries & Honey LLC{% endblock %}
 
+{% load static %}
+
 {% block content %}
 <section class="hero">
     <div class="container">
+        <img src="{% static 'images/logo.png' %}" alt="Bear Creek Apiaries & Honey LLC" class="hero-logo">
         <h2>Pure, Natural Honey from Our Hives to Your Home</h2>
         <p>Experience the sweetness of locally produced, artisanal honey</p>
         <a href="{% url 'products' %}" class="btn">Shop Our Honey</a>

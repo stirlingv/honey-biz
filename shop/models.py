@@ -24,9 +24,20 @@ class Order(models.Model):
     """Model for honey orders"""
     STATUS_CHOICES = [
         ('pending', 'Pending'),
+        ('awaiting_payment', 'Awaiting Payment'),
+        ('paid', 'Paid'),
         ('processing', 'Processing'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
+        ('refunded', 'Refunded'),
+    ]
+
+    PAYMENT_STATUS_CHOICES = [
+        ('unpaid', 'Unpaid'),
+        ('pending', 'Payment Pending'),
+        ('completed', 'Payment Completed'),
+        ('failed', 'Payment Failed'),
+        ('refunded', 'Refunded'),
     ]
 
     # Customer Information
@@ -46,6 +57,13 @@ class Order(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     notes = models.TextField(blank=True)
 
+    # Payment Information
+    payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='unpaid')
+    qb_invoice_id = models.CharField(max_length=100, blank=True, null=True, help_text="QuickBooks Invoice ID")
+    qb_payment_id = models.CharField(max_length=100, blank=True, null=True, help_text="QuickBooks Payment ID")
+    payment_url = models.URLField(blank=True, null=True, help_text="QuickBooks Payment Link")
+    paid_at = models.DateTimeField(blank=True, null=True)
+
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -55,6 +73,14 @@ class Order(models.Model):
 
     def __str__(self):
         return f"Order #{self.id} - {self.first_name} {self.last_name}"
+
+    @property
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    @property
+    def full_address(self):
+        return f"{self.address}, {self.city}, {self.state} {self.zip_code}"
 
     def save(self, *args, **kwargs):
         # Calculate total price
