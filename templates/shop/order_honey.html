@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Honey - Bear Creek Apiaries & Honey LLC{% endblock %}
+
+{% block content %}
+<section class="form-section">
+    <div class="container">
+        <div class="form-container">
+            <h2>Order Honey</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+                Fill out the form below to place your honey order. We'll contact you to confirm your order and arrange payment and delivery.
+            </p>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <h3 style="margin-bottom: 1rem; color: #f6a326;">Contact Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_first_name">First Name *</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_last_name">Last Name *</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_email">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_phone">Phone *</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.phone.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Delivery Address</h3>
+                <div class="form-group">
+                    <label for="id_address">Street Address *</label>
+                    {{ form.address }}
+                    {% if form.address.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.address.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_city">City *</label>
+                        {{ form.city }}
+                        {% if form.city.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.city.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_state">State *</label>
+                        {{ form.state }}
+                        {% if form.state.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.state.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_zip_code">ZIP Code *</label>
+                    {{ form.zip_code }}
+                    {% if form.zip_code.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.zip_code.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Order Details</h3>
+                <div class="form-group">
+                    <label for="id_product">Select Product *</label>
+                    {{ form.product }}
+                    {% if form.product.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.product.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_quantity">Quantity *</label>
+                    {{ form.quantity }}
+                    {% if form.quantity.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.quantity.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_notes">Special Instructions (Optional)</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.notes.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Submit Order</button>
+                <a href="{% url 'products' %}" class="btn btn-secondary" style="width: 100%; text-align: center; display: block; margin-top: 1rem;">Back to Products</a>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

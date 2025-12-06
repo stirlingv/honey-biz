@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Bear Creek Apiaries & Honey LLC{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h2>Pure, Natural Honey from Our Hives to Your Home</h2>
+        <p>Experience the sweetness of locally produced, artisanal honey</p>
+        <a href="{% url 'products' %}" class="btn">Shop Our Honey</a>
+        <a href="{% url 'nuke_request' %}" class="btn btn-secondary">Get Bee Nucs</a>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2>Why Choose Bear Creek Honey?</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon">🌸</div>
+                <h3>100% Natural</h3>
+                <p>Our honey is raw and unfiltered, preserving all the natural enzymes, pollen, and nutrients that make honey so beneficial.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🏡</div>
+                <h3>Locally Produced</h3>
+                <p>Made right here in our community by Bear Creek Apiaries, a small family-owned business dedicated to sustainable beekeeping.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🐝</div>
+                <h3>Bee Friendly</h3>
+                <p>We practice ethical beekeeping methods that prioritize the health and wellbeing of our bee colonies.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% if featured_products %}
+<section class="products">
+    <div class="container">
+        <h2>Featured Honey Products</h2>
+        <div class="product-grid">
+            {% for product in featured_products %}
+            <div class="product-card">
+                <div class="product-image">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                        🍯
+                    {% endif %}
+                </div>
+                <div class="product-info">
+                    <h3>{{ product.name }}</h3>
+                    <p class="size">{{ product.size }}</p>
+                    <p class="price">${{ product.price }}</p>
+                    <p>{{ product.description|truncatewords:20 }}</p>
+                    <a href="{% url 'product_detail' product.pk %}" class="btn">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% url 'products' %}" class="btn">View All Products</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<section class="features" style="background-color: #fefdfb;">
+    <div class="container">
+        <h2>Interested in Beekeeping?</h2>
+        <div style="max-width: 700px; margin: 0 auto; text-align: center;">
+            <p style="font-size: 1.2rem; margin-bottom: 2rem;">
+                We offer bee starter kits (nucs) for aspiring beekeepers. Our nucs include healthy colonies with a laying queen, ready to establish in your own hive.
+            </p>
+            <a href="{% url 'nuke_request' %}" class="btn">Request Bee Nucs</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

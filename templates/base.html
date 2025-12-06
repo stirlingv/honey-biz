@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bear Creek Apiaries & Honey LLC{% endblock %}</title>
+    <meta name="description" content="Bear Creek Apiaries & Honey LLC - Local, artisanal honey and bee starter kits">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <a href="{% url 'home' %}">
+                        <h1>🐝 Bear Creek Apiaries</h1>
+                    </a>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'about' %}">About</a></li>
+                    <li><a href="{% url 'products' %}">Honey</a></li>
+                    <li><a href="{% url 'nuke_request' %}">Bee Nucs</a></li>
+                    <li><a href="{% url 'order_honey' %}" class="btn-order">Order Now</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        {% if messages %}
+        <div class="container">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Bear Creek Apiaries & Honey LLC</h3>
+                    <p>Locally owned and operated</p>
+                    <p>Providing pure, natural honey from our hives to your home</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="{% url 'home' %}">Home</a></li>
+                        <li><a href="{% url 'about' %}">About Us</a></li>
+                        <li><a href="{% url 'products' %}">Our Honey</a></li>
+                        <li><a href="{% url 'nuke_request' %}">Bee Nucs</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <p>Email: info@bearcreekapiaries.com</p>
+                    <p>Phone: (555) 123-4567</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Bear Creek Apiaries & Honey LLC. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
