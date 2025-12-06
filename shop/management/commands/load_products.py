@@ -1,0 +1,61 @@
+from django.core.management.base import BaseCommand
+from shop.models import Product
+
+
+class Command(BaseCommand):
+    help = 'Load initial product data'
+
+    def handle(self, *args, **options):
+        # Clear existing products
+        Product.objects.all().delete()
+
+        products = [
+            {
+                "name": "Wildflower Honey",
+                "description": "Our signature wildflower honey is harvested from diverse local flora, creating a rich and complex flavor profile. This raw, unfiltered honey captures the essence of our region's natural beauty in every spoonful. Perfect for tea, toast, or enjoying straight from the jar.",
+                "price": 12.99,
+                "size": "12 oz",
+                "in_stock": True
+            },
+            {
+                "name": "Wildflower Honey",
+                "description": "Our signature wildflower honey in a larger size. Harvested from diverse local flora, creating a rich and complex flavor profile. This raw, unfiltered honey captures the essence of our region's natural beauty. Perfect for families or honey enthusiasts.",
+                "price": 22.99,
+                "size": "32 oz",
+                "in_stock": True
+            },
+            {
+                "name": "Clover Honey",
+                "description": "Light and delicate, our clover honey is perfect for those who prefer a milder taste. This golden honey is smooth and sweet, making it ideal for baking, cooking, or adding to your favorite beverages. A classic choice loved by all ages.",
+                "price": 11.99,
+                "size": "12 oz",
+                "in_stock": True
+            },
+            {
+                "name": "Spring Blossom Honey",
+                "description": "Collected during the first bloom of spring, this honey showcases the fresh, floral notes of early season blossoms. Light amber in color with a delicate sweetness, it's a seasonal favorite that captures the essence of renewal and new beginnings.",
+                "price": 14.99,
+                "size": "16 oz",
+                "in_stock": True
+            },
+            {
+                "name": "Raw Honeycomb",
+                "description": "Experience honey the way nature intended with our raw honeycomb. This is pure honey still in the beeswax comb, just as the bees made it. Chew the wax for a burst of honey flavor, or use it as an elegant addition to cheese boards. A true delicacy!",
+                "price": 18.99,
+                "size": "8 oz",
+                "in_stock": True
+            },
+            {
+                "name": "Autumn Harvest Honey",
+                "description": "Our autumn harvest honey is darker and more robust, with rich, earthy undertones from late-season flowers. This bold honey is perfect for glazes, marinades, or drizzling over aged cheeses. A sophisticated choice for culinary adventures.",
+                "price": 13.99,
+                "size": "12 oz",
+                "in_stock": True
+            }
+        ]
+
+        for product_data in products:
+            Product.objects.create(**product_data)
+            self.stdout.write(self.style.SUCCESS(f'Created product: {product_data["name"]} - {product_data["size"]}'))
+
+        self.stdout.write(self.style.SUCCESS(f'Successfully created {len(products)} products'))

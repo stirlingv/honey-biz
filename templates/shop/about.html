@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us - Bear Creek Apiaries & Honey LLC{% endblock %}
+
+{% block content %}
+<section class="about-section">
+    <div class="container">
+        <div class="about-content">
+            <h2>About Bear Creek Apiaries & Honey LLC</h2>
+            
+            <p>
+                Welcome to Bear Creek Apiaries & Honey LLC, your local source for pure, natural honey and beekeeping supplies. 
+                We are a small, family-owned business dedicated to sustainable beekeeping practices and producing the highest 
+                quality honey for our community.
+            </p>
+
+            <h3>Our Story</h3>
+            <p>
+                Bear Creek Apiaries was founded on a passion for beekeeping and a commitment to supporting the vital role 
+                that honeybees play in our ecosystem. What started as a hobby has grown into a thriving small business, 
+                allowing us to share the fruits of our labor with neighbors and honey enthusiasts throughout the region.
+            </p>
+
+            <h3>Our Honey</h3>
+            <p>
+                Every jar of Bear Creek honey is a testament to the hard work of our bees and our commitment to quality. 
+                We never heat or over-filter our honey, ensuring that you receive a product that is:
+            </p>
+            <ul>
+                <li>100% raw and natural</li>
+                <li>Rich in natural enzymes and antioxidants</li>
+                <li>Full of local pollen, which may help with seasonal allergies</li>
+                <li>Free from additives, preservatives, or artificial ingredients</li>
+                <li>Sustainably harvested with bee health as our top priority</li>
+            </ul>
+
+            <h3>Beekeeping Services</h3>
+            <p>
+                In addition to our honey products, we offer bee starter kits (nucs) for those interested in starting their 
+                own beekeeping journey. Our nucs include:
+            </p>
+            <ul>
+                <li>A healthy, established colony with a laying queen</li>
+                <li>Multiple frames of brood in various stages</li>
+                <li>Sufficient worker bees to maintain the colony</li>
+                <li>Food stores to help the colony thrive</li>
+            </ul>
+
+            <h3>Our Commitment</h3>
+            <p>
+                We believe in ethical beekeeping that puts the health and welfare of our bees first. Our practices include:
+            </p>
+            <ul>
+                <li>Natural pest management techniques</li>
+                <li>Minimal intervention in hive operations</li>
+                <li>Ensuring adequate food stores for our bees year-round</li>
+                <li>Supporting native pollinator populations</li>
+                <li>Educating our community about the importance of bees</li>
+            </ul>
+
+            <h3>Visit Us</h3>
+            <p>
+                We love connecting with our customers and fellow beekeeping enthusiasts. Whether you're interested in 
+                purchasing honey, starting your own hives, or simply learning more about bees, we're here to help.
+            </p>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="{% url 'products' %}" class="btn" style="margin-right: 1rem;">Shop Honey</a>
+                <a href="{% url 'nuke_request' %}" class="btn btn-secondary">Request Nucs</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

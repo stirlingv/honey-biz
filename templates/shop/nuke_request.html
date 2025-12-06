@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+
+{% block title %}Request Bee Nucs - Bear Creek Apiaries & Honey LLC{% endblock %}
+
+{% block content %}
+<section class="form-section">
+    <div class="container">
+        <div class="form-container">
+            <h2>Request Bee Nucs (Starter Kits)</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+                Interested in starting your beekeeping journey? Fill out the form below to request information about our bee nucleus colonies (nucs). We'll contact you to discuss availability, pricing, and pickup details.
+            </p>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <h3 style="margin-bottom: 1rem; color: #f6a326;">Contact Information</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_first_name">First Name *</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_last_name">Last Name *</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_email">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_phone">Phone *</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.phone.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Location</h3>
+                <div class="form-group">
+                    <label for="id_address">Street Address *</label>
+                    {{ form.address }}
+                    {% if form.address.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.address.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_city">City *</label>
+                        {{ form.city }}
+                        {% if form.city.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.city.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_state">State *</label>
+                        {{ form.state }}
+                        {% if form.state.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.state.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_zip_code">ZIP Code *</label>
+                    {{ form.zip_code }}
+                    {% if form.zip_code.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.zip_code.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Nuc Request Details</h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_quantity">Number of Nucs Requested *</label>
+                        {{ form.quantity }}
+                        {% if form.quantity.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.quantity.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_experience_level">Beekeeping Experience *</label>
+                        {{ form.experience_level }}
+                        {% if form.experience_level.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.experience_level.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_preferred_pickup_date">Preferred Pickup Date (Optional)</label>
+                    {{ form.preferred_pickup_date }}
+                    {% if form.preferred_pickup_date.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.preferred_pickup_date.errors }}</div>
+                    {% endif %}
+                    <small class="helptext">Nucs are typically available in spring (April-June)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_notes">Tell Us About Your Plans (Optional)</label>
+                    {{ form.notes }}
+                    {% if form.notes.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.notes.errors }}</div>
+                    {% endif %}
+                    <small class="helptext">Share your beekeeping experience, equipment status, or any questions you have</small>
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">Submit Request</button>
+                <a href="{% url 'home' %}" class="btn btn-secondary" style="width: 100%; text-align: center; display: block; margin-top: 1rem;">Back to Home</a>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

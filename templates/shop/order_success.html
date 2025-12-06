@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Confirmed - Bear Creek Apiaries & Honey LLC{% endblock %}
+
+{% block content %}
+<section class="success-container">
+    <div class="container">
+        <div class="icon">✓</div>
+        <h2>Order Submitted Successfully!</h2>
+        <p>
+            Thank you for your order! We've received your request and will contact you shortly at the email address 
+            you provided to confirm your order and arrange payment and delivery details.
+        </p>
+        <div>
+            <a href="{% url 'home' %}" class="btn" style="margin-right: 1rem;">Return Home</a>
+            <a href="{% url 'products' %}" class="btn btn-secondary">View More Products</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
