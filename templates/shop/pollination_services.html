@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+
+{% block title %}Pollination Services - Bear Creek Apiaries & Honey LLC{% endblock %}
+
+{% block content %}
+<section class="service-hero" style="background: linear-gradient(rgba(246, 163, 38, 0.9), rgba(244, 185, 66, 0.85)); padding: 3rem 0; text-align: center; color: #fff;">
+    <div class="container">
+        <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">🐝 Pollination Services</h1>
+        <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">
+            Boost your crop yields with professional honeybee pollination services from Bear Creek Apiaries.
+        </p>
+    </div>
+</section>
+
+<section class="service-info" style="padding: 3rem 0;">
+    <div class="container">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+            <div class="info-card" style="background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="color: #f6a326; margin-bottom: 1rem;">🌻 Why Pollination Matters</h3>
+                <p>Honeybees are essential for pollinating many crops. Studies show that proper bee pollination can increase yields by 30-70% for many fruits and vegetables.</p>
+            </div>
+            <div class="info-card" style="background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="color: #f6a326; margin-bottom: 1rem;">🍓 Crops We Service</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li>✓ Blueberries & Strawberries</li>
+                    <li>✓ Citrus Groves</li>
+                    <li>✓ Watermelon & Cantaloupe</li>
+                    <li>✓ Cucumbers, Squash & Peppers</li>
+                    <li>✓ Orchards & Fruit Trees</li>
+                </ul>
+            </div>
+            <div class="info-card" style="background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="color: #f6a326; margin-bottom: 1rem;">📋 Our Process</h3>
+                <ol style="padding-left: 1.2rem;">
+                    <li>Submit your request below</li>
+                    <li>We'll assess your needs</li>
+                    <li>Receive a custom quote</li>
+                    <li>We deliver & place hives</li>
+                    <li>Bees pollinate your crops!</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="form-section" style="background: #f9f9f9; padding: 3rem 0;">
+    <div class="container">
+        <div class="form-container" style="max-width: 800px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="text-align: center; margin-bottom: 0.5rem;">Request Pollination Services</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+                Fill out the form below and we'll contact you to discuss your pollination needs and provide a quote.
+            </p>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <h3 style="margin-bottom: 1rem; color: #f6a326;">Contact Information</h3>
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_first_name">First Name *</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_last_name">Last Name *</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_email">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_phone">Phone *</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.phone.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        {{ form.prefer_callback }}
+                        <label for="id_prefer_callback" style="margin: 0; font-weight: normal; cursor: pointer;">
+                            📞 I'd prefer a phone callback
+                        </label>
+                    </div>
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">Check this if you'd like us to call you to discuss your pollination needs</small>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Property Location</h3>
+                <div class="form-group">
+                    <label for="id_property_address">Property Address *</label>
+                    {{ form.property_address }}
+                    {% if form.property_address.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.property_address.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_city">City *</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_state">State *</label>
+                        {{ form.state }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_zip_code">ZIP Code *</label>
+                        {{ form.zip_code }}
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Pollination Details</h3>
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_crop_type">Crop Type *</label>
+                        {{ form.crop_type }}
+                        {% if form.crop_type.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.crop_type.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_crop_type_other">If Other, Please Specify</label>
+                        {{ form.crop_type_other }}
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_acreage">Acreage to Pollinate *</label>
+                        {{ form.acreage }}
+                        {% if form.acreage.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.acreage.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_num_hives_requested">Number of Hives (optional)</label>
+                        {{ form.num_hives_requested }}
+                        <small style="color: #666;">Leave blank if unsure - we'll recommend</small>
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_preferred_start_date">When Do You Need Bees? *</label>
+                        {{ form.preferred_start_date }}
+                        {% if form.preferred_start_date.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.preferred_start_date.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_duration_weeks">Duration (weeks) *</label>
+                        {{ form.duration_weeks }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_notes">Additional Information</label>
+                    {{ form.notes }}
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="background: #f6a326; border: none; padding: 1rem 3rem; font-size: 1.1rem; border-radius: 25px; color: #fff; cursor: pointer;">
+                        Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

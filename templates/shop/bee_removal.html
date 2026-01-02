@@ -1,0 +1,215 @@
+{% extends 'base.html' %}
+
+{% block title %}Bee Removal & Relocation Services - Bear Creek Apiaries & Honey LLC{% endblock %}
+
+{% block content %}
+<section class="service-hero" style="background: linear-gradient(rgba(246, 163, 38, 0.9), rgba(244, 185, 66, 0.85)); padding: 3rem 0; text-align: center; color: #fff;">
+    <div class="container">
+        <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">🐝 Bee Removal & Relocation</h1>
+        <p style="font-size: 1.2rem; max-width: 700px; margin: 0 auto;">
+            Humane bee removal services in Florida. We safely relocate bees to our apiaries instead of exterminating them.
+        </p>
+    </div>
+</section>
+
+<section class="service-info" style="padding: 3rem 0;">
+    <div class="container">
+        <div style="background: #e8f5e9; border-left: 4px solid #4caf50; padding: 1.5rem; margin-bottom: 2rem; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #2e7d32; margin-bottom: 0.5rem;">🌿 We Save Bees, Not Exterminate Them</h3>
+            <p style="margin: 0; color: #555;">Honeybees are vital pollinators. When you call us, we safely remove and relocate the colony to one of our apiaries where they can thrive and continue their important work.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2rem; margin-bottom: 3rem;">
+            <div class="info-card" style="background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="color: #f6a326; margin-bottom: 1rem;">🏠 Common Locations</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li>✓ Trees & Branches</li>
+                    <li>✓ Inside Walls</li>
+                    <li>✓ Roof & Eaves</li>
+                    <li>✓ Sheds & Outbuildings</li>
+                    <li>✓ Ground Nests</li>
+                    <li>✓ Fence Posts</li>
+                </ul>
+            </div>
+            <div class="info-card" style="background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="color: #f6a326; margin-bottom: 1rem;">⚠️ Important Safety Tips</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li>❌ Don't spray the bees</li>
+                    <li>❌ Don't try to smoke them out</li>
+                    <li>❌ Don't seal their entrance</li>
+                    <li>✓ Keep children & pets away</li>
+                    <li>✓ Observe from a safe distance</li>
+                    <li>✓ Call a professional</li>
+                </ul>
+            </div>
+            <div class="info-card" style="background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <h3 style="color: #f6a326; margin-bottom: 1rem;">📋 Our Process</h3>
+                <ol style="padding-left: 1.2rem;">
+                    <li>Submit request below</li>
+                    <li>We assess the situation</li>
+                    <li>Provide quote & schedule</li>
+                    <li>Safe removal & relocation</li>
+                    <li>Bees get a new home!</li>
+                </ol>
+            </div>
+        </div>
+
+        <div style="background: #fff3e0; border-left: 4px solid #f6a326; padding: 1.5rem; margin-bottom: 2rem; border-radius: 0 8px 8px 0;">
+            <h3 style="color: #e65100; margin-bottom: 0.5rem;">⏰ Emergency Bee Removal</h3>
+            <p style="margin: 0; color: #555;">For emergency situations (aggressive bees near high-traffic areas, allergic individuals at risk), please submit the form below and select "Emergency" urgency. Check the "Prefer a Callback" box and we'll contact you as soon as possible.</p>
+        </div>
+    </div>
+</section>
+
+<section class="form-section" style="background: #f9f9f9; padding: 3rem 0;">
+    <div class="container">
+        <div class="form-container" style="max-width: 800px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="text-align: center; margin-bottom: 0.5rem;">Request Bee Removal</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+                Fill out the form below and we'll contact you to assess the situation and provide a quote.
+            </p>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <h3 style="margin-bottom: 1rem; color: #f6a326;">Contact Information</h3>
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_first_name">First Name *</label>
+                        {{ form.first_name }}
+                        {% if form.first_name.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.first_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_last_name">Last Name *</label>
+                        {{ form.last_name }}
+                        {% if form.last_name.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.last_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_email">Email *</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_phone">Phone *</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.phone.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        {{ form.prefer_callback }}
+                        <label for="id_prefer_callback" style="margin: 0; font-weight: normal; cursor: pointer;">
+                            📞 I'd prefer a phone callback
+                        </label>
+                    </div>
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">Check this if you'd like us to call you to discuss the bee removal</small>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Property Location</h3>
+                <div class="form-group">
+                    <label for="id_property_address">Property Address *</label>
+                    {{ form.property_address }}
+                    {% if form.property_address.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.property_address.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_city">City *</label>
+                        {{ form.city }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_state">State *</label>
+                        {{ form.state }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_zip_code">ZIP Code *</label>
+                        {{ form.zip_code }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_property_type">Property Type *</label>
+                    {{ form.property_type }}
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">About the Bees</h3>
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_bee_location">Where Are the Bees? *</label>
+                        {{ form.bee_location }}
+                        {% if form.bee_location.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.bee_location.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_bee_location_other">If Other, Please Describe</label>
+                        {{ form.bee_location_other }}
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_how_long_present">How Long Have They Been There? *</label>
+                        {{ form.how_long_present }}
+                        {% if form.how_long_present.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.how_long_present.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_estimated_size">Estimated Size of Colony</label>
+                        {{ form.estimated_size }}
+                    </div>
+                </div>
+
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="id_height_from_ground">Height From Ground</label>
+                        {{ form.height_from_ground }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_urgency">Urgency Level *</label>
+                        {{ form.urgency }}
+                    </div>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Additional Information</h3>
+                <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                    <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                        {{ form.has_been_sprayed }}
+                        <label for="id_has_been_sprayed" style="margin: 0;">Have the bees been sprayed with pesticides?</label>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem;">
+                        {{ form.can_send_photo }}
+                        <label for="id_can_send_photo" style="margin: 0;">Can you send photos of the bees?</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_notes">Additional Notes</label>
+                    {{ form.notes }}
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button type="submit" class="btn btn-primary" style="background: #f6a326; border: none; padding: 1rem 3rem; font-size: 1.1rem; border-radius: 25px; color: #fff; cursor: pointer;">
+                        Submit Request
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+{% endblock %}

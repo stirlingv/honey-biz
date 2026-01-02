@@ -33,11 +33,21 @@
                         <span class="nav-title">Bear Creek Apiaries</span>
                     </a>
                 </div>
+                <button class="nav-toggle" aria-label="Toggle navigation">
+                    <span class="hamburger"></span>
+                </button>
                 <ul class="nav-menu">
                     <li><a href="{% url 'home' %}">Home</a></li>
                     <li><a href="{% url 'about' %}">About</a></li>
                     <li><a href="{% url 'products' %}">Honey</a></li>
-                    <li><a href="{% url 'nuke_request' %}">Bee Nucs</a></li>
+                    <li class="nav-dropdown">
+                        <button class="dropdown-toggle">Services ▾</button>
+                        <ul class="dropdown-menu">
+                            <li><a href="{% url 'nuke_request' %}">Bee Nucs</a></li>
+                            <li><a href="{% url 'pollination_services' %}">Pollination</a></li>
+                            <li><a href="{% url 'bee_removal' %}">Bee Removal</a></li>
+                        </ul>
+                    </li>
                     <li><a href="{% url 'order_honey' %}" class="btn-order">Order Now</a></li>
                 </ul>
             </div>
@@ -79,11 +89,12 @@
                 <div class="footer-section">
                     <h4>Contact</h4>
                     <p>Email: info@bearcreekapiaries.com</p>
-                    <p>Phone: (555) 123-4567</p>
+                    <p><a href="{% url 'callback_request' %}" style="color: #f6a326;">📞 Request a Callback</a></p>
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 Bear Creek Apiaries & Honey LLC. All rights reserved.</p>
+                <p class="cottage-food-notice">Made in a cottage food operation that is not subject to Florida's food safety regulations.</p>
+                <p>&copy; 2026 Bear Creek Apiaries & Honey LLC. All rights reserved.</p>
                 <p class="footer-legal">
                     <a href="{% url 'privacy_policy' %}">Privacy Policy</a> | 
                     <a href="{% url 'terms_of_service' %}">Terms of Service</a>
@@ -92,6 +103,40 @@
         </div>
     </footer>
 
+    <script>
+        // Mobile hamburger menu toggle
+        document.querySelector('.nav-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        // Services dropdown toggle (click, not hover)
+        document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
+            toggle.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                const dropdown = this.closest('.nav-dropdown');
+                dropdown.classList.toggle('open');
+            });
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.nav-dropdown')) {
+                document.querySelectorAll('.nav-dropdown').forEach(function(dropdown) {
+                    dropdown.classList.remove('open');
+                });
+            }
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-menu a').forEach(function(link) {
+            link.addEventListener('click', function() {
+                document.querySelector('.nav-menu').classList.remove('active');
+                document.querySelector('.nav-toggle').classList.remove('active');
+            });
+        });
+    </script>
     {% block extra_js %}{% endblock %}
 </body>
 </html>

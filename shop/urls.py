@@ -11,6 +11,16 @@ urlpatterns = [
     path('nucs/', views.nuke_request, name='nuke_request'),
     path('nucs/success/', views.nuke_success, name='nuke_success'),
     
+    # Services
+    path('services/pollination/', views.pollination_services, name='pollination_services'),
+    path('services/pollination/success/', views.pollination_success, name='pollination_success'),
+    path('services/bee-removal/', views.bee_removal, name='bee_removal'),
+    path('services/bee-removal/success/', views.bee_removal_success, name='bee_removal_success'),
+    
+    # Callback request
+    path('callback/', views.callback_request, name='callback_request'),
+    path('callback/success/', views.callback_success, name='callback_success'),
+    
     # Checkout flow
     path('checkout/<int:order_id>/review/', views.checkout_review, name='checkout_review'),
     path('checkout/<int:order_id>/process/', views.checkout_process, name='checkout_process'),

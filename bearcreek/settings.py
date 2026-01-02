@@ -32,6 +32,13 @@ DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
+# CSRF trusted origins for Render deployment
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.onrender.com',
+]
+# Add custom domain when ready (uncomment and update):
+# CSRF_TRUSTED_ORIGINS += ['https://bcapiaries.com', 'https://www.bcapiaries.com']
+
 
 # Application definition
 
@@ -184,3 +191,27 @@ QUICKBOOKS_CLIENT_SECRET = os.getenv('QUICKBOOKS_CLIENT_SECRET', '')
 QUICKBOOKS_REDIRECT_URI = os.getenv('QUICKBOOKS_REDIRECT_URI', 'http://localhost:8000/quickbooks/callback/')
 QUICKBOOKS_ENVIRONMENT = os.getenv('QUICKBOOKS_ENVIRONMENT', 'sandbox')  # 'sandbox' or 'production'
 QUICKBOOKS_COMPANY_ID = os.getenv('QUICKBOOKS_COMPANY_ID', '')
+
+# =============================================================================
+# Email Settings (for notifications)
+# =============================================================================
+
+# For development, use console backend (prints to terminal)
+# For production, configure SMTP
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@bearcreekapiaries.com')
+
+# SMS/Email Notification Settings - Different for dev vs prod
+if DEBUG:
+    # Development: Send to your test accounts
+    SMS_NOTIFICATION_EMAIL = os.getenv('DEV_SMS_NOTIFICATION_EMAIL', '')
+    ADMIN_NOTIFICATION_EMAIL = os.getenv('DEV_ADMIN_NOTIFICATION_EMAIL', '')
+else:
+    # Production: Send to mom's accounts
+    SMS_NOTIFICATION_EMAIL = os.getenv('SMS_NOTIFICATION_EMAIL', '8505450205@vtext.com')
+    ADMIN_NOTIFICATION_EMAIL = os.getenv('ADMIN_NOTIFICATION_EMAIL', 'tarivan60@gmail.com')

@@ -75,6 +75,118 @@ header {
     color: #333;
 }
 
+/* Hamburger Menu Button */
+.nav-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1001;
+}
+
+.hamburger {
+    display: block;
+    width: 25px;
+    height: 3px;
+    background: #fff;
+    position: relative;
+    transition: background 0.3s;
+}
+
+.hamburger::before,
+.hamburger::after {
+    content: '';
+    position: absolute;
+    width: 25px;
+    height: 3px;
+    background: #fff;
+    left: 0;
+    transition: transform 0.3s;
+}
+
+.hamburger::before {
+    top: -8px;
+}
+
+.hamburger::after {
+    top: 8px;
+}
+
+/* Hamburger animation when active */
+.nav-toggle.active .hamburger {
+    background: transparent;
+}
+
+.nav-toggle.active .hamburger::before {
+    transform: rotate(45deg) translate(5px, 6px);
+}
+
+.nav-toggle.active .hamburger::after {
+    transform: rotate(-45deg) translate(5px, -6px);
+}
+
+/* Dropdown Menu Styles */
+.nav-dropdown {
+    position: relative;
+}
+
+.dropdown-toggle {
+    background: none;
+    border: none;
+    color: #fff;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: inherit;
+    padding: 0;
+    transition: color 0.3s;
+}
+
+.dropdown-toggle:hover {
+    color: #333;
+}
+
+.nav-dropdown .dropdown-menu {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    min-width: 160px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    z-index: 1000;
+    list-style: none;
+    transition: opacity 0.2s, visibility 0.2s;
+    margin-top: 0.5rem;
+}
+
+/* Show dropdown on click (via .open class) */
+.nav-dropdown.open .dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+}
+
+.nav-dropdown .dropdown-menu li {
+    padding: 0;
+}
+
+.nav-dropdown .dropdown-menu a {
+    display: block;
+    padding: 0.75rem 1.25rem;
+    color: #333 !important;
+    transition: background 0.2s;
+    white-space: nowrap;
+}
+
+.nav-dropdown .dropdown-menu a:hover {
+    background: #f6a326;
+    color: #fff !important;
+}
+
 .btn-order {
     background-color: #fff;
     color: #f6a326 !important;
@@ -468,8 +580,80 @@ footer {
     border-top: 1px solid #555;
 }
 
+.cottage-food-notice {
+    font-size: 0.85rem;
+    color: #aaa;
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+    .nav-toggle {
+        display: block;
+    }
+
+    .navbar .container {
+        position: relative;
+    }
+
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #f4b942 0%, #f6a326 100%);
+        flex-direction: column;
+        padding: 1rem;
+        gap: 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .nav-menu.active {
+        display: flex;
+    }
+
+    .nav-menu li {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .nav-menu li:last-child {
+        border-bottom: none;
+        padding-top: 1rem;
+    }
+
+    /* Mobile dropdown */
+    .nav-dropdown .dropdown-menu {
+        position: static;
+        visibility: visible;
+        opacity: 1;
+        display: none;
+        box-shadow: none;
+        background: rgba(255,255,255,0.1);
+        margin: 0.5rem 0 0 0;
+        border-radius: 4px;
+    }
+
+    .nav-dropdown.open .dropdown-menu {
+        display: block;
+    }
+
+    .nav-dropdown .dropdown-menu a {
+        color: #fff !important;
+    }
+
+    .nav-dropdown .dropdown-menu a:hover {
+        background: rgba(255,255,255,0.2);
+    }
+
+    .dropdown-toggle {
+        width: 100%;
+    }
+
     .nav-brand a {
         flex-direction: column;
         gap: 0.25rem;
@@ -481,11 +665,6 @@ footer {
 
     .nav-title {
         font-size: 1.2rem;
-    }
-
-    .nav-menu {
-        flex-wrap: wrap;
-        gap: 1rem;
     }
 
     .hero-logo {

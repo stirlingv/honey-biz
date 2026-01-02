@@ -3,7 +3,7 @@
 
 services:
   - type: web
-    name: bear-creek-apiaries
+    name: bcapiaries
     runtime: python
     buildCommand: ./build.sh
     startCommand: gunicorn bearcreek.wsgi:application
@@ -14,8 +14,11 @@ services:
         generateValue: true
       - key: ALLOWED_HOSTS
         value: ".onrender.com"
+      - key: RENDER
+        value: "true"
       - key: PYTHON_VERSION
         value: "3.12.0"
+      # QuickBooks Integration
       - key: QUICKBOOKS_CLIENT_ID
         sync: false
       - key: QUICKBOOKS_CLIENT_SECRET
@@ -25,6 +28,23 @@ services:
       - key: QUICKBOOKS_ENVIRONMENT
         value: "production"
       - key: QUICKBOOKS_COMPANY_ID
+        sync: false
+      # Email/SMS Notifications (Production)
+      - key: EMAIL_BACKEND
+        value: "django.core.mail.backends.smtp.EmailBackend"
+      - key: EMAIL_HOST
+        value: "smtp.gmail.com"
+      - key: EMAIL_PORT
+        value: "587"
+      - key: EMAIL_USE_TLS
+        value: "True"
+      - key: EMAIL_HOST_USER
+        sync: false
+      - key: EMAIL_HOST_PASSWORD
+        sync: false
+      - key: SMS_NOTIFICATION_EMAIL
+        sync: false
+      - key: ADMIN_NOTIFICATION_EMAIL
         sync: false
     disk:
       name: sqlite-data

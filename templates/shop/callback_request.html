@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Request a Callback - Bear Creek Apiaries & Honey LLC{% endblock %}
+
+{% block content %}
+<section class="form-section" style="padding: 3rem 0;">
+    <div class="container">
+        <div class="form-container" style="max-width: 600px; margin: 0 auto; background: #fff; padding: 2rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <h2 style="text-align: center; margin-bottom: 0.5rem;">📞 Request a Callback</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 2rem;">
+                Leave your details and we'll call you back to discuss your needs.
+            </p>
+            
+            <form method="post">
+                {% csrf_token %}
+                
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="id_name" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Your Name *</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.name.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="id_phone" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Phone Number *</label>
+                    {{ form.phone }}
+                    {% if form.phone.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.phone.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="id_email" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Email (optional)</label>
+                    {{ form.email }}
+                    <small style="color: #666; display: block; margin-top: 0.25rem;">In case we can't reach you by phone</small>
+                    {% if form.email.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.email.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="id_interest" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">What would you like to discuss?</label>
+                    {{ form.interest }}
+                    {% if form.interest.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.interest.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="id_best_time" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Best Time to Call (optional)</label>
+                    {{ form.best_time }}
+                    {% if form.best_time.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.best_time.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group" style="margin-bottom: 1.5rem;">
+                    <label for="id_message" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Message (optional)</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.message.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; padding: 1rem; font-size: 1.1rem;">
+                    📞 Request Callback
+                </button>
+            </form>
+            
+            <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #eee; text-align: center;">
+                <p style="color: #666; margin-bottom: 1rem;">Looking for something specific?</p>
+                <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center;">
+                    <a href="{% url 'products' %}" class="btn" style="background: #f5f5f5; color: #333; padding: 0.5rem 1rem; font-size: 0.9rem;">🍯 Honey Products</a>
+                    <a href="{% url 'nuke_request' %}" class="btn" style="background: #f5f5f5; color: #333; padding: 0.5rem 1rem; font-size: 0.9rem;">🐝 Bee Nucs</a>
+                    <a href="{% url 'pollination_services' %}" class="btn" style="background: #f5f5f5; color: #333; padding: 0.5rem 1rem; font-size: 0.9rem;">🌻 Pollination</a>
+                    <a href="{% url 'bee_removal' %}" class="btn" style="background: #f5f5f5; color: #333; padding: 0.5rem 1rem; font-size: 0.9rem;">🏠 Bee Removal</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

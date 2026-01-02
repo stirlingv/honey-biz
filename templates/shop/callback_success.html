@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Callback Requested - Bear Creek Apiaries & Honey LLC{% endblock %}
+
+{% block content %}
+<section class="success-section" style="padding: 4rem 0; text-align: center;">
+    <div class="container">
+        <div style="max-width: 600px; margin: 0 auto; background: #fff; padding: 3rem; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📞</div>
+            <h1 style="color: #4caf50; margin-bottom: 1rem;">We'll Call You Soon!</h1>
+            <p style="color: #666; font-size: 1.1rem; margin-bottom: 2rem;">
+                Thanks for reaching out! We've received your callback request and will contact you as soon as possible.
+            </p>
+            
+            <div style="background: #e8f5e9; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+                <p style="margin: 0; color: #2e7d32;">
+                    <strong>What's next?</strong><br>
+                    Keep your phone nearby - we typically respond within a few hours during business hours.
+                </p>
+            </div>
+            
+            <a href="{% url 'home' %}" class="btn" style="padding: 1rem 2rem;">
+                ← Return to Home
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

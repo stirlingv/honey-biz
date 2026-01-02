@@ -9,8 +9,15 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.urls import reverse
 
-from .models import Product, Order, NukeRequest
-from .forms import OrderForm, NukeRequestForm
+from .models import Product, Order, NukeRequest, PollinationRequest, BeeRemovalRequest, CallbackRequest
+from .forms import OrderForm, NukeRequestForm, PollinationRequestForm, BeeRemovalRequestForm, CallbackRequestForm
+from .services.notifications import (
+    notify_new_order, 
+    notify_new_nuc_request,
+    notify_new_pollination_request,
+    notify_new_bee_removal,
+    notify_new_callback_request
+)
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +67,8 @@ def order_honey(request):
         form = OrderForm(request.POST)
         if form.is_valid():
             order = form.save()
+            # Send SMS/email notification
+            notify_new_order(order)
             # Store order ID in session for checkout
             request.session['pending_order_id'] = order.id
             return redirect('checkout_review', order_id=order.id)
@@ -87,6 +96,8 @@ def nuke_request(request):
         form = NukeRequestForm(request.POST)
         if form.is_valid():
             nuke_req = form.save()
+            # Send SMS/email notification
+            notify_new_nuc_request(nuke_req)
             messages.success(
                 request,
                 f'Thank you for your interest! We will contact you at {nuke_req.email} to discuss your nuc purchase.'
@@ -103,6 +114,66 @@ def nuke_request(request):
 def nuke_success(request):
     """Nuc request success confirmation page"""
     return render(request, 'shop/nuke_success.html')
+
+
+# =============================================================================
+# Pollination Services Views
+# =============================================================================
+
+def pollination_services(request):
+    """Pollination services information and request form"""
+    if request.method == 'POST':
+        form = PollinationRequestForm(request.POST)
+        if form.is_valid():
+            pollination_req = form.save()
+            # Send SMS/email notification
+            notify_new_pollination_request(pollination_req)
+            messages.success(
+                request,
+                f'Thank you for your pollination inquiry! We will contact you at {pollination_req.email} to discuss your needs.'
+            )
+            return redirect('pollination_success')
+    else:
+        form = PollinationRequestForm()
+    
+    return render(request, 'shop/pollination_services.html', {
+        'form': form
+    })
+
+
+def pollination_success(request):
+    """Pollination request success confirmation page"""
+    return render(request, 'shop/pollination_success.html')
+
+
+# =============================================================================
+# Bee Removal Services Views
+# =============================================================================
+
+def bee_removal(request):
+    """Bee removal/relocation services information and request form"""
+    if request.method == 'POST':
+        form = BeeRemovalRequestForm(request.POST)
+        if form.is_valid():
+            removal_req = form.save()
+            # Send SMS/email notification
+            notify_new_bee_removal(removal_req)
+            messages.success(
+                request,
+                f'Thank you for contacting us! We will reach out to {removal_req.email} as soon as possible.'
+            )
+            return redirect('bee_removal_success')
+    else:
+        form = BeeRemovalRequestForm()
+    
+    return render(request, 'shop/bee_removal.html', {
+        'form': form
+    })
+
+
+def bee_removal_success(request):
+    """Bee removal request success confirmation page"""
+    return render(request, 'shop/bee_removal_success.html')
 
 
 # =============================================================================
@@ -296,3 +367,29 @@ def quickbooks_disconnect(request):
     
     messages.success(request, 'Disconnected from QuickBooks.')
     return redirect('home')
+
+
+def callback_request(request):
+    """Simple callback request form"""
+    if request.method == 'POST':
+        form = CallbackRequestForm(request.POST)
+        if form.is_valid():
+            callback = form.save()
+            
+            # Send notifications
+            notify_new_callback_request(callback)
+            
+            messages.success(
+                request,
+                f'Thanks {callback.name}! We\'ll call you at {callback.phone} soon.'
+            )
+            return redirect('callback_success')
+    else:
+        form = CallbackRequestForm()
+    
+    return render(request, 'shop/callback_request.html', {'form': form})
+
+
+def callback_success(request):
+    """Callback request success page"""
+    return render(request, 'shop/callback_success.html')

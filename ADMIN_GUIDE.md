@@ -1,0 +1,224 @@
+# 🐝 Bear Creek Apiaries - Admin Guide
+
+## How to Manage Your Business
+
+This guide will help you use the admin panel to manage orders, requests, and inventory.
+
+---
+
+## 📱 Getting Started
+
+### Logging In
+1. Go to: `https://your-website.com/admin/` (or `http://127.0.0.1:8000/admin/` when testing locally)
+2. Enter your username and password
+3. Click "Log in"
+
+You'll see the main dashboard with all the different sections you can manage.
+
+---
+
+## 📬 When You Get a Text/Email Notification
+
+When a customer submits a request, you'll receive:
+- **Text message (SMS)**: Quick alert with the key details
+- **Email**: Full details you can reference
+
+The text will tell you if the customer **wants a callback** (📞 CALLBACK) - these customers prefer a phone call!
+
+---
+
+## 🍯 Managing Honey Orders
+
+### Viewing Orders
+1. Click **"Orders"** on the main page
+2. You'll see a list of all orders with:
+   - Order number (#1, #2, etc.)
+   - Customer name and contact info
+   - What they ordered
+   - Total price
+   - Status (colored badge)
+   - If they want a callback (📞 CALL)
+
+### Order Status Meanings
+| Status | Color | What It Means |
+|--------|-------|---------------|
+| PENDING | Yellow | New order - needs attention |
+| PROCESSING | Purple | You're working on it |
+| COMPLETED | Green | Done! Order fulfilled |
+| CANCELLED | Red | Customer cancelled |
+
+### Updating an Order Status
+**Quick way (from the list):**
+1. Click the dropdown next to the status
+2. Select the new status
+3. Click **"Save"** at the bottom
+
+**Or update multiple at once:**
+1. Check the boxes next to orders you want to update
+2. Select an action from the dropdown (e.g., "✅ Mark as COMPLETED")
+3. Click **"Go"**
+
+### Viewing Full Order Details
+1. Click the order number (e.g., "#5")
+2. You'll see all customer info, address, notes, etc.
+3. Click **"Save"** after making any changes
+
+---
+
+## 🐝 Managing Nuc Requests
+
+### Viewing Requests
+1. Click **"Nuc Requests"** on the main page
+2. Each request shows:
+   - Request number (NUC-1, NUC-2, etc.)
+   - Customer info
+   - How many nucs they want
+   - Their experience level
+   - Preferred pickup date
+
+### Request Status Workflow
+1. **PENDING** → New request, call/email the customer
+2. **CONTACTED** → You've reached out to them
+3. **COMPLETED** → They picked up their nucs!
+4. **DECLINED** → They cancelled or you couldn't fulfill
+
+### Adding Your Notes
+1. Click on the request to open it
+2. Scroll to **"Status & Notes"**
+3. Add notes in the **"Admin notes"** field (e.g., "Called 1/2, will pick up Saturday")
+4. Click **"Save"**
+
+---
+
+## 🌻 Managing Pollination Requests
+
+### Viewing Requests
+1. Click **"Pollination Requests"** on the main page
+2. Shows: customer, crop type, acreage, start date, your quote
+
+### Adding a Price Quote
+1. Click the request to open it
+2. Find **"Quoted price"** field
+3. Enter your price (just the number, e.g., `500.00`)
+4. Update status to **"Contacted"**
+5. Click **"Save"**
+
+### Status Workflow
+1. **PENDING** → New request
+2. **CONTACTED** → You've sent a quote
+3. **SCHEDULED** → They accepted, bees are scheduled
+4. **COMPLETED** → Service finished
+
+---
+
+## 🏠 Managing Bee Removal Requests
+
+### ⚠️ Important: Check Urgency First!
+Bee removal requests are sorted by urgency:
+- 🟢 **LOW** - No rush
+- 🟡 **MEDIUM** - Would like it soon
+- 🟠 **HIGH** - Causing problems
+- 🔴 **EMERGENCY** - Safety concern (respond ASAP!)
+
+### Check If Sprayed
+Look for **"⚠️SPRAYED"** in the location column - this means someone sprayed pesticides on the bees. Important to know before removal!
+
+### Adding a Quote & Scheduling
+1. Click the request to open it
+2. Enter your **"Quoted price"**
+3. Set the **"Scheduled date"** when you plan to do the removal
+4. Update status to **"Scheduled"**
+5. Click **"Save"**
+
+---
+
+## 📞 Managing Callback Requests
+
+These are simple "please call me" requests from the footer.
+
+### Viewing Callbacks
+1. Click **"Callback Requests"**
+2. See: name, phone, what they're interested in, best time to call
+
+### What They're Interested In
+The colored badge shows what they want to discuss:
+- 🟠 **Honey** - Honey products
+- 🟢 **Nucs** - Bee starter colonies
+- 🟣 **Pollination** - Pollination services
+- 🔴 **Bee Removal** - Bee removal
+- 🔵 **General** - Just a question
+
+### After You Call
+1. Open the callback request
+2. Add notes about what you discussed
+3. Change status to **"Contacted"** or **"Completed"**
+4. Click **"Save"**
+
+---
+
+## 📦 Managing Products (Inventory)
+
+### Viewing Products
+1. Click **"Products"** on the main page
+2. See all your honey products with prices and stock status
+
+### Marking Products Out of Stock
+**Quick way:**
+1. Uncheck the **"In stock"** checkbox in the list
+2. Click **"Save"**
+
+**Multiple products:**
+1. Check boxes next to products
+2. Select **"❌ Mark as OUT OF STOCK"**
+3. Click **"Go"**
+
+### Adding a New Product
+1. Click **"Add Product"** (top right)
+2. Fill in:
+   - Name (e.g., "Wildflower Honey")
+   - Size (e.g., "16 oz")
+   - Description
+   - Price
+   - Check **"In stock"** if available
+3. Click **"Save"**
+
+### Editing a Product
+1. Click the product name
+2. Make your changes
+3. Click **"Save"**
+
+---
+
+## 🔍 Finding Things
+
+### Search
+Every page has a search box at the top. Type a name, email, or phone number to find orders/requests.
+
+### Filter
+Use the filters on the right side to narrow down:
+- By status (Pending, Completed, etc.)
+- By date
+- By product or crop type
+
+### Date Navigation
+The calendar bar at the top lets you jump to specific months.
+
+---
+
+## 💡 Quick Tips
+
+1. **Look for 📞 CALL** - These customers want a phone call!
+2. **Check urgency colors** - Red = urgent, respond quickly
+3. **Add admin notes** - Keep track of your conversations
+4. **Use bulk actions** - Check multiple boxes + action dropdown to update many at once
+5. **Save often** - Always click "Save" after making changes
+
+---
+
+## ❓ Need Help?
+
+If something isn't working, contact your website administrator (Stirling).
+
+---
+
+*Last updated: January 2026*

@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block title %}Request Submitted - Pollination Services - Bear Creek Apiaries{% endblock %}
+
+{% block content %}
+<section class="success-section" style="padding: 4rem 0; text-align: center;">
+    <div class="container">
+        <div style="max-width: 600px; margin: 0 auto; background: #fff; padding: 3rem; border-radius: 10px; box-shadow: 0 2px 15px rgba(0,0,0,0.1);">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🐝</div>
+            <h1 style="color: #28a745; margin-bottom: 1rem;">Request Received!</h1>
+            <p style="font-size: 1.1rem; color: #666; margin-bottom: 2rem;">
+                Thank you for your interest in our pollination services! We've received your request and will contact you within 1-2 business days to discuss your needs and provide a quote.
+            </p>
+            
+            <div style="background: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem; text-align: left;">
+                <h3 style="color: #f6a326; margin-bottom: 1rem;">What Happens Next?</h3>
+                <ol style="padding-left: 1.2rem; color: #666;">
+                    <li style="margin-bottom: 0.5rem;">We'll review your pollination requirements</li>
+                    <li style="margin-bottom: 0.5rem;">Our team will contact you to discuss details</li>
+                    <li style="margin-bottom: 0.5rem;">You'll receive a customized quote</li>
+                    <li>We'll schedule hive delivery at your convenience</li>
+                </ol>
+            </div>
+            
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                <a href="{% url 'home' %}" class="btn" style="background: #f6a326; color: #fff; padding: 0.75rem 2rem; text-decoration: none; border-radius: 25px;">
+                    Return Home
+                </a>
+                <a href="{% url 'products' %}" class="btn" style="background: #333; color: #fff; padding: 0.75rem 2rem; text-decoration: none; border-radius: 25px;">
+                    Browse Our Honey
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
