@@ -6,10 +6,10 @@ services:
     name: bcapiaries
     runtime: python
     buildCommand: ./build.sh
-    startCommand: gunicorn bearcreek.wsgi:application
+    startCommand: ./start.sh
     envVars:
       - key: DEBUG
-        value: "True"
+        value: "False"
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: ALLOWED_HOSTS

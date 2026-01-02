@@ -11,10 +11,7 @@ pip install -r requirements.txt
 # Collect static files
 python manage.py collectstatic --noinput
 
-# Create data directory if it doesn't exist (for SQLite on persistent disk)
-mkdir -p /opt/render/project/src/data
-
-# Run database migrations
-python manage.py migrate
+# Note: Migrations run at startup (in startCommand) because the persistent disk
+# is only mounted at runtime, not during build
 
 echo "Build completed successfully!"
