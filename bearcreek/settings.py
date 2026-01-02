@@ -35,9 +35,9 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 # CSRF trusted origins for Render deployment
 CSRF_TRUSTED_ORIGINS = [
     'https://*.onrender.com',
+    'https://bcapiaries.com',
+    'https://www.bcapiaries.com',
 ]
-# Add custom domain when ready (uncomment and update):
-# CSRF_TRUSTED_ORIGINS += ['https://bcapiaries.com', 'https://www.bcapiaries.com']
 
 
 # Application definition
@@ -204,7 +204,7 @@ EMAIL_PORT = int(os.getenv('EMAIL_PORT', 587))
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'True').lower() == 'true'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@bearcreekapiaries.com')
+DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@bcapiaries.com')
 
 # SMS/Email Notification Settings - Different for dev vs prod
 if DEBUG:
