@@ -9,7 +9,7 @@ services:
     startCommand: gunicorn bearcreek.wsgi:application
     envVars:
       - key: DEBUG
-        value: "False"
+        value: "True"
       - key: DJANGO_SECRET_KEY
         generateValue: true
       - key: ALLOWED_HOSTS
