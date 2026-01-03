@@ -71,12 +71,26 @@
 
 <section class="features" style="background-color: #fefdfb;">
     <div class="container">
-        <h2>Interested in Beekeeping?</h2>
-        <div style="max-width: 700px; margin: 0 auto; text-align: center;">
-            <p style="font-size: 1.2rem; margin-bottom: 2rem;">
-                We offer bee starter kits (nucs) for aspiring beekeepers. Our nucs include healthy colonies with a laying queen, ready to establish in your own hive.
-            </p>
-            <a href="{% url 'nuke_request' %}" class="btn">Request Bee Nucs</a>
+        <h2>Our Services</h2>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon">📦</div>
+                <h3>Bee Nucs</h3>
+                <p>Start your beekeeping journey! Our nucs include healthy colonies with a laying queen, ready to establish in your own hive.</p>
+                <a href="{% url 'nuke_request' %}" class="btn" style="margin-top: 1rem;">Request Nucs</a>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🌻</div>
+                <h3>Pollination Services</h3>
+                <p>Need help pollinating your crops, orchard, or garden? We provide professional bee pollination for farms and gardens of all sizes.</p>
+                <a href="{% url 'pollination_services' %}" class="btn" style="margin-top: 1rem;">Request Pollination</a>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🏠</div>
+                <h3>Bee Removal</h3>
+                <p>Have unwanted bees on your property? We offer humane bee removal and relocation services to our apiaries.</p>
+                <a href="{% url 'bee_removal' %}" class="btn" style="margin-top: 1rem;">Request Removal</a>
+            </div>
         </div>
     </div>
 </section>
