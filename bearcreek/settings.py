@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'storages',  # django-storages for S3
     'shop',
 ]
 
@@ -145,9 +146,33 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # WhiteNoise for serving static files in production
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-# Media files (User uploaded files)
-MEDIA_URL = 'media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# =============================================================================
+# Media Files (User uploaded files - Product images, etc.)
+# =============================================================================
+
+# Use S3 in production, local storage in development
+if os.getenv('USE_S3', 'False').lower() == 'true':
+    # AWS S3 Settings for Production
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
+    
+    # S3 file settings
+    AWS_S3_FILE_OVERWRITE = False  # Don't overwrite files with same name
+    AWS_DEFAULT_ACL = None  # Use bucket default ACL
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',  # Cache for 1 day
+    }
+    AWS_QUERYSTRING_AUTH = False  # Public URLs (no signed URLs)
+    
+    # Use S3 for media files
+    DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/'
+else:
+    # Local storage for development
+    MEDIA_URL = 'media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/6.0/ref/settings/#default-auto-field

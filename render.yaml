@@ -46,6 +46,17 @@ services:
         sync: false
       - key: ADMIN_NOTIFICATION_EMAIL
         sync: false
+      # AWS S3 Storage (for product images)
+      - key: USE_S3
+        value: "True"
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_STORAGE_BUCKET_NAME
+        sync: false
+      - key: AWS_S3_REGION_NAME
+        sync: false
     disk:
       name: sqlite-data
       mountPath: /opt/render/project/src/data
