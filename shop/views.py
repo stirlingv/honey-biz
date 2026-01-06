@@ -5,7 +5,7 @@ from datetime import datetime
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views.decorators.http import require_POST
 from django.urls import reverse
 
@@ -393,3 +393,14 @@ def callback_request(request):
 def callback_success(request):
     """Callback request success page"""
     return render(request, 'shop/callback_success.html')
+
+
+def robots_txt(request):
+    """Serve robots.txt with sitemap location."""
+    sitemap_url = request.build_absolute_uri(reverse('sitemap'))
+    lines = [
+        "User-agent: *",
+        "Allow: /",
+        f"Sitemap: {sitemap_url}",
+    ]
+    return HttpResponse("\n".join(lines), content_type="text/plain")

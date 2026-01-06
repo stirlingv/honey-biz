@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}{{ product.name }} - Bear Creek Apiaries & Honey LLC{% endblock %}
+{% block title %}{{ product.name }} {{ product.size }} | Local Honey in Tallahassee, FL{% endblock %}
+{% block meta_description %}{{ product.name }} {{ product.size }} from Bear Creek Apiaries in Tallahassee, FL. {{ product.description|truncatewords:20 }}{% endblock %}
+{% block og_title %}{{ product.name }} {{ product.size }} | Local Honey in Tallahassee, FL{% endblock %}
+{% block og_description %}{{ product.description|truncatewords:20 }}{% endblock %}
 
 {% block content %}
 <section class="form-section">

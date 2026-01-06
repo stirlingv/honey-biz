@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Bear Creek Apiaries & Honey LLC{% endblock %}</title>
-    <meta name="description" content="Bear Creek Apiaries & Honey LLC - Local, artisanal honey and bee starter kits">
+    <meta name="description" content="{% block meta_description %}Bear Creek Apiaries & Honey LLC - Local honey, bee nucs, pollination, and bee removal in Tallahassee, FL.{% endblock %}">
     {% load static %}
     
     <!-- Favicons -->
@@ -17,8 +17,63 @@
     <!-- Open Graph / Social Media Sharing -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="{% block og_title %}Bear Creek Apiaries & Honey LLC{% endblock %}">
-    <meta property="og:description" content="Local, artisanal honey and bee starter kits from Bear Creek Apiaries">
+    <meta property="og:description" content="{% block og_description %}Local honey, bee nucs, pollination, and bee removal in Tallahassee, FL.{% endblock %}">
     <meta property="og:image" content="{% static 'images/favicon_io/android-chrome-512x512.png' %}">
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": ["LocalBusiness", "Farm"],
+          "@id": "{{ request.scheme }}://{{ request.get_host }}/#business",
+          "name": "Bear Creek Apiaries & Honey LLC",
+          "url": "{{ request.scheme }}://{{ request.get_host }}",
+          "image": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.png' %}",
+          "email": "info@bcapiaries.com",
+          "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "Tallahassee",
+            "addressRegion": "FL",
+            "addressCountry": "US"
+          },
+          "areaServed": [
+            {
+              "@type": "City",
+              "name": "Tallahassee"
+            }
+          ],
+          "keywords": "local honey, raw honey, bee nucs, pollination services, bee removal, Tallahassee FL"
+        },
+        {
+          "@type": "Service",
+          "name": "Honeybee Pollination Services",
+          "serviceType": "Pollination",
+          "provider": {
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#business"
+          },
+          "areaServed": {
+            "@type": "City",
+            "name": "Tallahassee"
+          },
+          "description": "On-site honeybee pollination services for farms, orchards, and gardens in Tallahassee, FL."
+        },
+        {
+          "@type": "Service",
+          "name": "Humane Bee Removal and Relocation",
+          "serviceType": "Bee Removal",
+          "provider": {
+            "@id": "{{ request.scheme }}://{{ request.get_host }}/#business"
+          },
+          "areaServed": {
+            "@type": "City",
+            "name": "Tallahassee"
+          },
+          "description": "Safe honeybee removal and relocation in Tallahassee, FL."
+        }
+      ]
+    }
+    </script>
     
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
