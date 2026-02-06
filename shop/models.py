@@ -71,6 +71,8 @@ class Order(models.Model):
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    acknowledged_at = models.DateTimeField(blank=True, null=True)
+    reminder_sent_at = models.DateTimeField(blank=True, null=True)
 
     class Meta:
         ordering = ['-created_at']

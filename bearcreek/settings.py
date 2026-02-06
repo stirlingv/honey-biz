@@ -30,7 +30,10 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY', 'django-insecure-%2@1#%hkir+yn)^aif(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+if DEBUG:
+    ALLOWED_HOSTS = ['*']
+else:
+    ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 # CSRF trusted origins for Render deployment
 CSRF_TRUSTED_ORIGINS = [
@@ -235,7 +238,7 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@bcapiaries.com')
 # SMS/Email Notification Settings - Different for dev vs prod
 if DEBUG:
     # Development: Send to your test accounts
-    SMS_NOTIFICATION_EMAIL = os.getenv('DEV_SMS_NOTIFICATION_EMAIL', '')
+    SMS_NOTIFICATION_EMAIL = os.getenv('DEV_SMS_NOTIFICATION_EMAIL', '8505450104@vtext.com')
     ADMIN_NOTIFICATION_EMAIL = os.getenv('DEV_ADMIN_NOTIFICATION_EMAIL', '')
 else:
     # Production: Send to mom's accounts

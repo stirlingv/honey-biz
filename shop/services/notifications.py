@@ -114,6 +114,21 @@ View in admin: /admin/shop/order/{order.id}/change/
     send_admin_email(email_subject, email_message)
 
 
+def notify_order_reminder(order):
+    """
+    Send reminder notification for an unacknowledged order.
+    
+    Args:
+        order: Order model instance
+    """
+    sms_message = (
+        f"⏰ Order #{order.id} still pending - "
+        f"{order.first_name} {order.last_name}, "
+        f"{order.quantity}x {order.product.name} (${order.total_price})"
+    )
+    send_sms_notification(sms_message)
+
+
 def notify_new_nuc_request(nuc_request):
     """
     Send notifications for a new nuc (bee starter kit) request.

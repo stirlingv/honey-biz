@@ -1,20 +1,28 @@
 {% extends 'base.html' %}
 
-{% block title %}Local Honey in Tallahassee, FL | Bear Creek Apiaries{% endblock %}
-{% block meta_description %}Bear Creek Apiaries in Tallahassee, FL offers local raw honey, bee nucs, pollination services, and humane bee removal. Order honey or request service today.{% endblock %}
-{% block og_title %}Local Honey in Tallahassee, FL | Bear Creek Apiaries{% endblock %}
-{% block og_description %}Local raw honey, bee nucs, pollination, and bee removal from a Tallahassee, FL apiary.{% endblock %}
+{% block title %}Gadsden County Honey | Serving Tallahassee, FL & Thomasville, GA{% endblock %}
+{% block meta_description %}Bear Creek Apiaries offers Gadsden County honey serving North Florida and South Georgia, with travel available for pollination nationwide. Order local raw honey or request services today.{% endblock %}
+{% block og_title %}Gadsden County Honey | Serving Tallahassee, FL & Thomasville, GA{% endblock %}
+{% block og_description %}Local raw honey from Gadsden County, FL serving North Florida and South Georgia, with travel available for pollination nationwide.{% endblock %}
 
 {% load static %}
 
 {% block content %}
-<section class="hero">
-    <div class="container">
-        <img src="{% static 'images/logo.png' %}" alt="Bear Creek Apiaries & Honey LLC" class="hero-logo">
-        <h2>Pure, Natural Honey from Our Hives to Your Home</h2>
-        <p>Experience the sweetness of locally produced, artisanal honey</p>
-        <a href="{% url 'products' %}" class="btn">Shop Our Honey</a>
-        <a href="{% url 'nuke_request' %}" class="btn btn-secondary">Get Bee Nucs</a>
+<section class="hero hero-photo" style="background-image: url('{% static 'images/live_photos/honey_jar.jpg' %}');">
+    <div class="hero-overlay"></div>
+    <div class="container hero-content">
+        <div class="hero-eyebrow">Gadsden County, Florida</div>
+        <h1>Raw, Local Honey from Our Hives to Your Home</h1>
+        <p>Family-owned and bee-friendly. Serving North Florida and South Georgia with small-batch honey, nucs, and bee services — and traveling nationwide for pollination.</p>
+        <div class="hero-actions">
+            <a href="{% url 'products' %}" class="btn">Shop Our Honey</a>
+            <a href="{% url 'nuke_request' %}" class="btn btn-secondary">Get Bee Nucs</a>
+        </div>
+        <div class="hero-badges">
+            <span class="hero-badge">Gadsden County Honey</span>
+            <span class="hero-badge">North Florida</span>
+            <span class="hero-badge">South Georgia + beyond</span>
+        </div>
     </div>
 </section>
 
@@ -52,7 +60,7 @@
                     {% if product.image %}
                         <img src="{{ product.image.url }}" alt="{{ product.name }}">
                     {% else %}
-                        🍯
+                        <img src="{% static 'images/live_photos/honey_bottle.jpg' %}" alt="Local honey jar">
                     {% endif %}
                 </div>
                 <div class="product-info">
@@ -71,6 +79,54 @@
     </div>
 </section>
 {% endif %}
+
+<section class="home-split">
+    <div class="container split-grid">
+        <div class="split-text">
+            <h2>From Hive to Table, Handled with Care</h2>
+            <p>
+                We harvest, bottle, and deliver our honey with the same care we give our hives.
+                Every jar is packed with flavor and local pollen from the Tallahassee area.
+            </p>
+            <a href="{% url 'about' %}" class="btn" style="margin-top: 1.5rem;">Meet the Beekeepers</a>
+        </div>
+        <div class="split-media">
+            <img src="{% static 'images/live_photos/nuc_kit.jpg' %}" alt="Bee nuc kit">
+        </div>
+    </div>
+</section>
+
+<section class="social-proof">
+    <div class="container">
+        <div class="section-header">
+            <h2>Mom’s Honey: From the Hive to Your Table</h2>
+            <p>Real hands, real hives, real honey. These are the moments behind every jar.</p>
+        </div>
+        <div class="proof-grid">
+            <div class="proof-card">
+                <img src="{% static 'images/live_photos/bees.jpg' %}" alt="Beekeeper with bees">
+                <div class="proof-card-body">
+                    <h3>Hands-on Beekeeping</h3>
+                    <p>We care for every colony ourselves to keep the bees healthy and thriving.</p>
+                </div>
+            </div>
+            <div class="proof-card">
+                <img src="{% static 'images/live_photos/honey_jar2.jpg' %}" alt="Jar of raw honey">
+                <div class="proof-card-body">
+                    <h3>Small-Batch Honey</h3>
+                    <p>Bottled in small batches so every jar is fresh, pure, and full of flavor.</p>
+                </div>
+            </div>
+            <div class="proof-card">
+                <img src="{% static 'images/live_photos/nuc_bees.jpg' %}" alt="Bee nuc with bees">
+                <div class="proof-card-body">
+                    <h3>Healthy Nucs</h3>
+                    <p>We raise strong starter colonies for beekeepers and farms across the country.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 <section class="features" style="background-color: #fefdfb;">
     <div class="container">

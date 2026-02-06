@@ -1,0 +1,12 @@
+{% extends "admin/change_form.html" %}
+
+{% block object-tools-items %}
+    {{ block.super }}
+    {% if original and not original.acknowledged_at %}
+        <li>
+            <a href="{% url 'admin:shop_order_acknowledge' original.pk %}" class="historylink">
+                Acknowledge Order
+            </a>
+        </li>
+    {% endif %}
+{% endblock %}

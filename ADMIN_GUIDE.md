@@ -71,6 +71,49 @@ The text will tell you if the customer **wants a callback** (📞 CALLBACK) - th
 1. You'll see all customer info, address, notes, etc.
 1. Click **"Save"** after making any changes
 
+### ✅ Acknowledge Orders (Required)
+
+Acknowledging an order means you took an action (like changing the status or payment status).
+This keeps you organized and stops reminders.
+
+**How to acknowledge:**
+
+1. Open the order
+1. Change **Status** or **Payment Status** (this is required)
+1. Click the **"Acknowledge Order"** button at the top
+
+If you try to acknowledge without taking any action, the system will warn you.
+
+### ✅ Bulk Acknowledge (Multiple Orders)
+
+1. Check the boxes next to orders you already acted on
+1. From the **Actions** dropdown, choose **"Acknowledge selected orders"**
+1. Click **Go**
+
+Orders without any action will be skipped and you will see a warning.
+
+### ⏰ Reminder Rules
+
+- **First reminder**: 24 hours after a new order if it is still **PENDING** and **UNPAID**
+- **Second reminder**: 24 hours after you acknowledge if the order is still **PENDING** and **UNPAID**
+- As soon as you update status or payment status, reminders stop
+
+### 🗂 Viewing Archived Orders (30+ Days Old)
+
+Completed orders older than 30 days are hidden from the default list.
+To view them:
+
+1. Open the Orders list
+1. Use the **Order age** filter on the right
+1. Choose **"Archived (completed 30+ days ago)"**
+
+### Suggested Workflow (Best Practices)
+
+1. Open new order
+1. Update **Status** to **PROCESSING** or **AWAITING_PAYMENT**
+1. Click **Acknowledge Order**
+1. Fulfill the order and set **Status** to **COMPLETED**
+
 ---
 
 ## 🐝 Managing Nuc Requests

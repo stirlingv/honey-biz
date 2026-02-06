@@ -5,6 +5,8 @@
 {% block og_title %}Local Raw Honey for Sale in Tallahassee, FL | Bear Creek Apiaries{% endblock %}
 {% block og_description %}Browse our Tallahassee, FL local honey collection and order your favorite jar.{% endblock %}
 
+{% load static %}
+
 {% block content %}
 <section class="products">
     <div class="container">
@@ -18,7 +20,7 @@
                     {% if product.image %}
                         <img src="{{ product.image.url }}" alt="{{ product.name }}">
                     {% else %}
-                        🍯
+                        <img src="{% static 'images/live_photos/honey_jar.jpg' %}" alt="Local honey jar">
                     {% endif %}
                 </div>
                 <div class="product-info">

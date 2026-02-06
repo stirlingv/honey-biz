@@ -5,44 +5,42 @@
 {% block og_title %}{{ product.name }} {{ product.size }} | Local Honey in Tallahassee, FL{% endblock %}
 {% block og_description %}{{ product.description|truncatewords:20 }}{% endblock %}
 
+{% load static %}
+
 {% block content %}
-<section class="form-section">
+<section class="product-detail">
     <div class="container">
-        <div class="form-container" style="max-width: 900px;">
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;">
-                <div>
-                    <div class="product-image" style="width: 100%; height: 400px; border-radius: 10px;">
+        <div class="product-detail-card">
+            <div class="product-detail-grid">
+                <div class="product-detail-media">
+                    <div class="product-detail-image">
                         {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
                         {% else %}
-                            🍯
+                            <img src="{% static 'images/live_photos/honey_bottle.jpg' %}" alt="Local honey jar">
                         {% endif %}
                     </div>
                 </div>
-                <div>
-                    <h2 style="text-align: left;">{{ product.name }}</h2>
-                    <p class="size" style="font-size: 1.2rem; color: #666; margin-bottom: 1rem;">{{ product.size }}</p>
-                    <p class="price" style="font-size: 2.5rem; font-weight: bold; color: #f6a326; margin-bottom: 1.5rem;">
-                        ${{ product.price }}
-                    </p>
-                    
-                    <div style="margin-bottom: 2rem;">
-                        <h3 style="font-size: 1.3rem; margin-bottom: 0.5rem;">Description</h3>
-                        <p style="color: #666; line-height: 1.8;">{{ product.description }}</p>
+                <div class="product-detail-info">
+                    <h1 class="product-detail-title">{{ product.name }}</h1>
+                    <p class="product-detail-size">{{ product.size }}</p>
+                    <p class="product-detail-price">${{ product.price }}</p>
+
+                    <div class="product-detail-description">
+                        <h3>Description</h3>
+                        <p>{{ product.description }}</p>
                     </div>
 
                     {% if product.in_stock %}
-                    <div style="background-color: #d4edda; color: #155724; padding: 0.75rem; border-radius: 5px; margin-bottom: 1.5rem;">
-                        ✓ In Stock
-                    </div>
+                    <div class="product-detail-stock in-stock">✓ In Stock</div>
                     {% else %}
-                    <div style="background-color: #f8d7da; color: #721c24; padding: 0.75rem; border-radius: 5px; margin-bottom: 1.5rem;">
-                        Currently Out of Stock
-                    </div>
+                    <div class="product-detail-stock out-of-stock">Currently Out of Stock</div>
                     {% endif %}
 
-                    <a href="{% url 'order_honey' %}?product={{ product.pk }}" class="btn" style="width: 100%; text-align: center; display: block; margin-bottom: 1rem;">Order Now</a>
-                    <a href="{% url 'products' %}" class="btn btn-secondary" style="width: 100%; text-align: center; display: block;">Back to Products</a>
+                    <div class="product-detail-actions">
+                        <a href="{% url 'order_honey' %}?product={{ product.pk }}" class="btn btn-block">Order Now</a>
+                        <a href="{% url 'products' %}" class="btn btn-secondary btn-block">Back to Products</a>
+                    </div>
                 </div>
             </div>
         </div>
