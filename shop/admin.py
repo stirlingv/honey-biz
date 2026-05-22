@@ -167,21 +167,22 @@ class OrderAdmin(admin.ModelAdmin):
         if obj.prefer_callback:
             return format_html(
                 '<span style="background:#fff3cd; padding:2px 8px; border-radius:12px; '
-                'font-size:11px; font-weight:bold;">📞 Call</span>'
+                'font-size:11px; font-weight:bold;">{}</span>',
+                '📞 Call',
             )
-        return ""
+        return ''
 
     prefer_callback_badge.short_description = "Callback"
 
     def invoice_sent_badge(self, obj):
         if obj.invoice_sent_at:
             return format_html(
-                '<span style="background:#d4edda; padding:2px 8px; border-radius:12px; '
-                'font-size:11px;">✓ Invoiced</span>'
+                '<span style="background:#d4edda; padding:2px 8px; border-radius:12px; font-size:11px;">{}</span>',
+                '✓ Invoiced',
             )
         return format_html(
-            '<span style="background:#fff3cd; padding:2px 8px; border-radius:12px; '
-            'font-size:11px;">Not Sent</span>'
+            '<span style="background:#fff3cd; padding:2px 8px; border-radius:12px; font-size:11px;">{}</span>',
+            'Not Sent',
         )
 
     invoice_sent_badge.short_description = "Invoice"
@@ -205,10 +206,12 @@ class OrderAdmin(admin.ModelAdmin):
     def acknowledged_badge(self, obj):
         if obj.acknowledged_at:
             return format_html(
-                '<span style="background:#d4edda; padding:2px 8px; border-radius:12px;">Acknowledged</span>'
+                '<span style="background:#d4edda; padding:2px 8px; border-radius:12px;">{}</span>',
+                'Acknowledged',
             )
         return format_html(
-            '<span style="background:#fff3cd; padding:2px 8px; border-radius:12px;">Unacknowledged</span>'
+            '<span style="background:#fff3cd; padding:2px 8px; border-radius:12px;">{}</span>',
+            'Unacknowledged',
         )
 
     acknowledged_badge.short_description = "Acknowledged"
