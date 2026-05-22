@@ -1,8 +1,32 @@
+import re
 from django import forms
+from django.core.exceptions import ValidationError
 from .models import Order, NukeRequest, PollinationRequest, BeeRemovalRequest, CallbackRequest
 
 
-class OrderForm(forms.ModelForm):
+def _normalize_phone(value):
+    """Accept any common US phone format, return (XXX) XXX-XXXX."""
+    digits = re.sub(r'\D', '', value)
+    if digits.startswith('1') and len(digits) == 11:
+        digits = digits[1:]
+    if len(digits) != 10:
+        raise ValidationError(
+            'Please enter a valid 10-digit US phone number, e.g. (850) 555-1234.'
+        )
+    return f'({digits[:3]}) {digits[3:6]}-{digits[6:]}'
+
+
+class ContactValidationMixin:
+    """Shared phone normalization and email lowercasing for all contact forms."""
+
+    def clean_phone(self):
+        return _normalize_phone(self.cleaned_data.get('phone', ''))
+
+    def clean_email(self):
+        return self.cleaned_data.get('email', '').strip().lower()
+
+
+class OrderForm(ContactValidationMixin, forms.ModelForm):
     """Form for placing honey orders"""
     class Meta:
         model = Order
@@ -15,7 +39,7 @@ class OrderForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name', 'autocomplete': 'given-name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name', 'autocomplete': 'family-name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'your.email@example.com', 'autocomplete': 'email'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(555) 123-4567', 'autocomplete': 'tel'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(850) 555-1234', 'autocomplete': 'tel'}),
             'prefer_callback': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '123 Main St', 'autocomplete': 'street-address'}),
             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City', 'autocomplete': 'address-level2'}),
@@ -27,7 +51,7 @@ class OrderForm(forms.ModelForm):
         }
 
 
-class NukeRequestForm(forms.ModelForm):
+class NukeRequestForm(ContactValidationMixin, forms.ModelForm):
     """Form for submitting nuc (bee starter kit) requests"""
     class Meta:
         model = NukeRequest
@@ -40,7 +64,7 @@ class NukeRequestForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name', 'autocomplete': 'given-name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name', 'autocomplete': 'family-name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'your.email@example.com', 'autocomplete': 'email'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(555) 123-4567', 'autocomplete': 'tel'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(850) 555-1234', 'autocomplete': 'tel'}),
             'prefer_callback': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '123 Main St', 'autocomplete': 'street-address'}),
             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City', 'autocomplete': 'address-level2'}),
@@ -53,7 +77,7 @@ class NukeRequestForm(forms.ModelForm):
         }
 
 
-class PollinationRequestForm(forms.ModelForm):
+class PollinationRequestForm(ContactValidationMixin, forms.ModelForm):
     """Form for submitting pollination service requests"""
     class Meta:
         model = PollinationRequest
@@ -67,7 +91,7 @@ class PollinationRequestForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name', 'autocomplete': 'given-name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name', 'autocomplete': 'family-name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'your.email@example.com', 'autocomplete': 'email'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(555) 123-4567', 'autocomplete': 'tel'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(850) 555-1234', 'autocomplete': 'tel'}),
             'prefer_callback': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'property_address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Address where pollination is needed', 'autocomplete': 'street-address'}),
             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City', 'autocomplete': 'address-level2'}),
@@ -83,7 +107,7 @@ class PollinationRequestForm(forms.ModelForm):
         }
 
 
-class BeeRemovalRequestForm(forms.ModelForm):
+class BeeRemovalRequestForm(ContactValidationMixin, forms.ModelForm):
     """Form for submitting bee removal/relocation requests"""
     class Meta:
         model = BeeRemovalRequest
@@ -98,7 +122,7 @@ class BeeRemovalRequestForm(forms.ModelForm):
             'first_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'First Name', 'autocomplete': 'given-name'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name', 'autocomplete': 'family-name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'your.email@example.com', 'autocomplete': 'email'}),
-            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(555) 123-4567', 'autocomplete': 'tel'}),
+            'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(850) 555-1234', 'autocomplete': 'tel'}),
             'prefer_callback': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'property_address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Address where bees are located', 'autocomplete': 'street-address'}),
             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City', 'autocomplete': 'address-level2'}),
@@ -117,7 +141,7 @@ class BeeRemovalRequestForm(forms.ModelForm):
         }
 
 
-class CallbackRequestForm(forms.ModelForm):
+class CallbackRequestForm(ContactValidationMixin, forms.ModelForm):
     """Simple form for requesting a callback"""
     class Meta:
         model = CallbackRequest
