@@ -225,12 +225,18 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@bcapiaries.com')
 
-# SMS/Email Notification Settings - Different for dev vs prod
-if DEBUG:
-    # Development: Send to your test accounts
-    SMS_NOTIFICATION_EMAIL = os.getenv('DEV_SMS_NOTIFICATION_EMAIL', '8505450104@vtext.com')
-    ADMIN_NOTIFICATION_EMAIL = os.getenv('DEV_ADMIN_NOTIFICATION_EMAIL', '')
-else:
-    # Production: Send to mom's accounts
-    SMS_NOTIFICATION_EMAIL = os.getenv('SMS_NOTIFICATION_EMAIL', '8505450205@vtext.com')
-    ADMIN_NOTIFICATION_EMAIL = os.getenv('ADMIN_NOTIFICATION_EMAIL', 'tarivan60@gmail.com')
+# Admin email notification (optional fallback)
+ADMIN_NOTIFICATION_EMAIL = os.getenv('ADMIN_NOTIFICATION_EMAIL', '' if DEBUG else 'tarivan60@gmail.com')
+
+# =============================================================================
+# Twilio WhatsApp Notifications
+# =============================================================================
+
+TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID', '')
+TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
+
+# Sandbox: 'whatsapp:+14155238886' — swap for approved number in production
+TWILIO_WHATSAPP_FROM = os.getenv('TWILIO_WHATSAPP_FROM', '')
+
+# Mom's WhatsApp number in E.164 format, e.g. +18505450205
+WHATSAPP_NOTIFY_NUMBER = os.getenv('WHATSAPP_NOTIFY_NUMBER', '')
