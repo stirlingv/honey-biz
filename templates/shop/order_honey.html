@@ -8,37 +8,52 @@
 {% block extra_js %}
 {% if google_maps_api_key %}
 <script>
-function initAddressAutocomplete() {
+async function initAddressAutocomplete() {
     const input = document.getElementById('id_address');
     if (!input) return;
 
-    const autocomplete = new google.maps.places.Autocomplete(input, {
+    const { PlaceAutocompleteElement } = await google.maps.importLibrary('places');
+
+    const autocompleteEl = new PlaceAutocompleteElement({
         types: ['address'],
         componentRestrictions: { country: 'us' },
-        fields: ['address_components'],
     });
 
-    autocomplete.addListener('place_changed', function () {
-        const place = autocomplete.getPlace();
-        if (!place.address_components) return;
+    // Style the autocomplete element to match our text input
+    autocompleteEl.style.cssText = input.style.cssText;
+    autocompleteEl.setAttribute('placeholder', '123 Main St');
+    autocompleteEl.className = input.className;
+
+    // Swap the original input for the autocomplete element
+    input.parentNode.replaceChild(autocompleteEl, input);
+
+    autocompleteEl.addEventListener('gmp-placeselect', async ({ place }) => {
+        await place.fetchFields({ fields: ['addressComponents'] });
 
         let streetNumber = '';
         let streetName = '';
 
-        for (const component of place.address_components) {
+        for (const component of place.addressComponents) {
             const type = component.types[0];
-            if (type === 'street_number')              streetNumber = component.long_name;
-            if (type === 'route')                      streetName   = component.long_name;
-            if (type === 'locality')                   document.getElementById('id_city').value     = component.long_name;
-            if (type === 'administrative_area_level_1') document.getElementById('id_state').value   = component.short_name;
-            if (type === 'postal_code')                document.getElementById('id_zip_code').value = component.long_name;
+            if (type === 'street_number')               streetNumber = component.longText;
+            if (type === 'route')                       streetName   = component.longText;
+            if (type === 'locality')                    document.getElementById('id_city').value     = component.longText;
+            if (type === 'administrative_area_level_1') document.getElementById('id_state').value    = component.shortText;
+            if (type === 'postal_code')                 document.getElementById('id_zip_code').value = component.longText;
         }
 
-        input.value = [streetNumber, streetName].filter(Boolean).join(' ');
+        // Write the street address back into a hidden input so the form submits it
+        const hidden = document.createElement('input');
+        hidden.type = 'hidden';
+        hidden.name = 'address';
+        hidden.id = 'id_address';
+        hidden.value = [streetNumber, streetName].filter(Boolean).join(' ');
+        autocompleteEl.parentNode.appendChild(hidden);
     });
 }
+initAddressAutocomplete();
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAddressAutocomplete" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&loading=async" async defer></script>
 {% endif %}
 {% endblock %}
 
