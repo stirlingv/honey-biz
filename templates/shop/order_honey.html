@@ -5,6 +5,43 @@
 {% block og_title %}Order Local Honey in Tallahassee, FL | Bear Creek Apiaries{% endblock %}
 {% block og_description %}Order raw local honey from our Tallahassee, FL apiary.{% endblock %}
 
+{% block extra_js %}
+{% if google_maps_api_key %}
+<script>
+function initAddressAutocomplete() {
+    const input = document.getElementById('id_address');
+    if (!input) return;
+
+    const autocomplete = new google.maps.places.Autocomplete(input, {
+        types: ['address'],
+        componentRestrictions: { country: 'us' },
+        fields: ['address_components'],
+    });
+
+    autocomplete.addListener('place_changed', function () {
+        const place = autocomplete.getPlace();
+        if (!place.address_components) return;
+
+        let streetNumber = '';
+        let streetName = '';
+
+        for (const component of place.address_components) {
+            const type = component.types[0];
+            if (type === 'street_number')              streetNumber = component.long_name;
+            if (type === 'route')                      streetName   = component.long_name;
+            if (type === 'locality')                   document.getElementById('id_city').value     = component.long_name;
+            if (type === 'administrative_area_level_1') document.getElementById('id_state').value   = component.short_name;
+            if (type === 'postal_code')                document.getElementById('id_zip_code').value = component.long_name;
+        }
+
+        input.value = [streetNumber, streetName].filter(Boolean).join(' ');
+    });
+}
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&libraries=places&callback=initAddressAutocomplete" async defer></script>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <section class="form-section">
     <div class="container">

@@ -1,5 +1,6 @@
 import logging
 
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
@@ -87,7 +88,8 @@ def order_honey(request):
         form = OrderForm(initial=initial)
 
     return render(request, 'shop/order_honey.html', {
-        'form': form
+        'form': form,
+        'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
     })
 
 

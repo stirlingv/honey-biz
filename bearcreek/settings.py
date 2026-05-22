@@ -234,3 +234,9 @@ ADMIN_NOTIFICATION_EMAIL = os.getenv('ADMIN_NOTIFICATION_EMAIL', '' if DEBUG els
 
 # Incoming webhook URL from Slack App settings → Incoming Webhooks
 SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL', '')
+
+# =============================================================================
+# Google Maps (Places Autocomplete on address fields)
+# =============================================================================
+
+GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
