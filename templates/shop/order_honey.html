@@ -33,7 +33,17 @@ async function initAddressAutocomplete() {
     input.parentNode.insertBefore(autocompleteEl, input);
 
     autocompleteEl.addEventListener('gmp-placeselect', async ({ place }) => {
-        await place.fetchFields({ fields: ['addressComponents'] });
+        try {
+            await place.fetchFields({ fields: ['addressComponents'] });
+        } catch (e) {
+            console.error('Places fetchFields failed — check that the Places API is enabled and the API key referrer restriction includes this domain:', e);
+            return;
+        }
+
+        if (!place.addressComponents || place.addressComponents.length === 0) {
+            console.warn('No address components returned. Places API may not be enabled.');
+            return;
+        }
 
         let streetNumber = '';
         let streetName   = '';
@@ -47,7 +57,6 @@ async function initAddressAutocomplete() {
             if (type === 'postal_code')                 document.getElementById('id_zip_code').value = component.longText;
         }
 
-        // Populate the hidden input so Django receives the street address on submit
         input.value = [streetNumber, streetName].filter(Boolean).join(' ');
     });
 }
