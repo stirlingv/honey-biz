@@ -212,14 +212,13 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
 
 # =============================================================================
-# QuickBooks Integration Settings
+# Square Payment Settings
 # =============================================================================
 
-QUICKBOOKS_CLIENT_ID = os.getenv('QUICKBOOKS_CLIENT_ID', '')
-QUICKBOOKS_CLIENT_SECRET = os.getenv('QUICKBOOKS_CLIENT_SECRET', '')
-QUICKBOOKS_REDIRECT_URI = os.getenv('QUICKBOOKS_REDIRECT_URI', 'http://localhost:8000/quickbooks/callback/')
-QUICKBOOKS_ENVIRONMENT = os.getenv('QUICKBOOKS_ENVIRONMENT', 'sandbox')  # 'sandbox' or 'production'
-QUICKBOOKS_COMPANY_ID = os.getenv('QUICKBOOKS_COMPANY_ID', '')
+SQUARE_ACCESS_TOKEN = os.getenv('SQUARE_ACCESS_TOKEN', '')
+SQUARE_LOCATION_ID = os.getenv('SQUARE_LOCATION_ID', '')
+SQUARE_ENVIRONMENT = os.getenv('SQUARE_ENVIRONMENT', 'sandbox')  # 'sandbox' or 'production'
+SQUARE_WEBHOOK_SIGNATURE_KEY = os.getenv('SQUARE_WEBHOOK_SIGNATURE_KEY', '')
 
 # =============================================================================
 # Email Settings (for notifications)

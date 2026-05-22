@@ -1,4 +1,5 @@
 from datetime import timedelta
+from urllib.parse import quote
 
 from django.contrib import admin, messages
 from django.shortcuts import redirect
@@ -44,47 +45,48 @@ class OrderAdmin(admin.ModelAdmin):
         'first_name',
         'last_name',
         'email',
+        'phone',
+        'prefer_callback_badge',
         'product',
         'quantity',
         'total_price',
+        'invoice_sent_badge',
         'status_badge',
         'status',
-        'payment_status_badge',
-        'payment_status',
-        'acknowledged_badge',
         'created_at',
     ]
-    list_filter = [OrderArchiveFilter, 'status', 'payment_status', 'created_at']
-    search_fields = ['first_name', 'last_name', 'email', 'qb_invoice_id']
+    list_filter = [OrderArchiveFilter, 'status', 'created_at']
+    search_fields = ['first_name', 'last_name', 'email', 'phone']
     list_editable = ['status']
-    actions = ['acknowledge_selected_orders']
+    actions = ['acknowledge_selected_orders', 'mark_invoice_sent']
     readonly_fields = [
+        'invoice_details',
+        'email_customer_link',
+        'invoice_sent_at',
         'total_price',
         'created_at',
         'updated_at',
         'acknowledged_at',
         'reminder_sent_at',
-        'qb_invoice_id',
-        'qb_payment_id',
-        'payment_url',
-        'paid_at',
     ]
     fieldsets = (
+        ('Invoice Info', {
+            'fields': ('invoice_details', 'email_customer_link', 'invoice_sent_at'),
+            'description': 'Copy these details into QuickBooks to create the invoice, then click "Mark Invoice Sent" in the action menu.',
+        }),
         ('Customer Information', {
-            'fields': ('first_name', 'last_name', 'email', 'phone', 'address', 'city', 'state', 'zip_code')
+            'fields': ('first_name', 'last_name', 'email', 'phone', 'prefer_callback', 'address', 'city', 'state', 'zip_code')
         }),
         ('Order Details', {
             'fields': ('product', 'quantity', 'total_price', 'status', 'notes')
         }),
-        ('Payment Information', {
-            'fields': ('payment_status', 'qb_invoice_id', 'qb_payment_id', 'payment_url', 'paid_at'),
+        ('Order Tracking', {
+            'fields': ('acknowledged_at', 'reminder_sent_at'),
             'classes': ('collapse',),
         }),
-        ('Order Tracking', {
-            'fields': ('acknowledged_at', 'reminder_sent_at')
-        }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at')
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
         }),
     )
 
@@ -107,53 +109,82 @@ class OrderAdmin(admin.ModelAdmin):
         ]
         return custom_urls + urls
 
-    def _has_action_taken(self, order):
-        return order.status != "pending" or order.payment_status != "unpaid"
+    # -------------------------------------------------------------------------
+    # Invoice helpers
+    # -------------------------------------------------------------------------
 
-    @admin.action(description="Acknowledge selected orders")
-    def acknowledge_selected_orders(self, request, queryset):
-        now = timezone.now()
-        acknowledged = 0
-        skipped = 0
-        for order in queryset:
-            if not self._has_action_taken(order):
-                skipped += 1
-                continue
-            order.acknowledged_at = now
-            order.save(update_fields=["acknowledged_at", "updated_at"])
-            acknowledged += 1
+    def invoice_details(self, obj):
+        lines = [
+            f"CUSTOMER: {obj.first_name} {obj.last_name}",
+            f"Email:    {obj.email}",
+            f"Phone:    {obj.phone}",
+            f"Address:  {obj.full_address}",
+            "",
+            f"ITEM:     {obj.product.name} ({obj.product.size})",
+            f"Qty:      {obj.quantity}  ×  ${obj.product.price:.2f} each",
+            f"TOTAL:    ${obj.total_price:.2f}",
+            "",
+            f"Order Date: {obj.created_at.strftime('%B %d, %Y')}",
+            f"Order #:    {obj.id}",
+        ]
+        return format_html(
+            '<pre style="background:#f8f9fa; padding:14px; border-radius:4px; '
+            'font-family:monospace; font-size:13px; line-height:1.7; '
+            'white-space:pre-wrap; border:1px solid #dee2e6; margin:0;">{}</pre>',
+            "\n".join(lines),
+        )
 
-        if acknowledged:
-            self.message_user(
-                request,
-                f"Acknowledged {acknowledged} order(s).",
-                level=messages.SUCCESS,
+    invoice_details.short_description = "QuickBooks Invoice Details"
+
+    def email_customer_link(self, obj):
+        subject = f"Your Bear Creek Apiaries Order #{obj.id}"
+        body = (
+            f"Dear {obj.first_name},\n\n"
+            f"Thank you for your order from Bear Creek Apiaries! "
+            f"Please find your invoice attached or see the details below:\n\n"
+            f"  {obj.product.name} ({obj.product.size}) "
+            f"x{obj.quantity} = ${obj.total_price:.2f}\n\n"
+            f"If you have any questions, feel free to reply to this email "
+            f"or call us at (850) 545-0205.\n\n"
+            f"Thank you,\nBear Creek Apiaries"
+        )
+        mailto = f"mailto:{obj.email}?subject={quote(subject)}&body={quote(body)}"
+        return format_html(
+            '<a href="{}" style="display:inline-block; background:#417690; color:white; '
+            'padding:7px 14px; text-decoration:none; border-radius:4px; font-size:13px;">'
+            '✉ Draft Email to {}</a>',
+            mailto,
+            obj.email,
+        )
+
+    email_customer_link.short_description = "Email Customer"
+
+    # -------------------------------------------------------------------------
+    # List display helpers
+    # -------------------------------------------------------------------------
+
+    def prefer_callback_badge(self, obj):
+        if obj.prefer_callback:
+            return format_html(
+                '<span style="background:#fff3cd; padding:2px 8px; border-radius:12px; '
+                'font-size:11px; font-weight:bold;">📞 Call</span>'
             )
-        if skipped:
-            self.message_user(
-                request,
-                f"Skipped {skipped} order(s) because no action was taken yet.",
-                level=messages.WARNING,
+        return ""
+
+    prefer_callback_badge.short_description = "Callback"
+
+    def invoice_sent_badge(self, obj):
+        if obj.invoice_sent_at:
+            return format_html(
+                '<span style="background:#d4edda; padding:2px 8px; border-radius:12px; '
+                'font-size:11px;">✓ Invoiced</span>'
             )
+        return format_html(
+            '<span style="background:#fff3cd; padding:2px 8px; border-radius:12px; '
+            'font-size:11px;">Not Sent</span>'
+        )
 
-    def acknowledge_order(self, request, order_id):
-        order = self.get_object(request, order_id)
-        if not order:
-            self.message_user(request, "Order not found.", level=messages.ERROR)
-            return redirect("..")
-
-        if not self._has_action_taken(order):
-            self.message_user(
-                request,
-                "Please update the order status or payment status before acknowledging.",
-                level=messages.WARNING,
-            )
-            return redirect("..")
-
-        order.acknowledged_at = timezone.now()
-        order.save(update_fields=["acknowledged_at", "updated_at"])
-        self.message_user(request, "Order acknowledged.", level=messages.SUCCESS)
-        return redirect("..")
+    invoice_sent_badge.short_description = "Invoice"
 
     def status_badge(self, obj):
         colors = {
@@ -172,24 +203,7 @@ class OrderAdmin(admin.ModelAdmin):
             obj.get_status_display(),
         )
 
-    status_badge.short_description = "Order Status"
-
-    def payment_status_badge(self, obj):
-        colors = {
-            "unpaid": "#fff3cd",
-            "pending": "#d1ecf1",
-            "completed": "#d4edda",
-            "failed": "#f8d7da",
-            "refunded": "#f8d7da",
-        }
-        color = colors.get(obj.payment_status, "#e2e3e5")
-        return format_html(
-            '<span style="background:{}; padding:2px 8px; border-radius:12px;">{}</span>',
-            color,
-            obj.get_payment_status_display(),
-        )
-
-    payment_status_badge.short_description = "Payment"
+    status_badge.short_description = "Status"
 
     def acknowledged_badge(self, obj):
         if obj.acknowledged_at:
@@ -202,17 +216,76 @@ class OrderAdmin(admin.ModelAdmin):
 
     acknowledged_badge.short_description = "Acknowledged"
 
+    # -------------------------------------------------------------------------
+    # Actions
+    # -------------------------------------------------------------------------
+
+    @admin.action(description="Mark invoice as sent")
+    def mark_invoice_sent(self, request, queryset):
+        now = timezone.now()
+        updated = 0
+        for order in queryset:
+            if not order.invoice_sent_at:
+                order.invoice_sent_at = now
+                order.save(update_fields=["invoice_sent_at", "updated_at"])
+                updated += 1
+        if updated:
+            self.message_user(request, f"Marked {updated} order(s) as invoiced.", level=messages.SUCCESS)
+        else:
+            self.message_user(request, "All selected orders were already marked as invoiced.", level=messages.WARNING)
+
+    @admin.action(description="Acknowledge selected orders")
+    def acknowledge_selected_orders(self, request, queryset):
+        now = timezone.now()
+        acknowledged = 0
+        skipped = 0
+        for order in queryset:
+            if order.status == "pending":
+                skipped += 1
+                continue
+            order.acknowledged_at = now
+            order.save(update_fields=["acknowledged_at", "updated_at"])
+            acknowledged += 1
+
+        if acknowledged:
+            self.message_user(request, f"Acknowledged {acknowledged} order(s).", level=messages.SUCCESS)
+        if skipped:
+            self.message_user(
+                request,
+                f"Skipped {skipped} order(s) still in pending status.",
+                level=messages.WARNING,
+            )
+
+    def acknowledge_order(self, request, order_id):
+        order = self.get_object(request, order_id)
+        if not order:
+            self.message_user(request, "Order not found.", level=messages.ERROR)
+            return redirect("..")
+
+        if order.status == "pending":
+            self.message_user(
+                request,
+                "Please update the order status before acknowledging.",
+                level=messages.WARNING,
+            )
+            return redirect("..")
+
+        order.acknowledged_at = timezone.now()
+        order.save(update_fields=["acknowledged_at", "updated_at"])
+        self.message_user(request, "Order acknowledged.", level=messages.SUCCESS)
+        return redirect("..")
+
 
 @admin.register(NukeRequest)
 class NukeRequestAdmin(admin.ModelAdmin):
-    list_display = ['id', 'first_name', 'last_name', 'email', 'quantity', 'experience_level', 'status', 'created_at']
+    list_display = ['id', 'first_name', 'last_name', 'email', 'phone', 'quantity', 'experience_level', 'status', 'created_at']
     list_filter = ['status', 'experience_level', 'created_at']
     search_fields = ['first_name', 'last_name', 'email']
     list_editable = ['status']
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ('Customer Information', {
-            'fields': ('first_name', 'last_name', 'email', 'phone', 'address', 'city', 'state', 'zip_code')
+            'fields': ('first_name', 'last_name', 'email', 'phone', 'prefer_callback', 'address', 'city', 'state', 'zip_code')
         }),
         ('Request Details', {
             'fields': ('quantity', 'experience_level', 'preferred_pickup_date', 'notes')
@@ -221,21 +294,22 @@ class NukeRequestAdmin(admin.ModelAdmin):
             'fields': ('status', 'admin_notes')
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at')
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
         }),
     )
 
 
 @admin.register(PollinationRequest)
 class PollinationRequestAdmin(admin.ModelAdmin):
-    list_display = ['id', 'first_name', 'last_name', 'email', 'crop_type', 'acreage', 'preferred_start_date', 'status', 'created_at']
+    list_display = ['id', 'first_name', 'last_name', 'email', 'phone', 'crop_type', 'acreage', 'preferred_start_date', 'status', 'created_at']
     list_filter = ['status', 'crop_type', 'created_at']
     search_fields = ['first_name', 'last_name', 'email', 'city']
     list_editable = ['status']
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ('Customer Information', {
-            'fields': ('first_name', 'last_name', 'email', 'phone')
+            'fields': ('first_name', 'last_name', 'email', 'phone', 'prefer_callback')
         }),
         ('Property Information', {
             'fields': ('property_address', 'city', 'state', 'zip_code')
@@ -247,21 +321,22 @@ class PollinationRequestAdmin(admin.ModelAdmin):
             'fields': ('status', 'quoted_price', 'admin_notes')
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at')
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
         }),
     )
 
 
 @admin.register(BeeRemovalRequest)
 class BeeRemovalRequestAdmin(admin.ModelAdmin):
-    list_display = ['id', 'first_name', 'last_name', 'email', 'city', 'bee_location', 'urgency', 'status', 'created_at']
+    list_display = ['id', 'first_name', 'last_name', 'email', 'phone', 'city', 'bee_location', 'urgency', 'status', 'created_at']
     list_filter = ['status', 'urgency', 'bee_location', 'property_type', 'created_at']
     search_fields = ['first_name', 'last_name', 'email', 'city', 'property_address']
     list_editable = ['status']
     readonly_fields = ['created_at', 'updated_at']
     fieldsets = (
         ('Customer Information', {
-            'fields': ('first_name', 'last_name', 'email', 'phone')
+            'fields': ('first_name', 'last_name', 'email', 'phone', 'prefer_callback')
         }),
         ('Property Information', {
             'fields': ('property_address', 'city', 'state', 'zip_code', 'property_type')
@@ -276,14 +351,15 @@ class BeeRemovalRequestAdmin(admin.ModelAdmin):
             'fields': ('status', 'scheduled_date', 'quoted_price', 'admin_notes')
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at')
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
         }),
     )
 
 
 @admin.register(CallbackRequest)
 class CallbackRequestAdmin(admin.ModelAdmin):
-    list_display = ['id', 'name', 'phone', 'interest', 'best_time', 'status', 'created_at']
+    list_display = ['id', 'name', 'phone', 'email', 'interest', 'best_time', 'status', 'created_at']
     list_filter = ['status', 'interest', 'created_at']
     search_fields = ['name', 'phone', 'email', 'message']
     list_editable = ['status']
@@ -299,6 +375,7 @@ class CallbackRequestAdmin(admin.ModelAdmin):
             'fields': ('status', 'admin_notes')
         }),
         ('Timestamps', {
-            'fields': ('created_at', 'updated_at')
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',),
         }),
     )

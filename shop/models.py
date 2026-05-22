@@ -63,10 +63,13 @@ class Order(models.Model):
 
     # Payment Information
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='unpaid')
-    qb_invoice_id = models.CharField(max_length=100, blank=True, null=True, help_text="QuickBooks Invoice ID")
-    qb_payment_id = models.CharField(max_length=100, blank=True, null=True, help_text="QuickBooks Payment ID")
-    payment_url = models.URLField(blank=True, null=True, help_text="QuickBooks Payment Link")
+    square_order_id = models.CharField(max_length=100, blank=True, null=True, help_text="Square Order ID")
+    square_payment_id = models.CharField(max_length=100, blank=True, null=True, help_text="Square Payment ID")
+    payment_url = models.URLField(blank=True, null=True, help_text="Square Checkout URL")
     paid_at = models.DateTimeField(blank=True, null=True)
+
+    # Invoice tracking
+    invoice_sent_at = models.DateTimeField(blank=True, null=True, help_text="When the QuickBooks invoice was sent to the customer")
 
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
