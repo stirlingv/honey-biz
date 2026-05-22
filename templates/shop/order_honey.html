@@ -42,7 +42,7 @@ async function initAddressAutocomplete() {
             if (type === 'postal_code')                 document.getElementById('id_zip_code').value = component.longText;
         }
 
-        // Write the street address back into a hidden input so the form submits it
+        // Write the street address into a hidden input so the form submits it
         const hidden = document.createElement('input');
         hidden.type = 'hidden';
         hidden.name = 'address';
@@ -51,9 +51,8 @@ async function initAddressAutocomplete() {
         autocompleteEl.parentNode.appendChild(hidden);
     });
 }
-initAddressAutocomplete();
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&loading=async" async defer></script>
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&loading=async&callback=initAddressAutocomplete" async defer></script>
 {% endif %}
 {% endblock %}
 
