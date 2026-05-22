@@ -229,14 +229,8 @@ DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL', 'noreply@bcapiaries.com')
 ADMIN_NOTIFICATION_EMAIL = os.getenv('ADMIN_NOTIFICATION_EMAIL', '' if DEBUG else 'tarivan60@gmail.com')
 
 # =============================================================================
-# Twilio WhatsApp Notifications
+# Slack Notifications
 # =============================================================================
 
-TWILIO_ACCOUNT_SID = os.getenv('TWILIO_ACCOUNT_SID', '')
-TWILIO_AUTH_TOKEN = os.getenv('TWILIO_AUTH_TOKEN', '')
-
-# Sandbox: 'whatsapp:+14155238886' — swap for approved number in production
-TWILIO_WHATSAPP_FROM = os.getenv('TWILIO_WHATSAPP_FROM', '')
-
-# Mom's WhatsApp number in E.164 format, e.g. +18505450205
-WHATSAPP_NOTIFY_NUMBER = os.getenv('WHATSAPP_NOTIFY_NUMBER', '')
+# Incoming webhook URL from Slack App settings → Incoming Webhooks
+SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL', '')
