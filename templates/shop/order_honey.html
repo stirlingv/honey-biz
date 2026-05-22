@@ -7,6 +7,13 @@
 
 {% block extra_js %}
 {% if google_maps_api_key %}
+<style>
+  gmp-placeautocomplete {
+    display: block;
+    width: 100%;
+    color-scheme: light;
+  }
+</style>
 <script>
 async function initAddressAutocomplete() {
     const input = document.getElementById('id_address');
@@ -18,20 +25,18 @@ async function initAddressAutocomplete() {
         types: ['address'],
         componentRestrictions: { country: 'us' },
     });
+    autocompleteEl.style.colorScheme = 'light';
 
-    // Style the autocomplete element to match our text input
-    autocompleteEl.style.cssText = input.style.cssText;
-    autocompleteEl.setAttribute('placeholder', '123 Main St');
-    autocompleteEl.className = input.className;
-
-    // Swap the original input for the autocomplete element
-    input.parentNode.replaceChild(autocompleteEl, input);
+    // Insert the autocomplete widget above the hidden original input.
+    // The original input stays so Django form validation still works.
+    input.style.display = 'none';
+    input.parentNode.insertBefore(autocompleteEl, input);
 
     autocompleteEl.addEventListener('gmp-placeselect', async ({ place }) => {
         await place.fetchFields({ fields: ['addressComponents'] });
 
         let streetNumber = '';
-        let streetName = '';
+        let streetName   = '';
 
         for (const component of place.addressComponents) {
             const type = component.types[0];
@@ -42,13 +47,8 @@ async function initAddressAutocomplete() {
             if (type === 'postal_code')                 document.getElementById('id_zip_code').value = component.longText;
         }
 
-        // Write the street address into a hidden input so the form submits it
-        const hidden = document.createElement('input');
-        hidden.type = 'hidden';
-        hidden.name = 'address';
-        hidden.id = 'id_address';
-        hidden.value = [streetNumber, streetName].filter(Boolean).join(' ');
-        autocompleteEl.parentNode.appendChild(hidden);
+        // Populate the hidden input so Django receives the street address on submit
+        input.value = [streetNumber, streetName].filter(Boolean).join(' ');
     });
 }
 </script>
