@@ -8,11 +8,7 @@
 {% block extra_js %}
 {% if google_maps_api_key %}
 <style>
-  gmp-placeautocomplete {
-    display: block;
-    width: 100%;
-    color-scheme: light;
-  }
+  gmp-placeautocomplete { display: block; width: 100%; color-scheme: light; }
 </style>
 <script>
 async function initAddressAutocomplete() {
@@ -27,27 +23,23 @@ async function initAddressAutocomplete() {
     });
     autocompleteEl.style.colorScheme = 'light';
 
-    // Insert the autocomplete widget above the hidden original input.
-    // The original input stays so Django form validation still works.
+    // Show the search widget; keep the original input hidden for form submission
     input.style.display = 'none';
     input.parentNode.insertBefore(autocompleteEl, input);
 
-    autocompleteEl.addEventListener('gmp-placeselect', async ({ place }) => {
+    autocompleteEl.addEventListener('gmp-select', async (event) => {
+        const place = event.placePrediction?.toPlace();
+        if (!place) return;
+
         try {
             await place.fetchFields({ fields: ['addressComponents'] });
         } catch (e) {
-            console.error('Places fetchFields failed — check that the Places API is enabled and the API key referrer restriction includes this domain:', e);
             return;
         }
 
-        if (!place.addressComponents || place.addressComponents.length === 0) {
-            console.warn('No address components returned. Places API may not be enabled.');
-            return;
-        }
+        if (!place.addressComponents?.length) return;
 
-        let streetNumber = '';
-        let streetName   = '';
-
+        let streetNumber = '', streetName = '';
         for (const component of place.addressComponents) {
             const type = component.types[0];
             if (type === 'street_number')               streetNumber = component.longText;
@@ -57,7 +49,11 @@ async function initAddressAutocomplete() {
             if (type === 'postal_code')                 document.getElementById('id_zip_code').value = component.longText;
         }
 
+        // Swap the search widget back out for the plain text input showing just the street
         input.value = [streetNumber, streetName].filter(Boolean).join(' ');
+        autocompleteEl.style.display = 'none';
+        input.style.display = '';
+        input.focus();
     });
 }
 </script>
