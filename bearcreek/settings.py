@@ -212,15 +212,6 @@ if not DEBUG:
     X_FRAME_OPTIONS = 'DENY'
 
 # =============================================================================
-# Square Payment Settings
-# =============================================================================
-
-SQUARE_ACCESS_TOKEN = os.getenv('SQUARE_ACCESS_TOKEN', '')
-SQUARE_LOCATION_ID = os.getenv('SQUARE_LOCATION_ID', '')
-SQUARE_ENVIRONMENT = os.getenv('SQUARE_ENVIRONMENT', 'sandbox')  # 'sandbox' or 'production'
-SQUARE_WEBHOOK_SIGNATURE_KEY = os.getenv('SQUARE_WEBHOOK_SIGNATURE_KEY', '')
-
-# =============================================================================
 # Email Settings (for notifications)
 # =============================================================================
 

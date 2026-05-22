@@ -15,14 +15,12 @@ class Command(BaseCommand):
         cutoff = timezone.now() - timedelta(hours=24)
         overdue_orders = Order.objects.filter(
             status="pending",
-            payment_status="unpaid",
             acknowledged_at__isnull=True,
             reminder_sent_at__isnull=True,
             created_at__lte=cutoff,
         )
         acknowledged_overdue_orders = Order.objects.filter(
             status="pending",
-            payment_status="unpaid",
             acknowledged_at__isnull=False,
             acknowledged_at__lte=cutoff,
         ).filter(

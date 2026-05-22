@@ -189,12 +189,9 @@ class OrderAdmin(admin.ModelAdmin):
     def status_badge(self, obj):
         colors = {
             "pending": "#fff3cd",
-            "awaiting_payment": "#d1ecf1",
             "processing": "#dfe6ff",
-            "paid": "#d4edda",
             "completed": "#d4edda",
             "cancelled": "#f8d7da",
-            "refunded": "#f8d7da",
         }
         color = colors.get(obj.status, "#e2e3e5")
         return format_html(
