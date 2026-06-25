@@ -54,15 +54,15 @@
     <div class="container">
         <div class="section-header">
             <h2>Gift &amp; Specialty Jars</h2>
-            <p>Adorable mini jars of our raw wildflower honey — perfect favors for weddings, showers, and the holidays. $10 each, with bulk discounts available. Choose a quantity below, or request a callback for larger orders.</p>
+            <p>Adorable mini jars of our raw wildflower honey — sweet favors and gifts for weddings, showers, birthdays, parties, holidays, and thank-yous. $10 each, with bulk discounts available. Choose a quantity below, or request a callback for larger orders.</p>
         </div>
         <div class="proof-grid">
             {% for p in gift_products %}
             <div class="proof-card">
-                {% if 'Wedding' in p.name %}
-                <img src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="Mini wedding favor honey jars from Bear Creek Apiaries">
-                {% else %}
+                {% if 'Holiday' in p.name %}
                 <img src="{% static 'images/live_photos/mini-jar-holidays.jpeg' %}" alt="Mini holiday honey jars from Bear Creek Apiaries">
+                {% else %}
+                <img src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="Mini honey favor jars from Bear Creek Apiaries">
                 {% endif %}
                 <div class="proof-card-body">
                     <h3>{{ p.name }}</h3>
