@@ -4,10 +4,21 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 
 class Product(models.Model):
     """Model for honey products"""
+    CATEGORY_CHOICES = [
+        ('honey', 'Honey'),
+        ('gift', 'Gift & Specialty'),
+    ]
+
     name = models.CharField(max_length=200)
     description = models.TextField()
     price = models.DecimalField(max_digits=6, decimal_places=2)
     size = models.CharField(max_length=100, help_text="e.g., 12 oz, 16 oz, 32 oz")
+    category = models.CharField(
+        max_length=20,
+        choices=CATEGORY_CHOICES,
+        default='honey',
+        help_text="'Honey' shows in the main grid; 'Gift & Specialty' shows in the gift jar section",
+    )
     image = models.ImageField(upload_to='products/', blank=True, null=True)
     in_stock = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

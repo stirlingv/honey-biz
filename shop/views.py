@@ -55,11 +55,16 @@ def terms_of_service(request):
     return render(request, 'shop/terms.html')
 
 
+MAX_SELF_SERVE_QUANTITY = 24
+
+
 def products(request):
     """Products listing page"""
-    products = Product.objects.filter(in_stock=True)
     return render(request, 'shop/products.html', {
-        'products': products
+        'products': Product.objects.filter(in_stock=True, category='honey'),
+        'gift_products': Product.objects.filter(in_stock=True, category='gift').order_by('name'),
+        'gift_quantity_range': range(1, MAX_SELF_SERVE_QUANTITY + 1),
+        'gift_max_quantity': MAX_SELF_SERVE_QUANTITY,
     })
 
 
@@ -85,6 +90,14 @@ def order_honey(request):
         product_id = request.GET.get('product')
         if product_id:
             initial['product'] = product_id
+        qty = request.GET.get('quantity')
+        if qty:
+            try:
+                qty = int(qty)
+            except (TypeError, ValueError):
+                qty = None
+            if qty and 1 <= qty <= MAX_SELF_SERVE_QUANTITY:
+                initial['quantity'] = qty
         form = OrderForm(initial=initial)
 
     return render(request, 'shop/order_honey.html', {
@@ -232,7 +245,15 @@ def callback_request(request):
             )
             return redirect('callback_success')
     else:
-        form = CallbackRequestForm()
+        initial = {}
+        interest = request.GET.get('interest')
+        valid_interests = {choice[0] for choice in CallbackRequest.INTEREST_CHOICES}
+        if interest in valid_interests:
+            initial['interest'] = interest
+        message = request.GET.get('message')
+        if message:
+            initial['message'] = message
+        form = CallbackRequestForm(initial=initial)
 
     return render(request, 'shop/callback_request.html', {'form': form})
 

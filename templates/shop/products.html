@@ -47,9 +47,9 @@
         {% endif %}
 
         <p style="max-width: 760px; margin: 2.5rem auto 0; text-align: center; font-size: 1.05rem; line-height: 1.8; color: #666;">
-            Also available <strong>upon request</strong>: raw honeycomb (call for pricing), plus honey by the
-            gallon and bucket. <a href="{% url 'callback_request' %}" style="color: #f6a326;">Contact us</a> and
-            we'll be glad to help. All prices are plus postage.
+            Also available <strong>upon request</strong>: raw honeycomb, plus honey by the gallon and bucket.
+            <a href="{% url 'callback_request' %}?interest=honey" style="color: #f6a326;">Request a callback</a>
+            and we'll be glad to help with pricing. All prices are plus postage.
         </p>
     </div>
 </section>
@@ -58,26 +58,37 @@
     <div class="container">
         <div class="section-header">
             <h2>Gift &amp; Specialty Jars</h2>
-            <p>Adorable mini jars of our raw wildflower honey — perfect favors for weddings, showers, and the holidays. $10 each, with bulk discounts available. Call for pricing on larger orders.</p>
+            <p>Adorable mini jars of our raw wildflower honey — perfect favors for weddings, showers, and the holidays. $10 each, with bulk discounts available. Choose a quantity below, or request a callback for larger orders.</p>
         </div>
         <div class="proof-grid">
+            {% for p in gift_products %}
             <div class="proof-card">
+                {% if 'Wedding' in p.name %}
                 <img src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="Mini wedding favor honey jars from Bear Creek Apiaries">
-                <div class="proof-card-body">
-                    <h3>Mini Wedding Favors</h3>
-                    <p>Sweet keepsakes for your big day — petite jars of local honey your guests can take home and remember you by.</p>
-                </div>
-            </div>
-            <div class="proof-card">
+                {% else %}
                 <img src="{% static 'images/live_photos/mini-jar-holidays.jpeg' %}" alt="Mini holiday honey jars from Bear Creek Apiaries">
+                {% endif %}
                 <div class="proof-card-body">
-                    <h3>Holiday Mini Jars</h3>
-                    <p>Festive little jars that make charming gifts, stocking stuffers, and party favors all season long.</p>
+                    <h3>{{ p.name }}</h3>
+                    <p>{{ p.description }}</p>
+                    <p class="price" style="color: #f6a326; font-weight: 700; font-size: 1.2rem;">${{ p.price }} each</p>
+                    <form method="get" action="{% url 'order_honey' %}" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                        <input type="hidden" name="product" value="{{ p.pk }}">
+                        <label style="font-weight: 600; color: #333;">Qty
+                            <select name="quantity" class="form-control" style="width: auto; display: inline-block; margin-left: 0.4rem;">
+                                {% for n in gift_quantity_range %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+                            </select>
+                        </label>
+                        <button type="submit" class="btn">Order Now</button>
+                    </form>
+                    <p style="margin-top: 0.75rem; margin-bottom: 0; font-size: 0.9rem; color: #666;">
+                        Need more than {{ gift_max_quantity }}?
+                        <a href="{% url 'callback_request' %}?interest=honey&amp;message=Interested+in+a+bulk+order+of+{{ p.name|urlencode }}" style="color: #f6a326;">Request a callback</a>
+                        for bulk pricing.
+                    </p>
                 </div>
             </div>
-        </div>
-        <div style="text-align: center; margin-top: 2rem;">
-            <a href="{% url 'callback_request' %}" class="btn">Call for Pricing</a>
+            {% endfor %}
         </div>
     </div>
 </section>
