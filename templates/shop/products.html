@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}Local Raw Honey for Sale in Tallahassee, FL | Bear Creek Apiaries{% endblock %}
-{% block meta_description %}Shop small-batch, raw honey from our Tallahassee, FL apiary. Multiple sizes available, harvested and bottled locally.{% endblock %}
+{% block meta_description %}Shop raw Gadsden County wildflower honey from our North Florida apiary — multifloral, medium-to-dark amber, with rich, balanced flavor. Multiple sizes, harvested and bottled locally.{% endblock %}
 {% block og_title %}Local Raw Honey for Sale in Tallahassee, FL | Bear Creek Apiaries{% endblock %}
 {% block og_description %}Browse our Tallahassee, FL local honey collection and order your favorite jar.{% endblock %}
 
@@ -11,7 +11,12 @@
 <section class="products">
     <div class="container">
         <h2>Our Honey Products</h2>
-        
+        <p style="max-width: 760px; margin: -1rem auto 2.5rem; text-align: center; font-size: 1.1rem; line-height: 1.8; color: #666;">
+            Raw, multifloral wildflower honey from Gadsden County, Florida — gathered by our mite-resistant bees from
+            clover, Spanish needle, palmetto, gallberry, and other native blooms. Sweet and flowery with a smooth finish
+            and more complexity than lighter, single-flower honeys.
+        </p>
+
         {% if products %}
         <div class="product-grid">
             {% for product in products %}
@@ -20,13 +25,13 @@
                     {% if product.image %}
                         <img src="{{ product.image.url }}" alt="{{ product.name }}">
                     {% else %}
-                        <img src="{% static 'images/live_photos/honey_jar.jpg' %}" alt="Local honey jar">
+                        <img src="{% static 'images/live_photos/new_jar.jpeg' %}" alt="Bear Creek Apiaries raw wildflower honey jar">
                     {% endif %}
                 </div>
                 <div class="product-info">
                     <h3>{{ product.name }}</h3>
                     <p class="size">{{ product.size }}</p>
-                    <p class="price">${{ product.price }}</p>
+                    <p class="price">${{ product.price }} <span style="font-size: 0.85rem; font-weight: 400; color: #888;">+ postage</span></p>
                     <p>{{ product.description|truncatewords:30 }}</p>
                     <a href="{% url 'product_detail' product.pk %}" class="btn">View Details</a>
                 </div>
@@ -40,6 +45,100 @@
             </p>
         </div>
         {% endif %}
+
+        <p style="max-width: 760px; margin: 2.5rem auto 0; text-align: center; font-size: 1.05rem; line-height: 1.8; color: #666;">
+            Also available <strong>upon request</strong>: raw honeycomb (call for pricing), plus honey by the
+            gallon and bucket. <a href="{% url 'callback_request' %}" style="color: #f6a326;">Contact us</a> and
+            we'll be glad to help. All prices are plus postage.
+        </p>
+    </div>
+</section>
+
+<section class="social-proof">
+    <div class="container">
+        <div class="section-header">
+            <h2>Gift &amp; Specialty Jars</h2>
+            <p>Adorable mini jars of our raw wildflower honey — perfect favors for weddings, showers, and the holidays. $10 each, with bulk discounts available. Call for pricing on larger orders.</p>
+        </div>
+        <div class="proof-grid">
+            <div class="proof-card">
+                <img src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="Mini wedding favor honey jars from Bear Creek Apiaries">
+                <div class="proof-card-body">
+                    <h3>Mini Wedding Favors</h3>
+                    <p>Sweet keepsakes for your big day — petite jars of local honey your guests can take home and remember you by.</p>
+                </div>
+            </div>
+            <div class="proof-card">
+                <img src="{% static 'images/live_photos/mini-jar-holidays.jpeg' %}" alt="Mini holiday honey jars from Bear Creek Apiaries">
+                <div class="proof-card-body">
+                    <h3>Holiday Mini Jars</h3>
+                    <p>Festive little jars that make charming gifts, stocking stuffers, and party favors all season long.</p>
+                </div>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="{% url 'callback_request' %}" class="btn">Call for Pricing</a>
+        </div>
+    </div>
+</section>
+
+<section class="features" style="background-color: #fefdfb;">
+    <div class="container">
+        <div class="section-header">
+            <h2>Tasting Notes</h2>
+            <p>A true "taste of place" — full-bodied yet approachable, with a flavor that changes with each season's bloom.</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon">🎨</div>
+                <h3>Color</h3>
+                <p>Golden amber to dark amber, depending on the season's nectar sources.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">👃</div>
+                <h3>Aroma</h3>
+                <p>Floral, earthy, and slightly woody, reflecting the diverse vegetation of North Florida.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🍯</div>
+                <h3>Flavor</h3>
+                <p>Rich and complex, with layered sweetness, mild floral notes, and subtle hints of herbs, wild berries, and tree blossoms.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🥄</div>
+                <h3>Texture</h3>
+                <p>Thick and smooth when fresh. Because it's raw and unfiltered, it may naturally crystallize over time — a sign of pure honey.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <div class="section-header">
+            <h2>Best Ways to Enjoy It</h2>
+            <p>Its balanced, robust flavor makes our wildflower honey wonderfully versatile.</p>
+        </div>
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="icon">🥞</div>
+                <h3>At the Table</h3>
+                <p>Drizzle over hot biscuits, toast, oatmeal, or a bowl of Greek yogurt.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🍵</div>
+                <h3>In the Kitchen</h3>
+                <p>A natural sweetener for tea and coffee, or a flavorful glaze for smoked meats and roasted vegetables.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🧀</div>
+                <h3>Perfect Pairings</h3>
+                <p>Its earthy notes pair beautifully with aged cheeses and robust wines.</p>
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 2.5rem;">
+            <a href="{% url 'order_honey' %}" class="btn">Order Honey</a>
+        </div>
     </div>
 </section>
 {% endblock %}
