@@ -57,11 +57,7 @@
             {% for product in featured_products %}
             <div class="product-card">
                 <div class="product-image">
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                    {% else %}
-                        <img src="{% static 'images/live_photos/new_jar.jpeg' %}" alt="Bear Creek Apiaries raw wildflower honey jar">
-                    {% endif %}
+                    {% include 'shop/_product_image.html' with product=product %}
                 </div>
                 <div class="product-info">
                     <h3>{{ product.name }}</h3>

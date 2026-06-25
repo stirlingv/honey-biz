@@ -34,7 +34,9 @@ logger = logging.getLogger(__name__)
 
 def home(request):
     """Home page view"""
-    featured_products = Product.objects.filter(in_stock=True)[:3]
+    # Lead with flagship honey ('honey' sorts after 'gift', so -category puts it first),
+    # then gift jars, so the showcase stays representative as the catalog grows.
+    featured_products = Product.objects.filter(in_stock=True).order_by('-category', 'name', 'size')[:4]
     return render(request, 'shop/home.html', {
         'featured_products': featured_products
     })

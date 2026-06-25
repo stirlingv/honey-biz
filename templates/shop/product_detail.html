@@ -14,11 +14,7 @@
             <div class="product-detail-grid">
                 <div class="product-detail-media">
                     <div class="product-detail-image">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        {% else %}
-                            <img src="{% static 'images/live_photos/new_jar.jpeg' %}" alt="Bear Creek Apiaries raw wildflower honey jar">
-                        {% endif %}
+                        {% include 'shop/_product_image.html' with product=product %}
                     </div>
                 </div>
                 <div class="product-detail-info">
