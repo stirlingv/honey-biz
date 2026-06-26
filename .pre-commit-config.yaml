@@ -42,6 +42,6 @@ repos:
         name: Django test suite
         entry: python manage.py test --verbosity=1
         language: system
-        types: [python]
+        always_run: true          # run the full suite on every push, not just Python changes
         pass_filenames: false
         stages: [pre-push]
