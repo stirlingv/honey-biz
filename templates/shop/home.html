@@ -49,32 +49,50 @@
     </div>
 </section>
 
-{% if featured_products %}
 <section class="products">
     <div class="container">
-        <h2>Shop Our Honey &amp; Gift Jars</h2>
-        <div class="product-grid featured-grid">
-            {% for product in featured_products %}
+        <h2>Shop Our Honey &amp; Gifts</h2>
+        <p style="max-width: 720px; margin: -1rem auto 2.5rem; text-align: center; font-size: 1.1rem; line-height: 1.8; color: #666;">
+            Straight from our hives in Gadsden County — raw wildflower honey by the jar, pure honeycomb,
+            and adorable mini jars for gifts and favors.
+        </p>
+        <div class="product-grid category-grid">
             <div class="product-card">
                 <div class="product-image">
-                    {% include 'shop/_product_image.html' with product=product %}
+                    <img src="{% static 'images/live_photos/new_jar.jpeg' %}" alt="Raw wildflower honey jar">
                 </div>
                 <div class="product-info">
-                    <h3>{{ product.name }}</h3>
-                    <p class="size">{{ product.size }}</p>
-                    <p class="price">${{ product.price }}</p>
-                    <p>{{ product.description|truncatewords:20 }}</p>
-                    <a href="{% url 'product_detail' product.pk %}" class="btn">View Details</a>
+                    <h3>Honey by the Jar</h3>
+                    <p>Raw, unfiltered wildflower honey in 16 oz and 32 oz jars — sweet, floral, and full-bodied.</p>
+                    <a href="{% url 'products' %}" class="btn">Shop Honey</a>
                 </div>
             </div>
-            {% endfor %}
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="{% static 'images/live_photos/honey_comb2.jpg' %}" alt="Raw honeycomb from the hive">
+                </div>
+                <div class="product-info">
+                    <h3>Honeycomb</h3>
+                    <p>Pure honey straight from the hive, sealed in its own beeswax comb. Available upon request.</p>
+                    <a href="{% url 'products' %}" class="btn">Learn More</a>
+                </div>
+            </div>
+            <div class="product-card">
+                <div class="product-image">
+                    <img src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="Mini honey favor jars">
+                </div>
+                <div class="product-info">
+                    <h3>Gift &amp; Favor Jars</h3>
+                    <p>Petite jars for weddings, showers, parties, and the holidays — $10 each, with bulk discounts.</p>
+                    <a href="{% url 'products' %}" class="btn">See Gift Jars</a>
+                </div>
+            </div>
         </div>
         <div style="text-align: center; margin-top: 2rem;">
-            <a href="{% url 'products' %}" class="btn">View All Products</a>
+            <a href="{% url 'products' %}" class="btn btn-secondary">View All Products</a>
         </div>
     </div>
 </section>
-{% endif %}
 
 <section class="home-split">
     <div class="container split-grid">

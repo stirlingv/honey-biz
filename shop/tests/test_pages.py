@@ -22,6 +22,13 @@ class StaticPageSmokeTests(TestCase):
             with self.subTest(page=name):
                 self.assertEqual(self.client.get(reverse(name)).status_code, 200)
 
+    def test_home_shows_category_tiles_linking_to_shop(self):
+        resp = self.client.get(reverse("home"))
+        self.assertEqual(resp.status_code, 200)
+        for label in ["Honey by the Jar", "Honeycomb", "Favor Jars"]:
+            self.assertContains(resp, label)
+        self.assertContains(resp, f'href="{reverse("products")}"')
+
     def test_robots_txt(self):
         resp = self.client.get("/robots.txt")
         self.assertEqual(resp.status_code, 200)
