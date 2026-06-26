@@ -1326,11 +1326,11 @@ footer {
     .order-details-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .checkout-actions {
         flex-direction: column;
     }
-    
+
     .status-header {
         flex-direction: column;
         gap: 0.5rem;
@@ -1398,4 +1398,24 @@ footer {
 
 .footer-legal a:hover {
     color: #f6a326;
+}
+
+/* Home "Shop Our Honey & Gift Jars" featured grid.
+   Use 1 / 2 / 4 columns (never 3) so a 4-item catalog always fills its rows
+   evenly — no orphaned card or dead space. Rules are last in the file so they
+   override the generic .product-grid cascade at every breakpoint. */
+.featured-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 992px) {
+    .featured-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .featured-grid {
+        grid-template-columns: 1fr;
+    }
 }
