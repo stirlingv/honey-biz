@@ -72,8 +72,23 @@ def product_detail(request, pk):
     })
 
 
+def _lookup_product(product_id):
+    """Return the Product for an id from the querystring/POST, or None."""
+    if not product_id:
+        return None
+    try:
+        return Product.objects.get(pk=product_id)
+    except (Product.DoesNotExist, ValueError, TypeError):
+        return None
+
+
 def order_honey(request):
-    """Order form for honey"""
+    """Order form for honey.
+
+    When the customer arrives from a product ("Order Now"), that product is
+    shown as an order summary and submitted as a hidden field; otherwise they
+    pick it from a dropdown.
+    """
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
@@ -84,11 +99,12 @@ def order_honey(request):
             order.save()
             request.session['pending_order_id'] = order.id
             return redirect('checkout_review', order_id=order.id)
+        selected_product = _lookup_product(request.POST.get('product'))
     else:
         initial = {}
-        product_id = request.GET.get('product')
-        if product_id:
-            initial['product'] = product_id
+        selected_product = _lookup_product(request.GET.get('product'))
+        if selected_product:
+            initial['product'] = selected_product.pk
         qty = request.GET.get('quantity')
         if qty:
             try:
@@ -101,6 +117,7 @@ def order_honey(request):
 
     return render(request, 'shop/order_honey.html', {
         'form': form,
+        'selected_product': selected_product,
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
     })
 

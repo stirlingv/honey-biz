@@ -80,6 +80,18 @@ class OrderSubmissionTests(OrderBase):
         resp = self.client.get(reverse("order_honey"), {"product": self.product.pk, "quantity": 999})
         self.assertIsNone(resp.context["form"]["quantity"].value())
 
+    def test_order_page_shows_summary_for_selected_product(self):
+        resp = self.client.get(reverse("order_honey"), {"product": self.product.pk})
+        self.assertEqual(resp.context["selected_product"], self.product)
+        self.assertContains(resp, "You're ordering")
+        self.assertContains(resp, self.product.name)
+        self.assertNotContains(resp, "Select Product")   # dropdown replaced by summary
+
+    def test_order_page_without_product_shows_picker(self):
+        resp = self.client.get(reverse("order_honey"))
+        self.assertIsNone(resp.context["selected_product"])
+        self.assertContains(resp, "Select Product")
+
 
 class CheckoutConfirmationTests(OrderBase):
     def test_review_renders_for_draft_order(self):
