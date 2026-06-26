@@ -78,8 +78,11 @@ def order_honey(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            order = form.save()
-            notify_new_order(order)
+            # Save as a draft; the business is only notified once the customer
+            # confirms on the review page (checkout_process).
+            order = form.save(commit=False)
+            order.status = 'draft'
+            order.save()
             request.session['pending_order_id'] = order.id
             return redirect('checkout_review', order_id=order.id)
     else:
@@ -196,10 +199,10 @@ def bee_removal_success(request):
 # =============================================================================
 
 def checkout_review(request, order_id):
-    """Review order before submitting"""
+    """Review a draft order before submitting it."""
     order = get_object_or_404(Order, pk=order_id)
 
-    if order.status != 'pending':
+    if order.status != 'draft':
         messages.info(request, 'This order has already been submitted.')
         return redirect('order_status', order_id=order.id)
 
@@ -207,15 +210,20 @@ def checkout_review(request, order_id):
 
 
 def checkout_process(request, order_id):
-    """Submit the order and confirm to customer we'll follow up with an invoice."""
+    """Confirm a draft order: mark it pending, notify the business, and thank the customer."""
     order = get_object_or_404(Order, pk=order_id)
 
-    if order.status not in ['pending']:
+    # Only a POST from the review page may submit the order (never a GET).
+    if request.method != 'POST':
+        return redirect('checkout_review', order_id=order.id)
+
+    if order.status != 'draft':
         messages.info(request, 'This order has already been submitted.')
         return redirect('order_status', order_id=order.id)
 
     order.status = 'pending'
     order.save()
+    notify_new_order(order)
     return redirect('order_success')
 
 

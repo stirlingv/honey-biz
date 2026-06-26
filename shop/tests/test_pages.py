@@ -41,7 +41,7 @@ class DynamicPageSmokeTests(TestCase):
         self.order = Order.objects.create(
             first_name="A", last_name="B", email="a@b.com", phone="(850) 555-1234",
             address="1 St", city="Tallahassee", state="FL", zip_code="32301",
-            product=self.product, quantity=1, total_price=Decimal("10.00"),
+            product=self.product, quantity=1, total_price=Decimal("10.00"), status="draft",
         )
 
     def test_product_detail_renders(self):
@@ -52,7 +52,7 @@ class DynamicPageSmokeTests(TestCase):
     def test_missing_product_returns_404(self):
         self.assertEqual(self.client.get(reverse("product_detail", args=[999999])).status_code, 404)
 
-    def test_checkout_review_renders_for_pending_order(self):
+    def test_checkout_review_renders_for_draft_order(self):
         self.assertEqual(self.client.get(reverse("checkout_review", args=[self.order.pk])).status_code, 200)
 
     def test_order_status_renders(self):
