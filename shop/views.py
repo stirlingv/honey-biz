@@ -73,11 +73,11 @@ def product_detail(request, pk):
 
 
 def _lookup_product(product_id):
-    """Return the Product for an id from the querystring/POST, or None."""
+    """Return the in-stock Product for an id from the querystring/POST, or None."""
     if not product_id:
         return None
     try:
-        return Product.objects.get(pk=product_id)
+        return Product.objects.get(pk=product_id, in_stock=True)
     except (Product.DoesNotExist, ValueError, TypeError):
         return None
 

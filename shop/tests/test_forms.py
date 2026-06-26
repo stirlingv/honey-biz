@@ -56,3 +56,28 @@ class OrderQuantityCapTests(TestCase):
 
     def test_zero_quantity_is_rejected(self):
         self.assertFalse(self._form(0).is_valid())
+
+
+class OrderProductChoiceTests(TestCase):
+    def test_picker_only_offers_in_stock_products(self):
+        available = Product.objects.create(
+            name="Fresh Honey", description="d", price=Decimal("9.00"), size="Pint", in_stock=True,
+        )
+        retired = Product.objects.create(
+            name="Old Placeholder Honey", description="d", price=Decimal("9.00"), size="12 oz", in_stock=False,
+        )
+        queryset = OrderForm().fields["product"].queryset
+        self.assertIn(available, queryset)
+        self.assertNotIn(retired, queryset)
+
+    def test_retired_product_cannot_be_ordered(self):
+        retired = Product.objects.create(
+            name="Old Placeholder Honey", description="d", price=Decimal("9.00"), size="12 oz", in_stock=False,
+        )
+        form = OrderForm({
+            "first_name": "J", "last_name": "D", "email": "j@d.com", "phone": "8505551234",
+            "address": "1 St", "city": "Tally", "state": "FL", "zip_code": "32301",
+            "product": retired.pk, "quantity": 1, "notes": "",
+        })
+        self.assertFalse(form.is_valid())
+        self.assertIn("product", form.errors)
