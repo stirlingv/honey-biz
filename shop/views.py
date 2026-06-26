@@ -92,13 +92,12 @@ def order_honey(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            # Save as a draft; the business is only notified once the customer
-            # confirms on the review page (checkout_process).
-            order = form.save(commit=False)
-            order.status = 'draft'
-            order.save()
-            request.session['pending_order_id'] = order.id
-            return redirect('checkout_review', order_id=order.id)
+            # Single step: the submitted form is the order. Save it, notify the
+            # business (Slack -> manual QuickBooks invoice), and confirm.
+            order = form.save()
+            notify_new_order(order)
+            request.session['completed_order_id'] = order.id
+            return redirect('order_success')
         selected_product = _lookup_product(request.POST.get('product'))
     else:
         initial = {}
@@ -123,8 +122,10 @@ def order_honey(request):
 
 
 def order_success(request):
-    """Generic order success confirmation page (no payment — manual follow-up)"""
-    return render(request, 'shop/order_success.html')
+    """Order confirmation page showing what was just placed (no online payment)."""
+    order_id = request.session.pop('completed_order_id', None)
+    order = Order.objects.filter(pk=order_id).first() if order_id else None
+    return render(request, 'shop/order_success.html', {'order': order})
 
 
 def nuke_request(request):
@@ -211,37 +212,8 @@ def bee_removal_success(request):
 
 
 # =============================================================================
-# Checkout and Payment Views
+# Order status
 # =============================================================================
-
-def checkout_review(request, order_id):
-    """Review a draft order before submitting it."""
-    order = get_object_or_404(Order, pk=order_id)
-
-    if order.status != 'draft':
-        messages.info(request, 'This order has already been submitted.')
-        return redirect('order_status', order_id=order.id)
-
-    return render(request, 'shop/checkout_review.html', {'order': order})
-
-
-def checkout_process(request, order_id):
-    """Confirm a draft order: mark it pending, notify the business, and thank the customer."""
-    order = get_object_or_404(Order, pk=order_id)
-
-    # Only a POST from the review page may submit the order (never a GET).
-    if request.method != 'POST':
-        return redirect('checkout_review', order_id=order.id)
-
-    if order.status != 'draft':
-        messages.info(request, 'This order has already been submitted.')
-        return redirect('order_status', order_id=order.id)
-
-    order.status = 'pending'
-    order.save()
-    notify_new_order(order)
-    return redirect('order_success')
-
 
 def order_status(request, order_id):
     """View order status"""

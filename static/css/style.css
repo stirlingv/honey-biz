@@ -1489,3 +1489,34 @@ footer {
 .order-summary-link:hover {
     text-decoration: underline;
 }
+
+/* Order confirmation summary on the success page. */
+.order-confirmation-card {
+    max-width: 460px;
+    margin: 0 auto 1.5rem;
+    background: #fffaf2;
+    border: 1px solid #f3e6cc;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    text-align: left;
+}
+
+.order-confirmation-number {
+    font-weight: 700;
+    color: #b07a1e;
+    margin-bottom: 0.6rem;
+}
+
+.order-confirmation-line {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: 1.05rem;
+    color: #333;
+}
+
+.order-confirmation-note {
+    margin-top: 0.4rem;
+    font-size: 0.85rem;
+    color: #888;
+}

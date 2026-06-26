@@ -1,7 +1,7 @@
-"""Integration tests for the honey ordering + checkout workflow.
+"""Integration tests for the single-step honey ordering workflow.
 
-The flow is: submit form -> draft order (no notification) -> review ->
-confirm (POST) -> pending order + business notified -> success.
+Flow: submit the order form -> the order is saved + the business is notified
+(Slack) -> a confirmation page shows the order summary. No separate review step.
 """
 
 from decimal import Decimal
@@ -29,34 +29,23 @@ class OrderBase(TestCase):
         data.update(overrides)
         return data
 
-    def _order(self, **overrides):
-        defaults = dict(
-            first_name="A", last_name="B", email="a@b.com", phone="(850) 555-1234",
-            address="1 St", city="Tallahassee", state="FL", zip_code="32301",
-            product=self.product, quantity=1, total_price=Decimal("17.00"), status="draft",
-        )
-        defaults.update(overrides)
-        return Order.objects.create(**defaults)
-
 
 class OrderSubmissionTests(OrderBase):
     @patch("shop.views.notify_new_order")
-    def test_valid_submission_creates_draft_without_notifying(self, notify):
+    def test_valid_submission_creates_order_and_notifies(self, notify):
         resp = self.client.post(reverse("order_honey"), self._payload())
 
         order = Order.objects.get()
-        self.assertEqual(order.status, "draft")
-        self.assertRedirects(resp, reverse("checkout_review", args=[order.id]))
-        self.assertEqual(order.total_price, Decimal("34.00"))   # 17.00 x 2
-        self.assertEqual(order.email, "jane@example.com")       # lowercased by form mixin
-        self.assertEqual(order.phone, "(850) 555-1234")         # normalized by form mixin
-        self.assertEqual(self.client.session["pending_order_id"], order.id)
-        notify.assert_not_called()                              # not until the customer confirms
+        self.assertRedirects(resp, reverse("order_success"))
+        self.assertEqual(order.status, "pending")
+        self.assertEqual(order.total_price, Decimal("34.00"))    # 17.00 x 2
+        self.assertEqual(order.email, "jane@example.com")        # lowercased by form mixin
+        self.assertEqual(order.phone, "(850) 555-1234")          # normalized by form mixin
+        notify.assert_called_once_with(order)
 
     @patch("shop.views.notify_new_order")
     def test_invalid_submission_creates_nothing(self, notify):
         resp = self.client.post(reverse("order_honey"), self._payload(email="not-an-email", phone="123"))
-
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(Order.objects.count(), 0)
         notify.assert_not_called()
@@ -64,7 +53,6 @@ class OrderSubmissionTests(OrderBase):
     @patch("shop.views.notify_new_order")
     def test_quantity_over_cap_is_rejected_and_points_to_callback(self, notify):
         resp = self.client.post(reverse("order_honey"), self._payload(quantity=25))
-
         self.assertEqual(resp.status_code, 200)
         self.assertEqual(Order.objects.count(), 0)
         self.assertContains(resp, "callback")
@@ -93,40 +81,15 @@ class OrderSubmissionTests(OrderBase):
         self.assertContains(resp, "Select Product")
 
 
-class CheckoutConfirmationTests(OrderBase):
-    def test_review_renders_for_draft_order(self):
-        order = self._order()
-        self.assertEqual(self.client.get(reverse("checkout_review", args=[order.id])).status_code, 200)
-
-    def test_review_redirects_when_order_already_submitted(self):
-        order = self._order(status="pending")
-        resp = self.client.get(reverse("checkout_review", args=[order.id]))
-        self.assertRedirects(resp, reverse("order_status", args=[order.id]))
-
+class OrderConfirmationTests(OrderBase):
     @patch("shop.views.notify_new_order")
-    def test_confirm_marks_pending_notifies_and_redirects_to_success(self, notify):
-        order = self._order()
-        resp = self.client.post(reverse("checkout_process", args=[order.id]))
+    def test_success_page_shows_the_placed_order(self, notify):
+        resp = self.client.post(reverse("order_honey"), self._payload(), follow=True)
+        order = Order.objects.get()
+        self.assertContains(resp, f"Order #{order.id}")
+        self.assertContains(resp, "Wildflower Honey")
 
-        order.refresh_from_db()
-        self.assertEqual(order.status, "pending")
-        self.assertRedirects(resp, reverse("order_success"))
-        notify.assert_called_once_with(order)
-
-    @patch("shop.views.notify_new_order")
-    def test_get_to_process_does_not_submit_or_notify(self, notify):
-        order = self._order()
-        resp = self.client.get(reverse("checkout_process", args=[order.id]))
-
-        order.refresh_from_db()
-        self.assertEqual(order.status, "draft")                 # unchanged — GET never mutates
-        self.assertRedirects(resp, reverse("checkout_review", args=[order.id]))
-        notify.assert_not_called()
-
-    @patch("shop.views.notify_new_order")
-    def test_confirming_an_already_submitted_order_is_idempotent(self, notify):
-        order = self._order(status="pending")
-        resp = self.client.post(reverse("checkout_process", args=[order.id]))
-
-        self.assertRedirects(resp, reverse("order_status", args=[order.id]))
-        notify.assert_not_called()                              # no duplicate notification
+    def test_success_page_without_a_recent_order_is_generic(self):
+        resp = self.client.get(reverse("order_success"))
+        self.assertEqual(resp.status_code, 200)
+        self.assertNotContains(resp, "Order #")
