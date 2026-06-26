@@ -6,7 +6,8 @@ from django.shortcuts import redirect
 from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html
-from .models import Product, Order, NukeRequest, PollinationRequest, BeeRemovalRequest, CallbackRequest
+
+from .models import BeeRemovalRequest, CallbackRequest, NukeRequest, Order, PollinationRequest, Product
 
 
 class OrderArchiveFilter(admin.SimpleListFilter):
@@ -32,8 +33,8 @@ class OrderArchiveFilter(admin.SimpleListFilter):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ['name', 'size', 'price', 'in_stock', 'created_at']
-    list_filter = ['in_stock', 'created_at']
+    list_display = ['name', 'category', 'size', 'price', 'in_stock', 'created_at']
+    list_filter = ['category', 'in_stock', 'created_at']
     search_fields = ['name', 'description']
     list_editable = ['price', 'in_stock']
 

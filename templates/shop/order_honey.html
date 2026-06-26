@@ -167,6 +167,7 @@ async function initAddressAutocomplete() {
                     {% if form.quantity.errors %}
                     <div style="color: #721c24; font-size: 0.9rem;">{{ form.quantity.errors }}</div>
                     {% endif %}
+                    <small class="helptext">Ordering more than 24? <a href="{% url 'callback_request' %}?interest=honey" style="color: #f6a326;">Request a callback</a> for bulk pricing.</small>
                 </div>
 
                 <div class="form-group">

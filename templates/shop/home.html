@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}Gadsden County Honey | Serving Tallahassee, FL & Thomasville, GA{% endblock %}
-{% block meta_description %}Bear Creek Apiaries offers Gadsden County honey serving North Florida and South Georgia, with travel available for pollination nationwide. Order local raw honey or request services today.{% endblock %}
+{% block meta_description %}Bear Creek Apiaries produces raw Gadsden County wildflower honey from mite-resistant (VSH) bees — no pesticides. Serving North Florida and South Georgia, with travel available for pollination nationwide.{% endblock %}
 {% block og_title %}Gadsden County Honey | Serving Tallahassee, FL & Thomasville, GA{% endblock %}
 {% block og_description %}Local raw honey from Gadsden County, FL serving North Florida and South Georgia, with travel available for pollination nationwide.{% endblock %}
 
@@ -13,15 +13,15 @@
     <div class="container hero-content">
         <div class="hero-eyebrow">Gadsden County, Florida</div>
         <h1>Raw, Local Honey from Our Hives to Your Home</h1>
-        <p>Family-owned and bee-friendly. Serving North Florida and South Georgia with small-batch honey, nucs, and bee services — and traveling nationwide for pollination.</p>
+        <p>Family-owned and bee-friendly. We produce raw Gadsden County wildflower honey from mite-resistant bees — no pesticides, just nectar gathered from native Florida wildflowers. Serving North Florida and South Georgia, and traveling nationwide for pollination.</p>
         <div class="hero-actions">
             <a href="{% url 'products' %}" class="btn">Shop Our Honey</a>
             <a href="{% url 'nuke_request' %}" class="btn btn-secondary">Get Bee Nucs</a>
         </div>
         <div class="hero-badges">
-            <span class="hero-badge">Gadsden County Honey</span>
-            <span class="hero-badge">North Florida</span>
-            <span class="hero-badge">South Georgia + beyond</span>
+            <span class="hero-badge">Raw Wildflower Honey</span>
+            <span class="hero-badge">Mite-Resistant Bees</span>
+            <span class="hero-badge">No Pesticides</span>
         </div>
     </div>
 </section>
@@ -31,19 +31,19 @@
         <h2>Why Choose Bear Creek Honey?</h2>
         <div class="feature-grid">
             <div class="feature-card">
-                <div class="icon">🌸</div>
-                <h3>100% Natural</h3>
-                <p>Our honey is raw and unfiltered, preserving all the natural enzymes, pollen, and nutrients that make honey so beneficial.</p>
-            </div>
-            <div class="feature-card">
-                <div class="icon">🏡</div>
-                <h3>Locally Produced</h3>
-                <p>Made right here in our community by Bear Creek Apiaries, a small family-owned business dedicated to sustainable beekeeping.</p>
+                <div class="icon">🍯</div>
+                <h3>Raw &amp; Unfiltered</h3>
+                <p>We never heat or over-filter our honey, preserving the natural enzymes, pollen, and nutrients that make raw honey so good for you.</p>
             </div>
             <div class="feature-card">
                 <div class="icon">🐝</div>
-                <h3>Bee Friendly</h3>
-                <p>We practice ethical beekeeping methods that prioritize the health and wellbeing of our bee colonies.</p>
+                <h3>Mite-Resistant Bees</h3>
+                <p>Our colonies are bred with Varroa Sensitive Hygiene (VSH) — natural mite resistance that keeps our bees healthy without pesticide treatments.</p>
+            </div>
+            <div class="feature-card">
+                <div class="icon">🌸</div>
+                <h3>A Taste of Place</h3>
+                <p>A true multifloral wildflower honey, gathered from clover, Spanish needle, palmetto, and other native Gadsden County blooms — with a flavor that shifts each season.</p>
             </div>
         </div>
     </div>
@@ -52,16 +52,12 @@
 {% if featured_products %}
 <section class="products">
     <div class="container">
-        <h2>Featured Honey Products</h2>
+        <h2>Shop Our Honey &amp; Gift Jars</h2>
         <div class="product-grid">
             {% for product in featured_products %}
             <div class="product-card">
                 <div class="product-image">
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                    {% else %}
-                        <img src="{% static 'images/live_photos/honey_bottle.jpg' %}" alt="Local honey jar">
-                    {% endif %}
+                    {% include 'shop/_product_image.html' with product=product %}
                 </div>
                 <div class="product-info">
                     <h3>{{ product.name }}</h3>
@@ -86,7 +82,8 @@
             <h2>From Hive to Table, Handled with Care</h2>
             <p>
                 We harvest, bottle, and deliver our honey with the same care we give our hives.
-                Every jar is packed with flavor and local pollen from the Tallahassee area.
+                Each jar is raw and unfiltered, with a rich, balanced sweetness, gentle floral notes,
+                and the local pollen of North Florida's wildflowers in every spoonful.
             </p>
             <a href="{% url 'about' %}" class="btn" style="margin-top: 1.5rem;">Meet the Beekeepers</a>
         </div>
@@ -121,7 +118,14 @@
                 <img src="{% static 'images/live_photos/nuc_bees.jpg' %}" alt="Bee nuc with bees">
                 <div class="proof-card-body">
                     <h3>Healthy Nucs</h3>
-                    <p>We raise strong starter colonies for beekeepers and farms across the country.</p>
+                    <p>We raise strong five-frame starter colonies, each with a laying queen, for local beekeepers and farms.</p>
+                </div>
+            </div>
+            <div class="proof-card">
+                <img src="{% static 'images/live_photos/honey-stand.jpeg' %}" alt="Bear Creek Apiaries honey stand">
+                <div class="proof-card-body">
+                    <h3>Local Roots</h3>
+                    <p>From our hives to our honey stand, we're proud to share our harvest with neighbors right here in North Florida.</p>
                 </div>
             </div>
         </div>
@@ -135,7 +139,7 @@
             <div class="feature-card">
                 <div class="icon"><img src="{% static 'images/bee_nuc.png' %}" alt="Bee Nuc" style="width: 80px; height: 80px;"></div>
                 <h3>Bee Nucs</h3>
-                <p>Start your beekeeping journey! Our nucs include healthy colonies with a laying queen, ready to establish in your own hive.</p>
+                <p>Start your beekeeping journey! Each nuc has five frames of bees and a laying queen — $175 each, with volume discounts. Pickup or local delivery only.</p>
                 <a href="{% url 'nuke_request' %}" class="btn" style="margin-top: 1rem;">Request Nucs</a>
             </div>
             <div class="feature-card">

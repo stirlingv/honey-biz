@@ -417,6 +417,14 @@ header {
     display: block;
 }
 
+/* Mini gift jars: show the whole jar (portrait photos) rather than cropping */
+.product-image img.mini-jar-photo,
+.product-detail-image img.mini-jar-photo {
+    object-fit: contain;
+    background: #faf8f4;
+    padding: 0.5rem;
+}
+
 /* Home Split Section */
 .home-split {
     padding: 4rem 0;
@@ -492,6 +500,14 @@ header {
     height: 220px;
     object-fit: cover;
     display: block;
+}
+
+/* Gift jar photos: show the whole jar instead of a cropped zoom */
+.gift-jars .proof-card img {
+    height: 300px;
+    object-fit: contain;
+    background: #faf8f4;
+    padding: 0.75rem;
 }
 
 .proof-card-body {

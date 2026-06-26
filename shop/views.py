@@ -2,11 +2,12 @@ import logging
 
 from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.http import HttpResponse
 
 from .forms import (
+    MAX_SELF_SERVE_QUANTITY,
     BeeRemovalRequestForm,
     CallbackRequestForm,
     NukeRequestForm,
@@ -14,11 +15,8 @@ from .forms import (
     PollinationRequestForm,
 )
 from .models import (
-    BeeRemovalRequest,
     CallbackRequest,
-    NukeRequest,
     Order,
-    PollinationRequest,
     Product,
 )
 from .services.notifications import (
@@ -34,7 +32,9 @@ logger = logging.getLogger(__name__)
 
 def home(request):
     """Home page view"""
-    featured_products = Product.objects.filter(in_stock=True)[:3]
+    # Lead with flagship honey ('honey' sorts after 'gift', so -category puts it first),
+    # then gift jars, so the showcase stays representative as the catalog grows.
+    featured_products = Product.objects.filter(in_stock=True).order_by('-category', 'name', 'size')[:4]
     return render(request, 'shop/home.html', {
         'featured_products': featured_products
     })
@@ -57,9 +57,11 @@ def terms_of_service(request):
 
 def products(request):
     """Products listing page"""
-    products = Product.objects.filter(in_stock=True)
     return render(request, 'shop/products.html', {
-        'products': products
+        'products': Product.objects.filter(in_stock=True, category='honey'),
+        'gift_products': Product.objects.filter(in_stock=True, category='gift').order_by('name'),
+        'gift_quantity_range': range(1, MAX_SELF_SERVE_QUANTITY + 1),
+        'gift_max_quantity': MAX_SELF_SERVE_QUANTITY,
     })
 
 
@@ -76,8 +78,11 @@ def order_honey(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            order = form.save()
-            notify_new_order(order)
+            # Save as a draft; the business is only notified once the customer
+            # confirms on the review page (checkout_process).
+            order = form.save(commit=False)
+            order.status = 'draft'
+            order.save()
             request.session['pending_order_id'] = order.id
             return redirect('checkout_review', order_id=order.id)
     else:
@@ -85,6 +90,14 @@ def order_honey(request):
         product_id = request.GET.get('product')
         if product_id:
             initial['product'] = product_id
+        qty = request.GET.get('quantity')
+        if qty:
+            try:
+                qty = int(qty)
+            except (TypeError, ValueError):
+                qty = None
+            if qty and 1 <= qty <= MAX_SELF_SERVE_QUANTITY:
+                initial['quantity'] = qty
         form = OrderForm(initial=initial)
 
     return render(request, 'shop/order_honey.html', {
@@ -186,10 +199,10 @@ def bee_removal_success(request):
 # =============================================================================
 
 def checkout_review(request, order_id):
-    """Review order before submitting"""
+    """Review a draft order before submitting it."""
     order = get_object_or_404(Order, pk=order_id)
 
-    if order.status != 'pending':
+    if order.status != 'draft':
         messages.info(request, 'This order has already been submitted.')
         return redirect('order_status', order_id=order.id)
 
@@ -197,15 +210,20 @@ def checkout_review(request, order_id):
 
 
 def checkout_process(request, order_id):
-    """Submit the order and confirm to customer we'll follow up with an invoice."""
+    """Confirm a draft order: mark it pending, notify the business, and thank the customer."""
     order = get_object_or_404(Order, pk=order_id)
 
-    if order.status not in ['pending']:
+    # Only a POST from the review page may submit the order (never a GET).
+    if request.method != 'POST':
+        return redirect('checkout_review', order_id=order.id)
+
+    if order.status != 'draft':
         messages.info(request, 'This order has already been submitted.')
         return redirect('order_status', order_id=order.id)
 
     order.status = 'pending'
     order.save()
+    notify_new_order(order)
     return redirect('order_success')
 
 
@@ -232,7 +250,15 @@ def callback_request(request):
             )
             return redirect('callback_success')
     else:
-        form = CallbackRequestForm()
+        initial = {}
+        interest = request.GET.get('interest')
+        valid_interests = {choice[0] for choice in CallbackRequest.INTEREST_CHOICES}
+        if interest in valid_interests:
+            initial['interest'] = interest
+        message = request.GET.get('message')
+        if message:
+            initial['message'] = message
+        form = CallbackRequestForm(initial=initial)
 
     return render(request, 'shop/callback_request.html', {'form': form})
 

@@ -1,0 +1,15 @@
+{% load static %}
+{% comment %}
+Renders the best image for a product. Gift jars (with no uploaded image) fall
+back to their specific photo by name; everything else uses the standard jar.
+Usage: {% include 'shop/_product_image.html' with product=product %}
+{% endcomment %}
+{% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+{% elif 'Holiday' in product.name %}
+    <img class="mini-jar-photo" src="{% static 'images/live_photos/mini-jar-holidays.jpeg' %}" alt="{{ product.name }} from Bear Creek Apiaries">
+{% elif product.category == 'gift' %}
+    <img class="mini-jar-photo" src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="{{ product.name }} from Bear Creek Apiaries">
+{% else %}
+    <img src="{% static 'images/live_photos/new_jar.jpeg' %}" alt="Bear Creek Apiaries raw wildflower honey jar">
+{% endif %}

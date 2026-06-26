@@ -31,7 +31,7 @@ class OrderReminderCommandTests(TestCase):
             product=self.product,
             quantity=1,
             total_price="12.00",
-            status="pending",
+            status=overrides.pop("status", "pending"),
             **overrides,
         )
         return order

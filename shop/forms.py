@@ -1,7 +1,9 @@
 import re
+
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Order, NukeRequest, PollinationRequest, BeeRemovalRequest, CallbackRequest
+
+from .models import BeeRemovalRequest, CallbackRequest, NukeRequest, Order, PollinationRequest
 
 
 def _normalize_phone(value):
@@ -26,8 +28,21 @@ class ContactValidationMixin:
         return self.cleaned_data.get('email', '').strip().lower()
 
 
+MAX_SELF_SERVE_QUANTITY = 24
+
+
 class OrderForm(ContactValidationMixin, forms.ModelForm):
     """Form for placing honey orders"""
+
+    def clean_quantity(self):
+        quantity = self.cleaned_data.get('quantity')
+        if quantity and quantity > MAX_SELF_SERVE_QUANTITY:
+            raise ValidationError(
+                f'For orders of more than {MAX_SELF_SERVE_QUANTITY} jars, please request a '
+                f'callback so we can arrange bulk pricing and delivery.'
+            )
+        return quantity
+
     class Meta:
         model = Order
         fields = [
@@ -46,7 +61,7 @@ class OrderForm(ContactValidationMixin, forms.ModelForm):
             'state': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'State', 'autocomplete': 'address-level1'}),
             'zip_code': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'ZIP Code', 'autocomplete': 'postal-code', 'maxlength': 10}),
             'product': forms.Select(attrs={'class': 'form-control'}),
-            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'value': 1}),
+            'quantity': forms.NumberInput(attrs={'class': 'form-control', 'min': 1, 'max': MAX_SELF_SERVE_QUANTITY, 'value': 1}),
             'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Any special instructions or notes (optional)'}),
         }
 

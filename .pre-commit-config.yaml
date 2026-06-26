@@ -1,0 +1,47 @@
+# Setup once after cloning (inside your virtualenv):
+#   pip install -r requirements-dev.txt
+#   pre-commit install            # lint/check/migration hooks on every commit
+#   pre-commit install --hook-type pre-push   # full test suite before pushing
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ["--maxkb=2048"]
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: debug-statements
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.6
+    hooks:
+      - id: ruff
+        args: [--fix]
+
+  - repo: local
+    hooks:
+      - id: django-check
+        name: Django system check
+        entry: python manage.py check
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: django-missing-migrations
+        name: Check for model changes missing a migration
+        entry: python manage.py makemigrations --check --dry-run
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: django-tests
+        name: Django test suite
+        entry: python manage.py test --verbosity=1
+        language: system
+        types: [python]
+        pass_filenames: false
+        stages: [pre-push]

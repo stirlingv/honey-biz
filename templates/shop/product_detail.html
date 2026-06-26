@@ -14,11 +14,7 @@
             <div class="product-detail-grid">
                 <div class="product-detail-media">
                     <div class="product-detail-image">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
-                        {% else %}
-                            <img src="{% static 'images/live_photos/honey_bottle.jpg' %}" alt="Local honey jar">
-                        {% endif %}
+                        {% include 'shop/_product_image.html' with product=product %}
                     </div>
                 </div>
                 <div class="product-detail-info">
