@@ -14,7 +14,7 @@ class OrderReminderCommandTests(TestCase):
             name="Wildflower Honey",
             description="Local raw honey",
             price="12.00",
-            size="16 oz",
+            size="Pint",
             in_stock=True,
         )
 

@@ -43,7 +43,7 @@ class StaticPageSmokeTests(TestCase):
 class DynamicPageSmokeTests(TestCase):
     def setUp(self):
         self.product = Product.objects.create(
-            name="Test Honey", description="d", price=Decimal("10.00"), size="16 oz",
+            name="Test Honey", description="d", price=Decimal("10.00"), size="Pint",
         )
         self.order = Order.objects.create(
             first_name="A", last_name="B", email="a@b.com", phone="(850) 555-1234",
