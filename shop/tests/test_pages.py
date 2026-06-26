@@ -29,6 +29,14 @@ class StaticPageSmokeTests(TestCase):
             self.assertContains(resp, label)
         self.assertContains(resp, f'href="{reverse("products")}"')
 
+    def test_product_cards_offer_order_now_and_learn_more(self):
+        # Seeded honey products give each card a primary order link and a
+        # secondary details link.
+        resp = self.client.get(reverse("products"))
+        self.assertContains(resp, "Order Now")
+        self.assertContains(resp, "Learn More")
+        self.assertContains(resp, f'{reverse("order_honey")}?product=')
+
     def test_robots_txt(self):
         resp = self.client.get("/robots.txt")
         self.assertEqual(resp.status_code, 200)
