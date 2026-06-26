@@ -1,0 +1,4 @@
+# Development & CI tooling (not installed in production)
+-r requirements.txt
+pre-commit==4.0.1
+ruff==0.8.6

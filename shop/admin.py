@@ -6,7 +6,8 @@ from django.shortcuts import redirect
 from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html
-from .models import Product, Order, NukeRequest, PollinationRequest, BeeRemovalRequest, CallbackRequest
+
+from .models import BeeRemovalRequest, CallbackRequest, NukeRequest, Order, PollinationRequest, Product
 
 
 class OrderArchiveFilter(admin.SimpleListFilter):

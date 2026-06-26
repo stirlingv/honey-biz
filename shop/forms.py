@@ -1,7 +1,9 @@
 import re
+
 from django import forms
 from django.core.exceptions import ValidationError
-from .models import Order, NukeRequest, PollinationRequest, BeeRemovalRequest, CallbackRequest
+
+from .models import BeeRemovalRequest, CallbackRequest, NukeRequest, Order, PollinationRequest
 
 
 def _normalize_phone(value):

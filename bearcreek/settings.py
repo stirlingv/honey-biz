@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from pathlib import Path
+
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
@@ -161,7 +162,7 @@ if os.getenv('USE_S3', 'False').lower() == 'true':
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
     AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'us-east-1')
-    
+
     # S3 file settings
     AWS_S3_FILE_OVERWRITE = False  # Don't overwrite files with same name
     AWS_DEFAULT_ACL = None  # Use bucket default ACL
@@ -169,7 +170,7 @@ if os.getenv('USE_S3', 'False').lower() == 'true':
         'CacheControl': 'max-age=86400',  # Cache for 1 day
     }
     AWS_QUERYSTRING_AUTH = False  # Public URLs (no signed URLs)
-    
+
     # Use S3 for media files
     DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
     MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com/'
@@ -192,22 +193,22 @@ if not DEBUG:
     # Force HTTPS
     SECURE_SSL_REDIRECT = True
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    
+
     # Secure cookies
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    
+
     # HTTP Strict Transport Security
     SECURE_HSTS_SECONDS = 31536000  # 1 year
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
-    
+
     # Prevent content type sniffing
     SECURE_CONTENT_TYPE_NOSNIFF = True
-    
+
     # XSS Protection
     SECURE_BROWSER_XSS_FILTER = True
-    
+
     # Clickjacking protection
     X_FRAME_OPTIONS = 'DENY'
 

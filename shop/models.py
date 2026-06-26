@@ -1,5 +1,6 @@
+from django.core.validators import MinValueValidator
 from django.db import models
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.urls import reverse
 
 
 class Product(models.Model):
@@ -29,6 +30,9 @@ class Product(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.size}"
+
+    def get_absolute_url(self):
+        return reverse('product_detail', args=[self.pk])
 
 
 class Order(models.Model):
@@ -184,13 +188,13 @@ class PollinationRequest(models.Model):
         default=False,
         help_text="Customer prefers a phone callback"
     )
-    
+
     # Property Information
     property_address = models.TextField(help_text="Address where pollination services are needed")
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=50, default='FL')
     zip_code = models.CharField(max_length=10)
-    
+
     # Service Details
     crop_type = models.CharField(max_length=50, choices=CROP_TYPE_CHOICES)
     crop_type_other = models.CharField(max_length=100, blank=True, help_text="If 'Other', please specify")
@@ -267,14 +271,14 @@ class BeeRemovalRequest(models.Model):
         default=False,
         help_text="Customer prefers a phone callback"
     )
-    
+
     # Property Information
     property_address = models.TextField(help_text="Address where bees are located")
     city = models.CharField(max_length=100)
     state = models.CharField(max_length=50, default='FL')
     zip_code = models.CharField(max_length=10)
     property_type = models.CharField(max_length=20, choices=PROPERTY_TYPE_CHOICES, default='residential')
-    
+
     # Bee Information
     bee_location = models.CharField(max_length=50, choices=LOCATION_CHOICES)
     bee_location_other = models.CharField(max_length=100, blank=True, help_text="If 'Other', please describe")
@@ -293,7 +297,7 @@ class BeeRemovalRequest(models.Model):
         help_text="Approximate height from ground (e.g., '6 feet', '15 feet', 'ground level')"
     )
     urgency = models.CharField(max_length=20, choices=URGENCY_CHOICES, default='medium')
-    
+
     # Additional Info
     has_been_sprayed = models.BooleanField(
         default=False,
@@ -345,11 +349,11 @@ class CallbackRequest(models.Model):
     name = models.CharField(max_length=200)
     phone = models.CharField(max_length=20)
     email = models.EmailField(blank=True, help_text="Optional - for follow-up if we can't reach you by phone")
-    
+
     # What they're interested in
     interest = models.CharField(
-        max_length=20, 
-        choices=INTEREST_CHOICES, 
+        max_length=20,
+        choices=INTEREST_CHOICES,
         default='general',
         help_text="What would you like to discuss?"
     )
@@ -357,7 +361,7 @@ class CallbackRequest(models.Model):
         blank=True,
         help_text="Any additional details (optional)"
     )
-    
+
     # Best time to call
     best_time = models.CharField(
         max_length=100,

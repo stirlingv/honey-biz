@@ -1,0 +1,11 @@
+target-version = "py312"
+line-length = 120
+extend-exclude = ["migrations", ".venv", "venv", "staticfiles"]
+
+[lint]
+# E/F: pycodestyle + pyflakes (real errors), I: import order, B: likely bugs.
+select = ["E", "F", "I", "B"]
+ignore = ["E501"]  # line length is not worth failing a commit over
+
+[lint.per-file-ignores]
+"**/settings.py" = ["E402"]  # settings sometimes configures things before imports

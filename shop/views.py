@@ -2,11 +2,12 @@ import logging
 
 from django.conf import settings
 from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
-from django.http import HttpResponse
 
 from .forms import (
+    MAX_SELF_SERVE_QUANTITY,
     BeeRemovalRequestForm,
     CallbackRequestForm,
     NukeRequestForm,
@@ -14,11 +15,8 @@ from .forms import (
     PollinationRequestForm,
 )
 from .models import (
-    BeeRemovalRequest,
     CallbackRequest,
-    NukeRequest,
     Order,
-    PollinationRequest,
     Product,
 )
 from .services.notifications import (
@@ -55,9 +53,6 @@ def privacy_policy(request):
 def terms_of_service(request):
     """Terms of service page"""
     return render(request, 'shop/terms.html')
-
-
-MAX_SELF_SERVE_QUANTITY = 24
 
 
 def products(request):

@@ -6,6 +6,7 @@ Admin email is kept as an optional silent fallback.
 """
 
 import logging
+
 import requests
 from django.conf import settings
 from django.core.mail import send_mail
