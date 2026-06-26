@@ -10,7 +10,7 @@ class SeedLiveCatalogTests(TestCase):
         honey = Product.objects.filter(in_stock=True, category="honey")
         self.assertEqual(
             set(honey.values_list("name", "size")),
-            {("Wildflower Honey", "16 oz"), ("Wildflower Honey", "32 oz")},
+            {("Wildflower Honey", "Pint"), ("Wildflower Honey", "Quart")},
         )
 
     def test_storefront_gift_jars_seeded(self):

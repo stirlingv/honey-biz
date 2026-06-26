@@ -17,7 +17,7 @@ class OrderBase(TestCase):
     def setUp(self):
         self.product = Product.objects.create(
             name="Wildflower Honey", description="raw", price=Decimal("17.00"),
-            size="16 oz", category="honey",
+            size="Pint", category="honey",
         )
 
     def _payload(self, **overrides):

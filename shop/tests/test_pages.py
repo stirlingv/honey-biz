@@ -29,6 +29,14 @@ class StaticPageSmokeTests(TestCase):
             self.assertContains(resp, label)
         self.assertContains(resp, f'href="{reverse("products")}"')
 
+    def test_product_cards_offer_order_now_and_learn_more(self):
+        # Seeded honey products give each card a primary order link and a
+        # secondary details link.
+        resp = self.client.get(reverse("products"))
+        self.assertContains(resp, "Order Now")
+        self.assertContains(resp, "Learn More")
+        self.assertContains(resp, f'{reverse("order_honey")}?product=')
+
     def test_robots_txt(self):
         resp = self.client.get("/robots.txt")
         self.assertEqual(resp.status_code, 200)
@@ -43,7 +51,7 @@ class StaticPageSmokeTests(TestCase):
 class DynamicPageSmokeTests(TestCase):
     def setUp(self):
         self.product = Product.objects.create(
-            name="Test Honey", description="d", price=Decimal("10.00"), size="16 oz",
+            name="Test Honey", description="d", price=Decimal("10.00"), size="Pint",
         )
         self.order = Order.objects.create(
             first_name="A", last_name="B", email="a@b.com", phone="(850) 555-1234",

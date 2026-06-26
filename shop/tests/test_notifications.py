@@ -37,7 +37,7 @@ class SendSlackTests(TestCase):
 class OrderNotificationTests(TestCase):
     def setUp(self):
         self.product = Product.objects.create(
-            name="Wildflower Honey", description="d", price=Decimal("17.00"), size="16 oz",
+            name="Wildflower Honey", description="d", price=Decimal("17.00"), size="Pint",
         )
 
     def _order(self, **o):

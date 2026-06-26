@@ -246,7 +246,7 @@ The colored badge shows what they want to discuss:
 1. Click **"Add Product"** (top right)
 1. Fill in:
    - Name (e.g., "Wildflower Honey")
-   - Size (e.g., "16 oz")
+   - Size — the jar volume (e.g., "Pint", "Quart")
    - Description
    - Price
    - Check **"In stock"** if available

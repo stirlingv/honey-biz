@@ -11,13 +11,12 @@
 - **Setup:**
   - `python3 -m venv venv && source venv/bin/activate`
   - `pip install -r requirements.txt`
-  - `python manage.py migrate`
-  - `python manage.py load_products` (loads sample data)
+  - `python manage.py migrate` (also seeds the live product catalog)
   - `python manage.py createsuperuser`
 - **Run dev server:** `python manage.py runserver`
 - **Admin:** `/admin/` (manage products, orders, nuc requests)
 - **Tests:** Place in `shop/tests/` (pytest or Django test runner)
-- **Custom management commands:** in `shop/management/commands/` (e.g., `load_products`, `send_order_reminders`)
+- **Custom management commands:** in `shop/management/commands/` (e.g., `send_order_reminders`)
 
 ## Patterns & Conventions
 - **Models:** All business data in `shop/models.py`. Use Django migrations for schema changes.
