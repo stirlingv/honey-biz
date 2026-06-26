@@ -37,6 +37,12 @@ class StaticPageSmokeTests(TestCase):
         self.assertContains(resp, "Learn More")
         self.assertContains(resp, f'{reverse("order_honey")}?product=')
 
+    def test_header_order_cta_routes_to_catalog(self):
+        # The header "Order Now" sends cold-start visitors to the catalog (where
+        # products have context + images) rather than a bare product picker.
+        resp = self.client.get(reverse("home"))
+        self.assertContains(resp, f'href="{reverse("products")}" class="btn-order"')
+
     def test_robots_txt(self):
         resp = self.client.get("/robots.txt")
         self.assertEqual(resp.status_code, 200)
