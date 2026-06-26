@@ -44,22 +44,17 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Run database migrations:
+4. Run database migrations (these also seed the live product catalog):
 ```bash
 python manage.py migrate
 ```
 
-5. Load sample product data:
-```bash
-python manage.py load_products
-```
-
-6. Create a superuser account (for admin access):
+5. Create a superuser account (for admin access):
 ```bash
 python manage.py createsuperuser
 ```
 
-7. Run the development server:
+6. Run the development server:
 ```bash
 python manage.py runserver
 ```
