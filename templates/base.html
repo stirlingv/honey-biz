@@ -6,14 +6,14 @@
     <title>{% block title %}Bear Creek Apiaries & Honey LLC{% endblock %}</title>
     <meta name="description" content="{% block meta_description %}Bear Creek Apiaries & Honey LLC - Local honey, bee nucs, pollination, and bee removal in Tallahassee, FL.{% endblock %}">
     {% load static %}
-    
+
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon_io/favicon.ico' %}">
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'images/favicon_io/favicon-32x32.png' %}">
     <link rel="icon" type="image/png" sizes="16x16" href="{% static 'images/favicon_io/favicon-16x16.png' %}">
     <link rel="apple-touch-icon" sizes="180x180" href="{% static 'images/favicon_io/apple-touch-icon.png' %}">
     <link rel="manifest" href="{% static 'images/favicon_io/site.webmanifest' %}">
-    
+
     <!-- Open Graph / Social Media Sharing -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="{% block og_title %}Bear Creek Apiaries & Honey LLC{% endblock %}">
@@ -74,7 +74,7 @@
       ]
     }
     </script>
-    
+
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -103,7 +103,7 @@
                             <li><a href="{% url 'bee_removal' %}">Bee Removal</a></li>
                         </ul>
                     </li>
-                    <li><a href="{% url 'order_honey' %}" class="btn-order">Order Now</a></li>
+                    <li><a href="{% url 'products' %}" class="btn-order">Order Now</a></li>
                 </ul>
             </div>
         </nav>
@@ -151,7 +151,7 @@
                 <p class="cottage-food-notice">Made in a cottage food operation that is not subject to Florida's food safety regulations.</p>
                 <p>&copy; 2026 Bear Creek Apiaries & Honey LLC. All rights reserved.</p>
                 <p class="footer-legal">
-                    <a href="{% url 'privacy_policy' %}">Privacy Policy</a> | 
+                    <a href="{% url 'privacy_policy' %}">Privacy Policy</a> |
                     <a href="{% url 'terms_of_service' %}">Terms of Service</a>
                 </p>
             </div>

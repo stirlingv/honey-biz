@@ -7,6 +7,18 @@
     <div class="container">
         <div class="icon">✓</div>
         <h2>Order Submitted Successfully!</h2>
+
+        {% if order %}
+        <div class="order-confirmation-card">
+            <p class="order-confirmation-number">Order #{{ order.id }}</p>
+            <div class="order-confirmation-line">
+                <span>{{ order.quantity }} × {{ order.product.name }} ({{ order.product.size }})</span>
+                <span>${{ order.total_price }}</span>
+            </div>
+            <p class="order-confirmation-note">Total shown is before postage.</p>
+        </div>
+        {% endif %}
+
         <p>
             Thank you for your order! We've received your request and will send you an invoice by email shortly.
             Once you receive the invoice, you can pay by check, cash, or however is most convenient.

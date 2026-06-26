@@ -3,7 +3,7 @@ import re
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import BeeRemovalRequest, CallbackRequest, NukeRequest, Order, PollinationRequest
+from .models import BeeRemovalRequest, CallbackRequest, NukeRequest, Order, PollinationRequest, Product
 
 
 def _normalize_phone(value):
@@ -33,6 +33,12 @@ MAX_SELF_SERVE_QUANTITY = 24
 
 class OrderForm(ContactValidationMixin, forms.ModelForm):
     """Form for placing honey orders"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Only offer products that are currently for sale; this stays in sync as
+        # the catalog changes (retired items have in_stock=False).
+        self.fields['product'].queryset = Product.objects.filter(in_stock=True)
 
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')

@@ -23,9 +23,7 @@ urlpatterns = [
     path('callback/', views.callback_request, name='callback_request'),
     path('callback/success/', views.callback_success, name='callback_success'),
 
-    # Order flow
-    path('checkout/<int:order_id>/review/', views.checkout_review, name='checkout_review'),
-    path('checkout/<int:order_id>/process/', views.checkout_process, name='checkout_process'),
+    # Order status
     path('order/<int:order_id>/status/', views.order_status, name='order_status'),
 
     # Legal pages

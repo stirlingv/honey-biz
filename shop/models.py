@@ -38,7 +38,6 @@ class Product(models.Model):
 class Order(models.Model):
     """Model for honey orders"""
     STATUS_CHOICES = [
-        ('draft', 'Draft (not yet confirmed)'),
         ('pending', 'Pending'),
         ('processing', 'Processing'),
         ('completed', 'Completed'),

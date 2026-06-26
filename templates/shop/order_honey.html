@@ -69,11 +69,47 @@ async function initAddressAutocomplete() {
             <p style="text-align: center; color: #666; margin-bottom: 2rem;">
                 Fill out the form below to place your honey order. We'll contact you to confirm your order and arrange payment and delivery.
             </p>
-            
+
             <form method="post">
                 {% csrf_token %}
-                
-                <h3 style="margin-bottom: 1rem; color: #f6a326;">Contact Information</h3>
+
+                <h3 style="margin-bottom: 1rem; color: #f6a326;">Your Order</h3>
+                {% if selected_product %}
+                <div class="order-summary-card">
+                    <div class="order-summary-image">
+                        {% include 'shop/_product_image.html' with product=selected_product %}
+                    </div>
+                    <div class="order-summary-info">
+                        <span class="order-summary-eyebrow">You're ordering</span>
+                        <h4>{{ selected_product.name }}</h4>
+                        <p class="order-summary-meta">{{ selected_product.size }} · ${{ selected_product.price }} each <span style="color:#888; font-weight:400;">+ postage</span></p>
+                        <a href="{% url 'product_detail' selected_product.pk %}" class="order-summary-link">View product details →</a>
+                    </div>
+                </div>
+                {{ form.product.as_hidden }}
+                {% if form.product.errors %}
+                <div style="color: #721c24; font-size: 0.9rem;">{{ form.product.errors }}</div>
+                {% endif %}
+                {% else %}
+                <div class="form-group">
+                    <label for="id_product">Select Product *</label>
+                    {{ form.product }}
+                    {% if form.product.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.product.errors }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="form-group">
+                    <label for="id_quantity">Quantity *</label>
+                    {{ form.quantity }}
+                    {% if form.quantity.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.quantity.errors }}</div>
+                    {% endif %}
+                    <small class="helptext">Ordering more than 24? <a href="{% url 'callback_request' %}?interest=honey" style="color: #f6a326;">Request a callback</a> for bulk pricing.</small>
+                </div>
+
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Contact Information</h3>
                 <div class="form-row">
                     <div class="form-group">
                         <label for="id_first_name">First Name *</label>
@@ -150,24 +186,6 @@ async function initAddressAutocomplete() {
                     {% if form.zip_code.errors %}
                     <div style="color: #721c24; font-size: 0.9rem;">{{ form.zip_code.errors }}</div>
                     {% endif %}
-                </div>
-
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Order Details</h3>
-                <div class="form-group">
-                    <label for="id_product">Select Product *</label>
-                    {{ form.product }}
-                    {% if form.product.errors %}
-                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.product.errors }}</div>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="id_quantity">Quantity *</label>
-                    {{ form.quantity }}
-                    {% if form.quantity.errors %}
-                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.quantity.errors }}</div>
-                    {% endif %}
-                    <small class="helptext">Ordering more than 24? <a href="{% url 'callback_request' %}?interest=honey" style="color: #f6a326;">Request a callback</a> for bulk pricing.</small>
                 </div>
 
                 <div class="form-group">
