@@ -63,6 +63,14 @@ class StaticPageSmokeTests(TestCase):
             html,
         )
 
+    def test_og_url_is_absolute_url(self):
+        """og:url should be the absolute URL of the current page."""
+        resp = self.client.get(reverse("home"))
+        self.assertIn(
+            '<meta property="og:url" content="http://testserver/">',
+            resp.content.decode(),
+        )
+
 
 class DynamicPageSmokeTests(TestCase):
     def setUp(self):
