@@ -16,6 +16,7 @@
 
     <!-- Open Graph / Social Media Sharing -->
     <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}">
     <meta property="og:title" content="{% block og_title %}Bear Creek Apiaries & Honey LLC{% endblock %}">
     <meta property="og:description" content="{% block og_description %}Local honey, bee nucs, pollination, and bee removal in Tallahassee, FL.{% endblock %}">
     <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'images/favicon_io/android-chrome-512x512.png' %}">
