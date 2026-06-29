@@ -26,6 +26,9 @@ urlpatterns = [
     # Order status
     path('order/<int:order_id>/status/', views.order_status, name='order_status'),
 
+    # Slack inbound events (reaction-driven status updates)
+    path('slack/events/', views.slack_events_endpoint, name='slack_events'),
+
     # Legal pages
     path('privacy/', views.privacy_policy, name='privacy_policy'),
     path('terms/', views.terms_of_service, name='terms_of_service'),

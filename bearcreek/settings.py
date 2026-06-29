@@ -236,6 +236,21 @@ ADMIN_NOTIFICATION_EMAIL = os.getenv('ADMIN_NOTIFICATION_EMAIL', '' if DEBUG els
 # Incoming webhook URL from Slack App settings → Incoming Webhooks
 SLACK_WEBHOOK_URL = os.getenv('SLACK_WEBHOOK_URL', '')
 
+# Two-way Slack (reactions update order/request status). When the bot token +
+# channel are set, notifications post via chat.postMessage (capturing the
+# message ts) instead of the outbound-only webhook.
+#   SLACK_BOT_TOKEN      — bot user OAuth token (xoxb-…), scopes: chat:write, reactions:read
+#   SLACK_SIGNING_SECRET — verifies inbound Events API requests at /slack/events/
+#   SLACK_CHANNEL        — channel id/name the bot posts notifications to
+#   SLACK_ALLOWED_REACTORS — optional comma-separated Slack user IDs allowed to
+#                            drive status changes (empty = anyone in the channel)
+SLACK_BOT_TOKEN = os.getenv('SLACK_BOT_TOKEN', '')
+SLACK_SIGNING_SECRET = os.getenv('SLACK_SIGNING_SECRET', '')
+SLACK_CHANNEL = os.getenv('SLACK_CHANNEL', '')
+SLACK_ALLOWED_REACTORS = [
+    u.strip() for u in os.getenv('SLACK_ALLOWED_REACTORS', '').split(',') if u.strip()
+]
+
 # =============================================================================
 # Google Maps (Places Autocomplete on address fields)
 # =============================================================================

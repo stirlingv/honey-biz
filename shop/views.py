@@ -1,10 +1,13 @@
+import json
 import logging
 
 from django.conf import settings
 from django.contrib import messages
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 
 from .forms import (
     MAX_SELF_SERVE_QUANTITY,
@@ -19,6 +22,7 @@ from .models import (
     Order,
     Product,
 )
+from .services import slack_events
 from .services.notifications import (
     notify_new_bee_removal,
     notify_new_callback_request,
@@ -28,6 +32,29 @@ from .services.notifications import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+@csrf_exempt
+@require_POST
+def slack_events_endpoint(request):
+    """Inbound Slack Events API endpoint. Verifies the request signature, then
+    handles the URL-verification handshake and ``reaction_added`` events that
+    drive order/request status changes."""
+    if not slack_events.verify_signature(request):
+        return HttpResponse(status=403)
+
+    try:
+        payload = json.loads(request.body)
+    except (json.JSONDecodeError, UnicodeDecodeError):
+        return HttpResponse(status=400)
+
+    if payload.get('type') == 'url_verification':
+        return JsonResponse({'challenge': payload.get('challenge', '')})
+
+    if payload.get('type') == 'event_callback':
+        slack_events.handle_event(payload)
+
+    return HttpResponse(status=200)
 
 
 def home(request):

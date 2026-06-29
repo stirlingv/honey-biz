@@ -7,7 +7,15 @@ from django.urls import path
 from django.utils import timezone
 from django.utils.html import format_html
 
-from .models import BeeRemovalRequest, CallbackRequest, NukeRequest, Order, PollinationRequest, Product
+from .models import (
+    BeeRemovalRequest,
+    CallbackRequest,
+    NukeRequest,
+    Order,
+    PollinationRequest,
+    Product,
+    SlackMessage,
+)
 
 
 class OrderArchiveFilter(admin.SimpleListFilter):
@@ -299,6 +307,19 @@ class NukeRequestAdmin(admin.ModelAdmin):
             'classes': ('collapse',),
         }),
     )
+
+
+@admin.register(SlackMessage)
+class SlackMessageAdmin(admin.ModelAdmin):
+    """Read-only view of the Slack message → record mapping (for debugging
+    reaction-driven status updates)."""
+    list_display = ['ts', 'channel', 'content_type', 'object_id', 'target', 'created_at']
+    list_filter = ['content_type', 'created_at']
+    search_fields = ['ts', 'channel']
+    readonly_fields = ['channel', 'ts', 'content_type', 'object_id', 'created_at']
+
+    def has_add_permission(self, request):
+        return False
 
 
 @admin.register(PollinationRequest)
