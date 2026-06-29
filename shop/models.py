@@ -1,3 +1,5 @@
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
@@ -384,3 +386,36 @@ class CallbackRequest(models.Model):
 
     def __str__(self):
         return f"Callback #{self.id} - {self.name} ({self.get_interest_display()})"
+
+
+class SlackMessage(models.Model):
+    """Links a posted Slack notification to the DB record it represents.
+
+    When a notification is posted via the Slack bot API we capture the message
+    timestamp (``ts``) and store it here against the order/request. Inbound
+    ``reaction_added`` events only carry the channel + ts, so this mapping is
+    how we trace a reaction back to the right object to update its status.
+    """
+    channel = models.CharField(max_length=50)
+    ts = models.CharField(max_length=50, help_text="Slack message timestamp")
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    target = GenericForeignKey('content_type', 'object_id')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ('channel', 'ts')
+
+    def __str__(self):
+        return f"SlackMessage({self.channel}/{self.ts} → {self.target})"
+
+    @classmethod
+    def record(cls, channel, ts, obj):
+        """Create/refresh the mapping for a posted message."""
+        ct = ContentType.objects.get_for_model(obj.__class__)
+        return cls.objects.update_or_create(
+            channel=channel,
+            ts=ts,
+            defaults={'content_type': ct, 'object_id': obj.pk},
+        )[0]
