@@ -93,6 +93,17 @@ def known_reactions(flow):
     return {name for name, _ in flow['progression']} | set(flow['terminal'])
 
 
+def status_to_reaction(model):
+    """Reverse of the flow: status value -> the reaction name that represents
+    it (for the bot's status cue). The default status (pending) maps to nothing."""
+    flow = STATUS_FLOW.get(model)
+    if not flow:
+        return {}
+    mapping = {status: name for name, status in flow['progression']}
+    mapping.update({status: name for name, status in flow['terminal'].items()})
+    return mapping
+
+
 def resolve_status(flow, present_reactions):
     """Resolve a single status from the set of reactions on a message."""
     present = set(present_reactions)
@@ -142,6 +153,12 @@ def handle_event(payload):
         if event.get('type') not in ('reaction_added', 'reaction_removed'):
             return None
 
+        # Ignore the bot's own reactions (its status cue) so admin-driven
+        # changes don't echo back through the resolver and fight themselves.
+        bot_user = getattr(settings, 'SLACK_BOT_USER_ID', '')
+        if bot_user and event.get('user') == bot_user:
+            return None
+
         allowed = getattr(settings, 'SLACK_ALLOWED_REACTORS', [])
         if allowed and event.get('user') not in allowed:
             logger.info("Ignoring Slack reaction from unlisted user %s", event.get('user'))
@@ -179,6 +196,9 @@ def handle_event(payload):
         # Idempotent: only persist + confirm when the resolved status changed.
         if target.status != new_status:
             target.status = new_status
+            # Tell the post_save sync this change came from Slack, so it stamps
+            # the message but doesn't redundantly re-drive the bot's cue.
+            target._status_change_source = 'slack'
             target.save(update_fields=['status', 'updated_at'])
             post_thread_reply(
                 channel, ts, f"{target} → *{target.get_status_display()}*"

@@ -24,7 +24,7 @@ from django.test import TestCase, override_settings
 from django.urls import reverse
 
 from shop.models import CallbackRequest, NukeRequest, Order, PollinationRequest, Product, SlackMessage
-from shop.services import notifications, slack_events
+from shop.services import notifications, slack_events, slack_sync
 
 BOT_SETTINGS = dict(
     SLACK_BOT_TOKEN="xoxb-test",
@@ -192,9 +192,14 @@ class SlackEventsEndpointTests(TestCase):
 
     @contextmanager
     def _reactions(self, names):
-        """Patch the live reaction set and the confirmation reply."""
+        """Patch the live reaction set, the inbound confirmation reply, and the
+        outbound sync calls the post_save signal makes (chat.update / cue)."""
         with patch("shop.services.slack_events.get_message_reactions", return_value=names) as fetch, \
-             patch("shop.services.slack_events.post_thread_reply") as reply:
+             patch("shop.services.slack_events.post_thread_reply") as reply, \
+             patch("shop.services.slack_sync.update_message"), \
+             patch("shop.services.slack_sync.add_reaction"), \
+             patch("shop.services.slack_sync.remove_reaction"), \
+             patch("shop.services.slack_sync.post_thread_reply"):
             yield fetch, reply
 
     # --- signature / handshake -------------------------------------------------
@@ -299,6 +304,16 @@ class SlackEventsEndpointTests(TestCase):
         self.order.refresh_from_db()
         self.assertEqual(self.order.status, "pending")
 
+    @override_settings(SLACK_BOT_USER_ID="UBOT")
+    def test_bot_own_reaction_is_ignored(self):
+        # The bot's own cue reaction must not echo back through the resolver.
+        self._map_order()
+        with self._reactions(["package"]) as (fetch, _reply):
+            self._signed_post(self._event("package", "1700000000.000100", user="UBOT"))
+        fetch.assert_not_called()
+        self.order.refresh_from_db()
+        self.assertEqual(self.order.status, "pending")
+
     def test_idempotent_replay(self):
         self._map_order()
         with self._reactions(["white_check_mark"]):
@@ -327,3 +342,122 @@ class SlackEventsEndpointTests(TestCase):
             self._signed_post(self._event("telephone_receiver", "300.0001"))
         callback.refresh_from_db()
         self.assertEqual(callback.status, "contacted")
+
+
+@override_settings(**BOT_SETTINGS)
+class OutboundSyncTests(TestCase):
+    """sync_status_to_slack — reflecting Django-side status changes into Slack."""
+
+    def setUp(self):
+        self.product = Product.objects.create(
+            name="Wildflower Honey", description="d", price=Decimal("17.00"), size="Pint",
+        )
+        self.order = Order.objects.create(
+            first_name="Jane", last_name="Doe", email="jane@example.com", phone="(850) 555-1234",
+            address="1 Honey Ln", city="Tallahassee", state="FL", zip_code="32301",
+            product=self.product, quantity=2,
+        )
+        self.link = SlackMessage.record(channel="C123", ts="1.1", obj=self.order, text="orig body")
+
+    @contextmanager
+    def _slack(self):
+        with patch("shop.services.slack_sync.update_message") as upd, \
+             patch("shop.services.slack_sync.add_reaction") as add, \
+             patch("shop.services.slack_sync.remove_reaction") as rem, \
+             patch("shop.services.slack_sync.post_thread_reply") as reply:
+            yield upd, add, rem, reply
+
+    def test_admin_change_stamps_message_and_drives_cue(self):
+        self.order.status = "processing"  # in-memory; call sync directly
+        with self._slack() as (upd, add, rem, reply):
+            slack_sync.sync_status_to_slack(self.order, source=None)
+        text = upd.call_args.args[2]
+        self.assertIn("orig body", text)
+        self.assertIn("Processing", text)
+        add.assert_called_once_with("C123", "1.1", "package")
+        rem.assert_not_called()
+        reply.assert_called_once()
+        self.link.refresh_from_db()
+        self.assertEqual(self.link.bot_reaction, "package")
+
+    def test_slack_source_stamps_only_no_cue_no_note(self):
+        self.order.status = "processing"
+        with self._slack() as (upd, add, rem, reply):
+            slack_sync.sync_status_to_slack(self.order, source="slack")
+        upd.assert_called_once()
+        add.assert_not_called()
+        rem.assert_not_called()
+        reply.assert_not_called()
+
+    def test_advancing_moves_the_cue(self):
+        self.link.bot_reaction = "package"
+        self.link.save()
+        self.order.status = "completed"
+        with self._slack() as (_upd, add, rem, _reply):
+            slack_sync.sync_status_to_slack(self.order, source=None)
+        rem.assert_called_once_with("C123", "1.1", "package")
+        add.assert_called_once_with("C123", "1.1", "white_check_mark")
+        self.link.refresh_from_db()
+        self.assertEqual(self.link.bot_reaction, "white_check_mark")
+
+    def test_regression_to_pending_removes_cue_and_adds_nothing(self):
+        self.link.bot_reaction = "white_check_mark"
+        self.link.save()
+        self.order.status = "pending"
+        with self._slack() as (_upd, add, rem, _reply):
+            slack_sync.sync_status_to_slack(self.order, source=None)
+        rem.assert_called_once_with("C123", "1.1", "white_check_mark")
+        add.assert_not_called()
+        self.link.refresh_from_db()
+        self.assertEqual(self.link.bot_reaction, "")
+
+    def test_no_linked_message_is_a_noop(self):
+        other = Order.objects.create(
+            first_name="No", last_name="Link", email="n@l.com", phone="x",
+            address="a", city="c", state="FL", zip_code="1", product=self.product, quantity=1,
+        )
+        other.status = "completed"
+        with self._slack() as (upd, add, rem, reply):
+            slack_sync.sync_status_to_slack(other, source=None)
+        upd.assert_not_called()
+        add.assert_not_called()
+        reply.assert_not_called()
+
+
+@override_settings(**BOT_SETTINGS)
+class StatusChangeSignalTests(TestCase):
+    """The post_save signal should fire the sync exactly when status changes."""
+
+    def setUp(self):
+        self.product = Product.objects.create(
+            name="Wildflower Honey", description="d", price=Decimal("17.00"), size="Pint",
+        )
+
+    def _order(self):
+        return Order.objects.create(
+            first_name="Jane", last_name="Doe", email="jane@example.com", phone="(850) 555-1234",
+            address="1 Honey Ln", city="Tallahassee", state="FL", zip_code="32301",
+            product=self.product, quantity=2,
+        )
+
+    def test_create_does_not_sync(self):
+        with patch("shop.services.slack_sync.sync_status_to_slack") as sync:
+            self._order()
+        sync.assert_not_called()
+
+    def test_status_change_fires_sync(self):
+        order = self._order()
+        order = Order.objects.get(pk=order.pk)  # fresh load → post_init snapshots
+        with patch("shop.services.slack_sync.sync_status_to_slack") as sync:
+            order.status = "processing"
+            order.save()
+        sync.assert_called_once()
+        self.assertEqual(sync.call_args.kwargs.get("source"), None)
+
+    def test_non_status_save_does_not_sync(self):
+        order = self._order()
+        order = Order.objects.get(pk=order.pk)
+        with patch("shop.services.slack_sync.sync_status_to_slack") as sync:
+            order.notes = "called customer"
+            order.save()
+        sync.assert_not_called()

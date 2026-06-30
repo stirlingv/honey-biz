@@ -401,6 +401,12 @@ class SlackMessage(models.Model):
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     target = GenericForeignKey('content_type', 'object_id')
+    # Original notification body (no status line), so admin-driven changes can
+    # re-stamp the message via chat.update without accumulating status lines.
+    text = models.TextField(blank=True, default='')
+    # The single reaction the bot itself currently has on the message (its
+    # status "cue"), tracked so we can move it precisely as status changes.
+    bot_reaction = models.CharField(max_length=50, blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -411,11 +417,11 @@ class SlackMessage(models.Model):
         return f"SlackMessage({self.channel}/{self.ts} → {self.target})"
 
     @classmethod
-    def record(cls, channel, ts, obj):
+    def record(cls, channel, ts, obj, text=''):
         """Create/refresh the mapping for a posted message."""
         ct = ContentType.objects.get_for_model(obj.__class__)
         return cls.objects.update_or_create(
             channel=channel,
             ts=ts,
-            defaults={'content_type': ct, 'object_id': obj.pk},
+            defaults={'content_type': ct, 'object_id': obj.pk, 'text': text},
         )[0]

@@ -71,11 +71,67 @@ def post_message(text, link_to=None):
         try:
             from shop.models import SlackMessage
             SlackMessage.record(
-                channel=data.get("channel", channel), ts=data["ts"], obj=link_to
+                channel=data.get("channel", channel), ts=data["ts"], obj=link_to,
+                text=text,
             )
         except Exception:
             logger.exception("Failed to record Slack message mapping")
     return data.get("ts")
+
+
+def update_message(channel, ts, text):
+    """Edit a previously-posted notification (chat.update). Used to stamp the
+    authoritative status onto the message when it changes outside Slack. No-op
+    without a bot token."""
+    token = getattr(settings, 'SLACK_BOT_TOKEN', '')
+    if not (token and channel and ts):
+        return False
+    try:
+        response = requests.post(
+            "https://slack.com/api/chat.update",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"channel": channel, "ts": ts, "text": text},
+            timeout=5,
+        )
+        response.raise_for_status()
+        return response.json().get("ok", False)
+    except Exception as e:
+        logger.error(f"Failed to update Slack message: {e}")
+        return False
+
+
+def add_reaction(channel, ts, name):
+    """Add the bot's own reaction to a message (status cue). No-op without a
+    bot token; treats already_reacted as success."""
+    return _reaction_op("reactions.add", channel, ts, name, ok_errors={"already_reacted"})
+
+
+def remove_reaction(channel, ts, name):
+    """Remove the bot's own reaction from a message. No-op without a bot token;
+    treats no_reaction as success (nothing to remove)."""
+    return _reaction_op("reactions.remove", channel, ts, name, ok_errors={"no_reaction"})
+
+
+def _reaction_op(method, channel, ts, name, ok_errors=frozenset()):
+    token = getattr(settings, 'SLACK_BOT_TOKEN', '')
+    if not (token and channel and ts and name):
+        return False
+    try:
+        response = requests.post(
+            f"https://slack.com/api/{method}",
+            headers={"Authorization": f"Bearer {token}"},
+            json={"channel": channel, "timestamp": ts, "name": name},
+            timeout=5,
+        )
+        response.raise_for_status()
+        data = response.json()
+    except Exception as e:
+        logger.error(f"Failed Slack {method}: {e}")
+        return False
+    if data.get("ok") or data.get("error") in ok_errors:
+        return True
+    logger.error("Slack %s error: %s", method, data.get("error"))
+    return False
 
 
 def get_message_reactions(channel, ts):
