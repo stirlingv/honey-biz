@@ -275,4 +275,4 @@ def _parse_promo_date(value):
 
 
 PROMO_BANNER_START = _parse_promo_date(os.getenv('PROMO_BANNER_START', '2026-06-29'))
-PROMO_BANNER_END = _parse_promo_date(os.getenv('PROMO_BANNER_END', '2026-07-06'))
+PROMO_BANNER_END = _parse_promo_date(os.getenv('PROMO_BANNER_END', '2026-07-05'))

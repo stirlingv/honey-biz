@@ -24,6 +24,9 @@ class PromoBannerTests(TestCase):
             response = self.client.get(reverse('home'))
         self.assertContains(response, 'promo-bar')
         self.assertContains(response, '4th-of-july')
+        # The $2/jar discount offer must be advertised while the promo runs.
+        self.assertContains(response, '$2')
+        self.assertContains(response, 'July 5')
 
     def test_bar_shows_site_wide_during_window(self):
         with self._window(-1, 1):
