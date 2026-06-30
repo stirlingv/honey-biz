@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+from datetime import date
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -83,6 +84,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
+                'shop.context_processors.promo_banner',
             ],
         },
     },
@@ -256,3 +258,21 @@ SLACK_ALLOWED_REACTORS = [
 # =============================================================================
 
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
+
+# =============================================================================
+# Seasonal promo banner
+# =============================================================================
+# Date-gated so the promotion retires itself with no manual teardown: the banner
+# only renders while today is within [START, END] (inclusive). Override the
+# window with the env vars (YYYY-MM-DD); set PROMO_BANNER_END empty to disable.
+
+
+def _parse_promo_date(value):
+    try:
+        return date.fromisoformat(value) if value else None
+    except ValueError:
+        return None
+
+
+PROMO_BANNER_START = _parse_promo_date(os.getenv('PROMO_BANNER_START', '2026-06-29'))
+PROMO_BANNER_END = _parse_promo_date(os.getenv('PROMO_BANNER_END', '2026-07-06'))

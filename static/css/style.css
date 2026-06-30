@@ -1520,3 +1520,73 @@ footer {
     font-size: 0.85rem;
     color: #888;
 }
+
+/* ---- Seasonal promo (date-gated; see context_processors.promo_banner) ---- */
+.promo-bar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.6rem 1rem;
+    background: #0a2342;
+    color: #fff;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    border-bottom: 3px solid var(--honey-500);
+}
+
+.promo-bar strong {
+    color: var(--honey-300);
+}
+
+.promo-bar:hover {
+    background: #0c2b54;
+}
+
+.promo-feature {
+    padding: 3rem 0;
+    background: var(--cream-50);
+}
+
+.promo-feature .container {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.5rem;
+    align-items: center;
+}
+
+.promo-feature-image {
+    display: block;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+.promo-feature-image img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.promo-feature-text .hero-eyebrow {
+    color: var(--honey-700);
+}
+
+.promo-feature-text h2 {
+    margin: 0.25rem 0 1rem;
+}
+
+.promo-feature-text p {
+    color: var(--ink-500);
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+    .promo-feature .container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
