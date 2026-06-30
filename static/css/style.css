@@ -1590,3 +1590,28 @@ footer {
         gap: 1.5rem;
     }
 }
+
+.price-original {
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+    margin-right: 0.4rem;
+}
+
+.price-sale {
+    color: var(--honey-500);
+    font-weight: 700;
+}
+
+.promo-tag {
+    display: inline-block;
+    margin-left: 0.5rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    background: #b3261e;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    vertical-align: middle;
+}

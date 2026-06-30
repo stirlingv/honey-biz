@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 import os
 from datetime import date
+from decimal import Decimal
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -276,3 +277,7 @@ def _parse_promo_date(value):
 
 PROMO_BANNER_START = _parse_promo_date(os.getenv('PROMO_BANNER_START', '2026-06-29'))
 PROMO_BANNER_END = _parse_promo_date(os.getenv('PROMO_BANNER_END', '2026-07-05'))
+# Per-jar discount advertised during the promo. Display-only: the figure is
+# shown to customers and applied by hand on the QuickBooks invoice (the site
+# takes no online payment), so no stored order total is recomputed.
+PROMO_DISCOUNT_PER_JAR = Decimal(os.getenv('PROMO_DISCOUNT_PER_JAR', '2'))
