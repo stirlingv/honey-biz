@@ -128,6 +128,20 @@ To make changes to the website:
 
 After making changes, test locally before deploying.
 
+### Verifying Slack status sync (post-deploy)
+
+Slack two-way sync no-ops without credentials, so after setting `SLACK_BOT_TOKEN`,
+`SLACK_CHANNEL`, and `SLACK_BOT_USER_ID`, confirm it end-to-end against the live
+workspace:
+
+```
+python manage.py slack_smoke_test
+```
+
+This posts a throwaway order, advances it through its statuses, reads the
+message's reactions back from Slack to confirm the bot's status cue moves, then
+deletes its test rows. Add `--delete-slack` to also remove the test message.
+
 ## License
 
 Copyright © 2024 Bear Creek Apiaries & Honey LLC. All rights reserved.
