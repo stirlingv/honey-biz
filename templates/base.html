@@ -80,6 +80,13 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
+    {% if promo_active %}
+    <a class="promo-bar" href="{% url 'products' %}">
+        <span aria-hidden="true">🎆</span>
+        <span><strong>Happy 4th of July!</strong> Save $2 on every jar through July 5 — Shop Now →</span>
+        <span aria-hidden="true">🎇</span>
+    </a>
+    {% endif %}
     <header>
         <nav class="navbar">
             <div class="container">

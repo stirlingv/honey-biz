@@ -65,6 +65,10 @@ run the tests yourself.
   `shop/forms.py`); larger orders are routed to the callback flow.
 - "Please call" / "call for pricing" prompts should route to the callback
   request form so the business gets a Slack notification.
+- **Seasonal promotions** are date-gated and display-only — see
+  `docs/promotions.md` before adding/changing a sale. The promo retires itself
+  after `PROMO_BANNER_END`; the discount is shown on the site but applied by
+  hand on the QuickBooks invoice (no stored order total is recomputed).
 
 ## Handy commands
 

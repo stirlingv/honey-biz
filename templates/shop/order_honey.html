@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load promo_extras %}
 
 {% block title %}Order Local Honey in Tallahassee, FL | Bear Creek Apiaries{% endblock %}
 {% block meta_description %}Place an order for local raw honey in Tallahassee, FL. We will confirm availability, payment, and pickup or delivery details.{% endblock %}
@@ -82,7 +83,12 @@ async function initAddressAutocomplete() {
                     <div class="order-summary-info">
                         <span class="order-summary-eyebrow">You're ordering</span>
                         <h4>{{ selected_product.name }}</h4>
+                        {% if promo_active and promo_discount %}
+                        <p class="order-summary-meta">{{ selected_product.size }} · <span class="price-original">${{ selected_product.price|floatformat:"-2" }}</span> <span class="price-sale">${{ selected_product.price|sale_price:promo_discount|floatformat:"-2" }}</span> each <span style="color:#888; font-weight:400;">+ postage</span></p>
+                        <p class="order-summary-meta" style="color:#b3261e; font-weight:600;">🎆 ${{ promo_discount|floatformat:"-2" }}/jar 4th of July discount, applied on your invoice</p>
+                        {% else %}
                         <p class="order-summary-meta">{{ selected_product.size }} · ${{ selected_product.price }} each <span style="color:#888; font-weight:400;">+ postage</span></p>
+                        {% endif %}
                         <a href="{% url 'product_detail' selected_product.pk %}" class="order-summary-link">View product details →</a>
                     </div>
                 </div>

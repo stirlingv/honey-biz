@@ -6,6 +6,7 @@
 {% block og_description %}Browse our Tallahassee, FL local honey collection and order your favorite jar.{% endblock %}
 
 {% load static %}
+{% load promo_extras %}
 
 {% block content %}
 <section class="products">
@@ -27,7 +28,16 @@
                 <div class="product-info">
                     <h3>{{ product.name }}</h3>
                     <p class="size">{{ product.size }}</p>
+                    {% if promo_active and promo_discount %}
+                    <p class="price">
+                        <span class="price-original">${{ product.price|floatformat:"-2" }}</span>
+                        <span class="price-sale">${{ product.price|sale_price:promo_discount|floatformat:"-2" }}</span>
+                        <span class="promo-tag">${{ promo_discount|floatformat:"-2" }} off</span>
+                        <span style="font-size: 0.85rem; font-weight: 400; color: #888;">+ postage</span>
+                    </p>
+                    {% else %}
                     <p class="price">${{ product.price }} <span style="font-size: 0.85rem; font-weight: 400; color: #888;">+ postage</span></p>
+                    {% endif %}
                     <p>{{ product.description|truncatewords:30 }}</p>
                     <div class="product-card-actions">
                         <a href="{% url 'order_honey' %}?product={{ product.pk }}" class="btn">Order Now</a>
@@ -70,7 +80,16 @@
                 <div class="proof-card-body">
                     <h3>{{ p.name }}</h3>
                     <p>{{ p.description }}</p>
+                    {% if promo_active and promo_discount %}
+                    <p class="price" style="font-weight: 700; font-size: 1.2rem;">
+                        <span class="price-original">${{ p.price|floatformat:"-2" }}</span>
+                        <span class="price-sale">${{ p.price|sale_price:promo_discount|floatformat:"-2" }}</span>
+                        <span style="font-size: 0.9rem; font-weight: 600; color: #333;">each</span>
+                        <span class="promo-tag">${{ promo_discount|floatformat:"-2" }} off</span>
+                    </p>
+                    {% else %}
                     <p class="price" style="color: #f6a326; font-weight: 700; font-size: 1.2rem;">${{ p.price }} each</p>
+                    {% endif %}
                     <form method="get" action="{% url 'order_honey' %}" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
                         <input type="hidden" name="product" value="{{ p.pk }}">
                         <label style="font-weight: 600; color: #333;">Qty

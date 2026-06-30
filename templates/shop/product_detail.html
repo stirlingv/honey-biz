@@ -6,6 +6,7 @@
 {% block og_description %}{{ product.description|truncatewords:20 }}{% endblock %}
 
 {% load static %}
+{% load promo_extras %}
 
 {% block content %}
 <section class="product-detail">
@@ -20,7 +21,15 @@
                 <div class="product-detail-info">
                     <h1 class="product-detail-title">{{ product.name }}</h1>
                     <p class="product-detail-size">{{ product.size }}</p>
+                    {% if promo_active and promo_discount %}
+                    <p class="product-detail-price">
+                        <span class="price-original">${{ product.price|floatformat:"-2" }}</span>
+                        <span class="price-sale">${{ product.price|sale_price:promo_discount|floatformat:"-2" }}</span>
+                        <span class="promo-tag">${{ promo_discount|floatformat:"-2" }} off through July 5</span>
+                    </p>
+                    {% else %}
                     <p class="product-detail-price">${{ product.price }}</p>
+                    {% endif %}
 
                     <div class="product-detail-description">
                         <h3>Description</h3>

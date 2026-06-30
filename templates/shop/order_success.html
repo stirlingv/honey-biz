@@ -15,7 +15,15 @@
                 <span>{{ order.quantity }} × {{ order.product.name }} ({{ order.product.size }})</span>
                 <span>${{ order.total_price }}</span>
             </div>
+            {% if order_discount %}
+            <div class="order-confirmation-line" style="color: #b3261e; font-weight: 600;">
+                <span>🎆 4th of July discount</span>
+                <span>−${{ order_discount|floatformat:"-2" }}</span>
+            </div>
+            <p class="order-confirmation-note">Your holiday discount will be applied on the invoice we email you. Total shown is before postage.</p>
+            {% else %}
             <p class="order-confirmation-note">Total shown is before postage.</p>
+            {% endif %}
         </div>
         {% endif %}
 

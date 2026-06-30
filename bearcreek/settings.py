@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+from datetime import date
+from decimal import Decimal
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -83,6 +85,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django.template.context_processors.media',
+                'shop.context_processors.promo_banner',
             ],
         },
     },
@@ -256,3 +259,25 @@ SLACK_ALLOWED_REACTORS = [
 # =============================================================================
 
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
+
+# =============================================================================
+# Seasonal promo banner
+# =============================================================================
+# Date-gated so the promotion retires itself with no manual teardown: the banner
+# only renders while today is within [START, END] (inclusive). Override the
+# window with the env vars (YYYY-MM-DD); set PROMO_BANNER_END empty to disable.
+
+
+def _parse_promo_date(value):
+    try:
+        return date.fromisoformat(value) if value else None
+    except ValueError:
+        return None
+
+
+PROMO_BANNER_START = _parse_promo_date(os.getenv('PROMO_BANNER_START', '2026-06-29'))
+PROMO_BANNER_END = _parse_promo_date(os.getenv('PROMO_BANNER_END', '2026-07-05'))
+# Per-jar discount advertised during the promo. Display-only: the figure is
+# shown to customers and applied by hand on the QuickBooks invoice (the site
+# takes no online payment), so no stored order total is recomputed.
+PROMO_DISCOUNT_PER_JAR = Decimal(os.getenv('PROMO_DISCOUNT_PER_JAR', '2'))

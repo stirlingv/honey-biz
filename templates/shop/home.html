@@ -26,6 +26,22 @@
     </div>
 </section>
 
+{% if promo_active %}
+<section class="promo-feature">
+    <div class="container">
+        <a href="{% url 'products' %}" class="promo-feature-image" aria-label="Shop our raw local honey for the 4th of July">
+            <img src="{% static 'images/live_photos/4th-of-july.jpg' %}" alt="Happy 4th of July from Bear Creek Apiaries — raw local honey from our hives to your home">
+        </a>
+        <div class="promo-feature-text">
+            <span class="hero-eyebrow">Limited-Time Holiday Special</span>
+            <h2>Save $2 a Jar This 4th of July</h2>
+            <p>Take <strong>$2 off every jar</strong> on all orders through <strong>July 5</strong> — raw, local honey straight from our Gadsden County hives, perfect for cookouts, gatherings, and gifts. The discount is applied to your invoice.</p>
+            <a href="{% url 'products' %}" class="btn">Shop the Holiday Honey</a>
+        </div>
+    </div>
+</section>
+{% endif %}
+
 <section class="features">
     <div class="container">
         <h2>Why Choose Bear Creek Honey?</h2>

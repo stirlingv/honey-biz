@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
+from .context_processors import promo_is_active
 from .forms import (
     MAX_SELF_SERVE_QUANTITY,
     BeeRemovalRequestForm,
@@ -152,7 +153,16 @@ def order_success(request):
     """Order confirmation page showing what was just placed (no online payment)."""
     order_id = request.session.pop('completed_order_id', None)
     order = Order.objects.filter(pk=order_id).first() if order_id else None
-    return render(request, 'shop/order_success.html', {'order': order})
+    # Display-only: tell the customer the promo discount that will land on their
+    # invoice. The stored order total stays at list price; the invoice is the
+    # financial source of truth.
+    order_discount = None
+    if order and promo_is_active():
+        order_discount = order.quantity * settings.PROMO_DISCOUNT_PER_JAR
+    return render(request, 'shop/order_success.html', {
+        'order': order,
+        'order_discount': order_discount,
+    })
 
 
 def nuke_request(request):
