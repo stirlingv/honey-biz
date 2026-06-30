@@ -253,6 +253,9 @@ SLACK_CHANNEL = os.getenv('SLACK_CHANNEL', '')
 SLACK_ALLOWED_REACTORS = [
     u.strip() for u in os.getenv('SLACK_ALLOWED_REACTORS', '').split(',') if u.strip()
 ]
+# Bot's own Slack user ID (from auth.test). Inbound reaction events authored by
+# the bot — its status cue — are ignored so admin-driven changes don't echo back.
+SLACK_BOT_USER_ID = os.getenv('SLACK_BOT_USER_ID', '')
 
 # =============================================================================
 # Google Maps (Places Autocomplete on address fields)
