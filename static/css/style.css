@@ -345,6 +345,19 @@ header {
     gap: 2rem;
 }
 
+/* Four-tile variant (e.g. Tasting Notes): even 4-across on wide screens instead
+   of the auto-fit 3+1 that leaves a lone stretched card. Falls back to 2x2 on
+   tablets; the base 768px rule below collapses it to a single column on phones. */
+.feature-grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .feature-grid--4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 .feature-card {
     text-align: center;
     padding: 2rem;
