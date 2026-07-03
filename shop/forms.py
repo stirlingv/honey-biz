@@ -34,11 +34,21 @@ MAX_SELF_SERVE_QUANTITY = 24
 class OrderForm(ContactValidationMixin, forms.ModelForm):
     """Form for placing honey orders"""
 
+    # Address fields are only required when the order is being shipped/delivered;
+    # for local pickup we don't collect them.
+    ADDRESS_FIELDS = ('address', 'city', 'state', 'zip_code')
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         # Only offer products that are currently for sale; this stays in sync as
         # the catalog changes (retired items have in_stock=False).
         self.fields['product'].queryset = Product.objects.filter(in_stock=True)
+        # Conditionally required — enforced in clean() based on fulfillment choice.
+        for name in self.ADDRESS_FIELDS:
+            self.fields[name].required = False
+        # Default to delivery when unspecified (e.g. JS disabled) so existing
+        # callers keep working; the model default is 'delivery' too.
+        self.fields['fulfillment'].required = False
 
     def clean_quantity(self):
         quantity = self.cleaned_data.get('quantity')
@@ -49,11 +59,26 @@ class OrderForm(ContactValidationMixin, forms.ModelForm):
             )
         return quantity
 
+    def clean(self):
+        cleaned = super().clean()
+        # Missing fulfillment defaults to delivery (keeps the address requirement).
+        cleaned['fulfillment'] = cleaned.get('fulfillment') or 'delivery'
+        # A shipping address is only required when the order is being delivered.
+        if cleaned.get('fulfillment') != 'pickup':
+            for name in self.ADDRESS_FIELDS:
+                if not cleaned.get(name):
+                    self.add_error(
+                        name,
+                        'Required for delivery. Choose "Local pickup" above if '
+                        'you plan to pick your order up.',
+                    )
+        return cleaned
+
     class Meta:
         model = Order
         fields = [
             'first_name', 'last_name', 'email', 'phone', 'prefer_callback',
-            'address', 'city', 'state', 'zip_code',
+            'fulfillment', 'address', 'city', 'state', 'zip_code',
             'product', 'quantity', 'notes'
         ]
         widgets = {
@@ -61,6 +86,7 @@ class OrderForm(ContactValidationMixin, forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name', 'autocomplete': 'family-name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'your.email@example.com', 'autocomplete': 'email'}),
             'phone': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '(850) 555-1234', 'autocomplete': 'tel'}),
+            'fulfillment': forms.RadioSelect(),
             'prefer_callback': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '123 Main St', 'autocomplete': 'street-address'}),
             'city': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City', 'autocomplete': 'address-level2'}),

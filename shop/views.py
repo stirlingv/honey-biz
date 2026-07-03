@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
-from .context_processors import promo_is_active
+from .context_processors import promo_discount_per_jar, promo_is_active
 from .forms import (
     MAX_SELF_SERVE_QUANTITY,
     BeeRemovalRequestForm,
@@ -142,9 +142,18 @@ def order_honey(request):
                 initial['quantity'] = qty
         form = OrderForm(initial=initial)
 
+    # Prices for every orderable product, so the form can show a live running
+    # total as the customer changes product/quantity (display-only; the invoice
+    # remains the financial source of truth).
+    product_prices = {
+        str(p.pk): float(p.price)
+        for p in Product.objects.filter(in_stock=True)
+    }
     return render(request, 'shop/order_honey.html', {
         'form': form,
         'selected_product': selected_product,
+        'product_prices': json.dumps(product_prices),
+        'promo_discount_per_jar': float(promo_discount_per_jar()),
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
     })
 

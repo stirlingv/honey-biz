@@ -1615,3 +1615,53 @@ footer {
     letter-spacing: 0.02em;
     vertical-align: middle;
 }
+
+/* Live order total on the honey order form */
+.order-total {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    background: #fffaf2;
+    border: 1px solid #f3e6cc;
+    border-radius: 12px;
+    padding: 0.9rem 1.1rem;
+    margin-top: 1rem;
+}
+
+.order-total-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #b07a1e;
+}
+
+.order-total-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #3a2c14;
+}
+
+.order-total-note {
+    width: 100%;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* Pickup vs. delivery radio group */
+.fulfillment-choice ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.fulfillment-choice li label {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    font-weight: 500;
+}

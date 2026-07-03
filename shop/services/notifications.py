@@ -208,13 +208,18 @@ def send_admin_email(subject, message):
 
 def notify_new_order(order):
     callback_flag = "📞 *CALL BACK REQUESTED*\n" if order.prefer_callback else ""
+    fulfillment_line = (
+        "*Local pickup* — arrange a pickup time\n"
+        if order.is_pickup
+        else f"*Ship to:* {order.full_address}\n"
+    )
     post_message(
         f"🍯 *New Honey Order #{order.id}*\n"
         f"{callback_flag}"
         f"*Customer:* {order.first_name} {order.last_name}\n"
         f"*Phone:* {order.phone}   *Email:* {order.email}\n"
         f"*Product:* {order.product.name} ({order.product.size}) × {order.quantity} = *${order.total_price}*\n"
-        f"*Ship to:* {order.full_address}\n"
+        f"{fulfillment_line}"
         f"➡️ Send QuickBooks invoice to {order.email}",
         link_to=order,
     )
@@ -330,6 +335,6 @@ def _order_email_body(order):
         f"Prefers Callback: {'YES' if order.prefer_callback else 'No'}\n\n"
         f"Product: {order.product.name} ({order.product.size})\n"
         f"Quantity: {order.quantity}\nTotal: ${order.total_price}\n\n"
-        f"Ship to:\n{order.full_address}\n\n"
+        f"{'Fulfillment: Local pickup — arrange a pickup time' if order.is_pickup else 'Ship to:' + chr(10) + order.full_address}\n\n"
         f"Notes: {order.notes or 'None'}"
     )

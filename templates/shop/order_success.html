@@ -20,8 +20,8 @@
                 <span>🎆 4th of July discount</span>
                 <span>−${{ order_discount|floatformat:"-2" }}</span>
             </div>
-            <p class="order-confirmation-note">Your holiday discount will be applied on the invoice we email you. Total shown is before postage.</p>
-            {% else %}
+            <p class="order-confirmation-note">Your holiday discount will be applied on the invoice we email you.{% if not order.is_pickup %} Total shown is before postage.{% endif %}</p>
+            {% elif not order.is_pickup %}
             <p class="order-confirmation-note">Total shown is before postage.</p>
             {% endif %}
         </div>
@@ -30,7 +30,11 @@
         <p>
             Thank you for your order! We've received your request and will send you an invoice by email shortly.
             Once you receive the invoice, you can pay by check, cash, or however is most convenient.
-            We'll also be in touch to arrange delivery or pickup.
+            {% if order.is_pickup %}
+            We'll also text or call you to arrange a pickup time.
+            {% else %}
+            We'll also be in touch to arrange delivery.
+            {% endif %}
         </p>
         <div>
             <a href="{% url 'home' %}" class="btn" style="margin-right: 1rem;">Return Home</a>

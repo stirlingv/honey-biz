@@ -81,6 +81,71 @@ class OrderSubmissionTests(OrderBase):
         self.assertContains(resp, "Select Product")
 
 
+class FulfillmentTests(OrderBase):
+    """Local pickup vs. delivery: address is only required when delivering."""
+
+    @patch("shop.views.notify_new_order")
+    def test_pickup_order_valid_without_address(self, notify):
+        payload = self._payload(fulfillment="pickup")
+        for field in ("address", "city", "state", "zip_code"):
+            payload.pop(field)
+        resp = self.client.post(reverse("order_honey"), payload)
+
+        self.assertRedirects(resp, reverse("order_success"))
+        order = Order.objects.get()
+        self.assertTrue(order.is_pickup)
+        self.assertEqual(order.address, "")
+        notify.assert_called_once_with(order)
+
+    @patch("shop.views.notify_new_order")
+    def test_delivery_order_requires_address(self, notify):
+        payload = self._payload(fulfillment="delivery")
+        payload.pop("address")
+        resp = self.client.post(reverse("order_honey"), payload)
+
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(Order.objects.count(), 0)
+        self.assertContains(resp, "Required for delivery")
+        notify.assert_not_called()
+
+    @patch("shop.views.notify_new_order")
+    def test_missing_fulfillment_defaults_to_delivery(self, notify):
+        # No fulfillment field (e.g. JS disabled) still behaves as delivery.
+        resp = self.client.post(reverse("order_honey"), self._payload())
+        self.assertRedirects(resp, reverse("order_success"))
+        self.assertEqual(Order.objects.get().fulfillment, "delivery")
+
+    def test_pickup_notification_omits_shipping_address(self):
+        order = Order.objects.create(
+            first_name="Jane", last_name="Doe", email="jane@example.com",
+            phone="(850) 555-1234", fulfillment="pickup",
+            product=self.product, quantity=1, total_price=Decimal("17.00"),
+        )
+        self.assertEqual(order.full_address, "Local pickup — no shipping address")
+
+    def test_pickup_slack_message_flags_pickup(self):
+        from shop.services import notifications
+        order = Order.objects.create(
+            first_name="Jane", last_name="Doe", email="jane@example.com",
+            phone="(850) 555-1234", fulfillment="pickup",
+            product=self.product, quantity=1, total_price=Decimal("17.00"),
+        )
+        with patch.object(notifications, "post_message") as post:
+            notifications.notify_new_order(order)
+        text = post.call_args.args[0]
+        self.assertIn("Local pickup", text)
+        self.assertNotIn("Ship to:", text)
+
+    @patch("shop.views.notify_new_order")
+    def test_pickup_success_page_has_no_postage_note(self, notify):
+        payload = self._payload(fulfillment="pickup")
+        for field in ("address", "city", "state", "zip_code"):
+            payload.pop(field)
+        resp = self.client.post(reverse("order_honey"), payload, follow=True)
+        self.assertNotContains(resp, "before postage")
+        self.assertContains(resp, "arrange a pickup time")
+
+
 class OrderConfirmationTests(OrderBase):
     @patch("shop.views.notify_new_order")
     def test_success_page_shows_the_placed_order(self, notify):

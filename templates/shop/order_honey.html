@@ -60,6 +60,67 @@ async function initAddressAutocomplete() {
 </script>
 <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&loading=async&callback=initAddressAutocomplete" async defer></script>
 {% endif %}
+
+<script>
+(function () {
+    const prices = {{ product_prices|safe }};
+    const promoPerJar = {{ promo_discount_per_jar }};
+
+    const productField = document.getElementById('id_product');
+    const quantityField = document.getElementById('id_quantity');
+    const totalBox = document.getElementById('order-total');
+    const totalAmount = document.getElementById('order-total-amount');
+    const totalNote = document.getElementById('order-total-note');
+    const addressSection = document.getElementById('delivery-address-section');
+    const fulfillmentInputs = document.querySelectorAll('input[name="fulfillment"]');
+
+    function selectedFulfillment() {
+        const checked = document.querySelector('input[name="fulfillment"]:checked');
+        return checked ? checked.value : 'delivery';
+    }
+
+    function money(n) {
+        return '$' + n.toFixed(2);
+    }
+
+    function updateTotal() {
+        const price = prices[productField && productField.value];
+        const qty = parseInt(quantityField && quantityField.value, 10);
+        if (!price || !qty || qty < 1) {
+            totalBox.hidden = true;
+            return;
+        }
+        const gross = price * qty;
+        const discount = promoPerJar * qty;
+        const net = Math.max(gross - discount, 0);
+        totalAmount.textContent = money(net);
+        let note = '';
+        if (discount > 0) {
+            note = 'includes ' + money(discount) + ' promo discount (applied on your invoice) · ';
+        }
+        note += selectedFulfillment() === 'pickup' ? 'free local pickup' : '+ postage';
+        totalNote.textContent = note;
+        totalBox.hidden = false;
+    }
+
+    function updateAddressVisibility() {
+        if (!addressSection) return;
+        addressSection.hidden = selectedFulfillment() === 'pickup';
+    }
+
+    if (productField) productField.addEventListener('change', updateTotal);
+    if (quantityField) quantityField.addEventListener('input', updateTotal);
+    fulfillmentInputs.forEach(function (input) {
+        input.addEventListener('change', function () {
+            updateAddressVisibility();
+            updateTotal();
+        });
+    });
+
+    updateAddressVisibility();
+    updateTotal();
+})();
+</script>
 {% endblock %}
 
 {% block content %}
@@ -115,6 +176,12 @@ async function initAddressAutocomplete() {
                     <small class="helptext">Ordering more than 24? <a href="{% url 'callback_request' %}?interest=honey" style="color: #f6a326;">Request a callback</a> for bulk pricing.</small>
                 </div>
 
+                <div id="order-total" class="order-total" hidden>
+                    <span class="order-total-label">Estimated total</span>
+                    <span class="order-total-amount" id="order-total-amount"></span>
+                    <span class="order-total-note" id="order-total-note"></span>
+                </div>
+
                 <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Contact Information</h3>
                 <div class="form-row">
                     <div class="form-group">
@@ -160,38 +227,49 @@ async function initAddressAutocomplete() {
                     <small style="color: #666; display: block; margin-top: 0.25rem;">Check this if you'd like us to call you to discuss your order</small>
                 </div>
 
-                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Delivery Address</h3>
-                <div class="form-group">
-                    <label for="id_address">Street Address *</label>
-                    {{ form.address }}
-                    {% if form.address.errors %}
-                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.address.errors }}</div>
+                <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">How would you like to get it?</h3>
+                <div class="form-group fulfillment-choice">
+                    {{ form.fulfillment }}
+                    {% if form.fulfillment.errors %}
+                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.fulfillment.errors }}</div>
                     {% endif %}
+                    <small style="color: #666; display: block; margin-top: 0.5rem;">Local pickup is free in the Tallahassee area — we'll arrange a time when we confirm your order.</small>
                 </div>
 
-                <div class="form-row">
+                <div id="delivery-address-section">
+                    <h3 style="margin-top: 2rem; margin-bottom: 1rem; color: #f6a326;">Delivery Address</h3>
                     <div class="form-group">
-                        <label for="id_city">City *</label>
-                        {{ form.city }}
-                        {% if form.city.errors %}
-                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.city.errors }}</div>
+                        <label for="id_address">Street Address *</label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.address.errors }}</div>
                         {% endif %}
                     </div>
-                    <div class="form-group">
-                        <label for="id_state">State *</label>
-                        {{ form.state }}
-                        {% if form.state.errors %}
-                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.state.errors }}</div>
-                        {% endif %}
-                    </div>
-                </div>
 
-                <div class="form-group">
-                    <label for="id_zip_code">ZIP Code *</label>
-                    {{ form.zip_code }}
-                    {% if form.zip_code.errors %}
-                    <div style="color: #721c24; font-size: 0.9rem;">{{ form.zip_code.errors }}</div>
-                    {% endif %}
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="id_city">City *</label>
+                            {{ form.city }}
+                            {% if form.city.errors %}
+                            <div style="color: #721c24; font-size: 0.9rem;">{{ form.city.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_state">State *</label>
+                            {{ form.state }}
+                            {% if form.state.errors %}
+                            <div style="color: #721c24; font-size: 0.9rem;">{{ form.state.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_zip_code">ZIP Code *</label>
+                        {{ form.zip_code }}
+                        {% if form.zip_code.errors %}
+                        <div style="color: #721c24; font-size: 0.9rem;">{{ form.zip_code.errors }}</div>
+                        {% endif %}
+                    </div>
                 </div>
 
                 <div class="form-group">

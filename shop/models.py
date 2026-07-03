@@ -46,6 +46,11 @@ class Order(models.Model):
         ('cancelled', 'Cancelled'),
     ]
 
+    FULFILLMENT_CHOICES = [
+        ('delivery', 'Ship / Deliver'),
+        ('pickup', 'Local Pickup'),
+    ]
+
     # Customer Information
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
@@ -55,10 +60,17 @@ class Order(models.Model):
         default=False,
         help_text="Customer prefers a phone callback"
     )
-    address = models.TextField()
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=50)
-    zip_code = models.CharField(max_length=10)
+    fulfillment = models.CharField(
+        max_length=20,
+        choices=FULFILLMENT_CHOICES,
+        default='delivery',
+        help_text="Whether the customer wants the order shipped/delivered or will pick it up locally",
+    )
+    # Address is required for delivery; blank for local pickup (enforced in OrderForm).
+    address = models.TextField(blank=True)
+    city = models.CharField(max_length=100, blank=True)
+    state = models.CharField(max_length=50, blank=True)
+    zip_code = models.CharField(max_length=10, blank=True)
 
     # Order Information
     product = models.ForeignKey(Product, on_delete=models.PROTECT)
@@ -87,7 +99,13 @@ class Order(models.Model):
         return f"{self.first_name} {self.last_name}"
 
     @property
+    def is_pickup(self):
+        return self.fulfillment == 'pickup'
+
+    @property
     def full_address(self):
+        if self.is_pickup:
+            return "Local pickup — no shipping address"
         return f"{self.address}, {self.city}, {self.state} {self.zip_code}"
 
     def save(self, *args, **kwargs):
