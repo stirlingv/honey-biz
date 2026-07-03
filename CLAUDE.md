@@ -37,6 +37,11 @@ These rules are mandatory, not optional:
    fix, passes after).
 4. Keep tests fast and hermetic: mock external calls (Slack/email via
    `unittest.mock`), never hit the network, and rely on Django's test DB.
+   When mocking Slack, patch **`post_message`** (the real outbound seam) — not
+   the older `send_slack` helper, which the bot/`chat.postMessage` path skips,
+   so patching it would let a live message fire when a bot token is set. As a
+   backstop, `settings.TESTING` blanks all Slack credentials during the suite so
+   a forgotten mock is a no-op instead of a real post to `#new-orders`.
 
 The repo enforces this with gates (see below), but do not wait for the gate —
 run the tests yourself.

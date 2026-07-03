@@ -49,18 +49,30 @@ class OrderNotificationTests(TestCase):
         defaults.update(o)
         return Order.objects.create(**defaults)
 
+    # Patch post_message — the real outbound seam. notify_new_order routes
+    # through it (bot API or webhook); patching the older send_slack helper misses
+    # the bot path entirely and would fire a live message when a bot token is set.
     def test_order_message_includes_key_details(self):
         order = self._order()
-        with patch("shop.services.notifications.send_slack") as slack:
+        with patch("shop.services.notifications.post_message") as post:
             notifications.notify_new_order(order)
-        slack.assert_called_once()
-        msg = slack.call_args.args[0]
+        post.assert_called_once()
+        msg = post.call_args.args[0]
         self.assertIn(f"#{order.id}", msg)
         self.assertIn("Wildflower Honey", msg)
         self.assertNotIn("CALL BACK REQUESTED", msg)
 
     def test_callback_flag_appears_when_requested(self):
         order = self._order(prefer_callback=True)
-        with patch("shop.services.notifications.send_slack") as slack:
+        with patch("shop.services.notifications.post_message") as post:
             notifications.notify_new_order(order)
-        self.assertIn("CALL BACK REQUESTED", slack.call_args.args[0])
+        self.assertIn("CALL BACK REQUESTED", post.call_args.args[0])
+
+    def test_notification_without_mocks_never_hits_the_network(self):
+        # Safety net (settings.TESTING blanks Slack creds): an un-mocked
+        # notification must be a no-op, not a live post to the real #new-orders
+        # channel. Guards against a forgotten mock leaking to Slack again.
+        order = self._order()
+        with patch("shop.services.notifications.requests.post") as post:
+            notifications.notify_new_order(order)
+        post.assert_not_called()

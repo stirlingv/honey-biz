@@ -11,8 +11,13 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import os
+import sys
 from datetime import date
 from decimal import Decimal
+
+# True while running the test suite (`manage.py test`). Used to keep tests
+# hermetic — see the Slack safety net below.
+TESTING = 'test' in sys.argv
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -256,6 +261,19 @@ SLACK_ALLOWED_REACTORS = [
 # Bot's own Slack user ID (from auth.test). Inbound reaction events authored by
 # the bot — its status cue — are ignored so admin-driven changes don't echo back.
 SLACK_BOT_USER_ID = os.getenv('SLACK_BOT_USER_ID', '')
+
+# Safety net: never touch the real Slack workspace during the test suite, even
+# if an individual test forgets to mock an outbound call. A developer's local
+# .env may have live Slack credentials; blanking them here means an unmocked
+# notify_*/post_message becomes a no-op instead of posting to #new-orders.
+# Tests that exercise the "configured" bot path opt back in explicitly with
+# override_settings(SLACK_BOT_TOKEN=..., SLACK_CHANNEL=...) AND mock requests.
+if TESTING:
+    SLACK_WEBHOOK_URL = ''
+    SLACK_BOT_TOKEN = ''
+    SLACK_CHANNEL = ''
+    SLACK_SIGNING_SECRET = ''
+    SLACK_BOT_USER_ID = ''
 
 # =============================================================================
 # Google Maps (Places Autocomplete on address fields)
