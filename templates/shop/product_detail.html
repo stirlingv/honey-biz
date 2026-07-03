@@ -8,6 +8,10 @@
 {% load static %}
 {% load promo_extras %}
 
+{% block structured_data %}
+<script type="application/ld+json">{{ product_jsonld|safe }}</script>
+{% endblock %}
+
 {% block content %}
 <section class="product-detail">
     <div class="container">

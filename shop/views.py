@@ -31,6 +31,7 @@ from .services.notifications import (
     notify_new_order,
     notify_new_pollination_request,
 )
+from .services.structured_data import merchant_feed_items, product_jsonld
 
 logger = logging.getLogger(__name__)
 
@@ -95,8 +96,11 @@ def products(request):
 def product_detail(request, pk):
     """Individual product detail page"""
     product = get_object_or_404(Product, pk=pk)
+    base_url = request.build_absolute_uri('/')
+    jsonld = product_jsonld(product, base_url, promo_discount_per_jar())
     return render(request, 'shop/product_detail.html', {
-        'product': product
+        'product': product,
+        'product_jsonld': json.dumps(jsonld),
     })
 
 
@@ -311,3 +315,33 @@ def robots_txt(request):
         f"Sitemap: {sitemap_url}",
     ]
     return HttpResponse("\n".join(lines), content_type="text/plain")
+
+
+def review_card(request):
+    """Printable QR card linking to the Google review page.
+
+    A shareable, always-available URL (unlike a local file) so the family can
+    open it on any device, print it for the market, or link it directly. The QR
+    image encodes ``GOOGLE_REVIEW_URL``.
+    """
+    return render(request, 'shop/review.html', {
+        'review_url': settings.GOOGLE_REVIEW_URL,
+    })
+
+
+def product_feed(request):
+    """Google Merchant Center product feed (RSS 2.0 + g: namespace).
+
+    Submit this URL as a scheduled feed in Merchant Center to get free product
+    listings in Google Shopping. It reflects the live in-stock catalog, so it
+    stays current on its own.
+    """
+    base_url = request.build_absolute_uri('/')
+    products = Product.objects.filter(in_stock=True)
+    items = merchant_feed_items(products, base_url, promo_discount_per_jar())
+    return render(
+        request,
+        'shop/product_feed.xml',
+        {'items': items, 'site_url': base_url.rstrip('/')},
+        content_type='application/xml',
+    )

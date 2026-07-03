@@ -263,6 +263,14 @@ SLACK_BOT_USER_ID = os.getenv('SLACK_BOT_USER_ID', '')
 
 GOOGLE_MAPS_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY', '')
 
+# Direct "write a review" link from the Google Business Profile. The printable
+# review card (/review) shows this link and a QR code of it — if this changes,
+# regenerate static/images/review-qr.png so the QR still matches (see
+# docs/growth.md).
+GOOGLE_REVIEW_URL = os.getenv(
+    'GOOGLE_REVIEW_URL', 'https://g.page/r/CQ-7t1bWFz5NEBM/review'
+)
+
 # =============================================================================
 # Seasonal promo banner
 # =============================================================================
