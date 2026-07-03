@@ -13,6 +13,9 @@ on Render; SQLite database.
 - App code: `shop/` (models, views, forms, admin, services, sitemaps).
 - Project config: `bearcreek/`.
 - Templates: `templates/shop/`; static assets: `static/`.
+- **How orders work end to end:** see `docs/order-runbook.md` (read it before
+  changing any ordering/fulfillment/notification logic, and update it when you
+  do). `docs/growth.md` covers SEO/feed + ordering-UX features.
 - Product/order inventory lives in the **gitignored** SQLite DB. Seed/changes
   for production go through a **data migration** (see
   `shop/migrations/0011_seed_live_catalog.py`), not manual prod edits.
