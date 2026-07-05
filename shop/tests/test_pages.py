@@ -54,12 +54,16 @@ class StaticPageSmokeTests(TestCase):
         self.assertEqual(resp.status_code, 200)
 
     def test_og_image_is_absolute_url(self):
-        """Open Graph requires an absolute og:image URL or Facebook rejects it."""
+        """Open Graph requires an absolute og:image URL or Facebook rejects it.
+
+        The default is a real photo (the market-stand hero), not the app icon,
+        so shared links get a proper preview image.
+        """
         resp = self.client.get(reverse("home"))
         html = resp.content.decode()
         self.assertIn(
             '<meta property="og:image" content="http://testserver'
-            '/static/images/favicon_io/android-chrome-512x512.png">',
+            '/static/images/live_photos/hero-honey-stand.jpg">',
             html,
         )
 

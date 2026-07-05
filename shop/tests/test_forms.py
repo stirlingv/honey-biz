@@ -3,6 +3,7 @@
 from decimal import Decimal
 
 from django.test import TestCase
+from django.urls import reverse
 
 from shop.forms import MAX_SELF_SERVE_QUANTITY, CallbackRequestForm, OrderForm
 from shop.models import Product
@@ -81,3 +82,9 @@ class OrderProductChoiceTests(TestCase):
         })
         self.assertFalse(form.is_valid())
         self.assertIn("product", form.errors)
+
+    def test_picker_empty_choice_is_a_friendly_prompt(self):
+        # Customers landing on /order/ directly (no product preselected) should
+        # see "Choose your honey…" instead of Django's default "---------".
+        self.assertEqual(OrderForm().fields["product"].empty_label, "Choose your honey…")
+        self.assertContains(self.client.get(reverse("order_honey")), "Choose your honey…")

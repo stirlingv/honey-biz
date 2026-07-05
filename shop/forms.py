@@ -43,6 +43,9 @@ class OrderForm(ContactValidationMixin, forms.ModelForm):
         # Only offer products that are currently for sale; this stays in sync as
         # the catalog changes (retired items have in_stock=False).
         self.fields['product'].queryset = Product.objects.filter(in_stock=True)
+        # Friendlier than Django's default "---------" for customers who land
+        # on /order/ directly without picking a product first.
+        self.fields['product'].empty_label = 'Choose your honey…'
         # Conditionally required — enforced in clean() based on fulfillment choice.
         for name in self.ADDRESS_FIELDS:
             self.fields[name].required = False

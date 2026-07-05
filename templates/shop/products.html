@@ -23,7 +23,7 @@
             {% for product in products %}
             <div class="product-card">
                 <div class="product-image">
-                    {% include 'shop/_product_image.html' with product=product %}
+                    {% include 'shop/_product_image.html' with product=product lazy=True %}
                 </div>
                 <div class="product-info">
                     <h3>{{ product.name }}</h3>
@@ -73,9 +73,9 @@
             {% for p in gift_products %}
             <div class="proof-card">
                 {% if 'Holiday' in p.name %}
-                <img src="{% static 'images/live_photos/mini-jar-holidays.jpeg' %}" alt="Mini holiday honey jars from Bear Creek Apiaries">
+                <img src="{% static 'images/live_photos/mini-jar-holidays.jpeg' %}" alt="Mini holiday honey jars from Bear Creek Apiaries" loading="lazy" decoding="async">
                 {% else %}
-                <img src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="Mini honey favor jars from Bear Creek Apiaries">
+                <img src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="Mini honey favor jars from Bear Creek Apiaries" loading="lazy" decoding="async">
                 {% endif %}
                 <div class="proof-card-body">
                     <h3>{{ p.name }}</h3>
