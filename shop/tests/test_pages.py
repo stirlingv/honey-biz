@@ -29,6 +29,14 @@ class StaticPageSmokeTests(TestCase):
             self.assertContains(resp, label)
         self.assertContains(resp, f'href="{reverse("products")}"')
 
+    def test_home_hero_photo_also_renders_inline_for_mobile(self):
+        # The wide market-stand photo is a full-bleed background on desktop but
+        # is also rendered as a framed <img> (shown on mobile via CSS) so phones
+        # get the whole photo instead of an awkward vertical crop.
+        resp = self.client.get(reverse("home"))
+        self.assertContains(resp, 'class="hero-photo-inline"')
+        self.assertContains(resp, "images/live_photos/hero-honey-stand.jpg")
+
     def test_product_cards_offer_order_now_and_learn_more(self):
         # Seeded honey products give each card a primary order link and a
         # secondary details link.

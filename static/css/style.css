@@ -302,6 +302,13 @@ header {
     backdrop-filter: blur(3px);
 }
 
+/* The wide market-stand photo reads well as a full-bleed background on
+   desktop; on mobile it is shown as a framed image (see the mobile media
+   query) so it is never cropped to an awkward vertical strip. */
+.hero-photo-inline {
+    display: none;
+}
+
 .btn {
     display: inline-block;
     padding: 1rem 2rem;
@@ -998,9 +1005,28 @@ footer {
     }
 
     .hero {
-        min-height: 420px;
+        min-height: 0;
         text-align: left;
-        padding: 3rem 0;
+        padding: 2.5rem 0 3rem;
+    }
+
+    /* A landscape photo can't be cropped to a tall phone screen without
+       slicing the banner and centering on a headless torso. On mobile we
+       drop the full-bleed crop for a clean honey gradient behind legible
+       text, then show the photo uncropped below (.hero-photo-inline).
+       !important overrides the inline background-image set in the template. */
+    .hero-photo {
+        background-image:
+            linear-gradient(135deg, #3a2408 0%, #6b4512 55%, #8a5a12 100%) !important;
+    }
+
+    .hero-photo-inline {
+        display: block;
+        width: 100%;
+        height: auto;
+        margin-top: 1.75rem;
+        border-radius: 14px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
     }
 
     .hero-logo {
