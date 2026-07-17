@@ -74,6 +74,7 @@
             
             <form method="post">
                 {% csrf_token %}
+                {% include 'shop/_anti_spam_fields.html' %}
                 
                 <h3 style="margin-bottom: 1rem; color: #f6a326;">Contact Information</h3>
                 <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">

@@ -118,6 +118,30 @@ Nudges the family about orders still `pending`: unacknowledged orders older than
 (`acknowledged_at`, set from the admin). Sends via `notify_order_reminder` and
 stamps `reminder_sent_at` so it doesn't repeat. Intended to run on a schedule.
 
+## Spam protection (all public submission forms)
+
+Every public form — orders, callbacks, nuc/pollination/bee-removal requests —
+mixes in `AntiSpamMixin` (`shop/forms.py`) to keep scripted spam out of Slack.
+Two low-friction, no-CAPTCHA traps, both invisible to real visitors:
+
+- **Honeypot** — a hidden `website` field (rendered off-screen by
+  `templates/shop/_anti_spam_fields.html`) that must stay empty. Bots fill every
+  field, so any content here fails validation.
+- **Submission timing** — a signed `loaded_at` render timestamp. A submission
+  that arrives less than `MIN_FORM_FILL_SECONDS` (2s) after the page rendered is
+  treated as scripted.
+
+Both **fail open** when their signal is absent (missing/tampered/expired token),
+so a genuine submission is never silently dropped; the honeypot is the always-on
+backstop. When a trap fires the form is invalid — the record is **not** saved and
+**no** Slack/email notification fires — exactly like any other validation error.
+The include also renders `form.non_field_errors`, so a rejection shows a message
+rather than failing silently. Tests: `shop/tests/test_antispam.py`.
+
+If you add a new public form, inherit `AntiSpamMixin` **and** `{% include
+'shop/_anti_spam_fields.html' %}` right after `{% csrf_token %}`, or it gets no
+protection.
+
 ## Where things live
 
 - Views: `shop/views.py` · Forms: `shop/forms.py` · Model: `shop/models.py`

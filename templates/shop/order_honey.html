@@ -134,6 +134,7 @@ async function initAddressAutocomplete() {
 
             <form method="post">
                 {% csrf_token %}
+                {% include 'shop/_anti_spam_fields.html' %}
 
                 <h3 style="margin-bottom: 1rem; color: #f6a326;">Your Order</h3>
                 {% if selected_product %}

@@ -1,0 +1,18 @@
+{% comment %}
+Anti-spam controls shared by every public submission form. Include this right
+after {% csrf_token %} inside the <form>. It renders:
+  * any non-field errors (so a rejected submission is never a silent failure),
+  * a honeypot text field hidden off-screen from real visitors, and
+  * the signed render-timestamp used for the submission-timing check.
+See shop/forms.py:AntiSpamMixin.
+{% endcomment %}
+{% if form.non_field_errors %}
+<div class="form-errors" role="alert" style="color:#721c24; background:#f8d7da; border:1px solid #f5c6cb; padding:0.75rem 1rem; border-radius:6px; margin-bottom:1.5rem;">
+    {{ form.non_field_errors }}
+</div>
+{% endif %}
+<div aria-hidden="true" style="position:absolute; left:-9999px; top:-9999px; width:1px; height:1px; overflow:hidden;">
+    <label for="{{ form.website.id_for_label }}">Website</label>
+    {{ form.website }}
+</div>
+{{ form.loaded_at }}

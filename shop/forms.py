@@ -1,9 +1,25 @@
 import re
+import time
 
 from django import forms
+from django.core import signing
 from django.core.exceptions import ValidationError
 
 from .models import BeeRemovalRequest, CallbackRequest, NukeRequest, Order, PollinationRequest, Product
+
+# --- Anti-spam (honeypot + submission timing) -------------------------------
+# A hidden field real visitors never see; automated spam bots fill every input,
+# so any content here marks the submission as a bot.
+HONEYPOT_FIELD = 'website'
+# Signed render timestamp, so we can tell how long the form was on screen.
+FORM_TIMESTAMP_FIELD = 'loaded_at'
+_TIMESTAMP_SALT = 'shop.forms.anti-spam'
+# Even with autofill, a human needs a moment to land on the page and submit;
+# a form that comes back faster than this is almost certainly scripted.
+MIN_FORM_FILL_SECONDS = 2.0
+# Ignore timestamps older than this (form left open in a tab): fail open rather
+# than punish someone who came back to finish later.
+MAX_FORM_AGE_SECONDS = 60 * 60 * 12
 
 
 def _normalize_phone(value):
@@ -16,6 +32,63 @@ def _normalize_phone(value):
             'Please enter a valid 10-digit US phone number, e.g. (850) 555-1234.'
         )
     return f'({digits[:3]}) {digits[3:6]}-{digits[6:]}'
+
+
+class AntiSpamMixin:
+    """Honeypot + submission-timing trap shared by every public-facing form.
+
+    Two low-friction, no-CAPTCHA defenses that automated spam bots trip on but
+    real visitors never notice:
+
+    * a hidden ``website`` field that must stay empty (bots fill every field);
+    * a signed render timestamp — a submission that arrives implausibly fast
+      after the page loaded is almost certainly scripted.
+
+    Both fail *open* when their signal is absent (no token, tampered token,
+    expired token) so a genuine submission is never silently dropped; the
+    honeypot is the always-on backstop. When a check does fire, the submission
+    is rejected as invalid, so it is neither saved nor sent to Slack.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields[HONEYPOT_FIELD] = forms.CharField(
+            required=False,
+            label='Website',
+            widget=forms.TextInput(attrs={'tabindex': '-1', 'autocomplete': 'off'}),
+        )
+        self.fields[FORM_TIMESTAMP_FIELD] = forms.CharField(
+            required=False,
+            widget=forms.HiddenInput(),
+        )
+        if not self.is_bound:
+            self.fields[FORM_TIMESTAMP_FIELD].initial = signing.dumps(
+                time.time(), salt=_TIMESTAMP_SALT
+            )
+
+    def clean(self):
+        cleaned = super().clean()
+        # Honeypot: content in a field humans can't see means a bot filled it.
+        if (cleaned.get(HONEYPOT_FIELD) or '').strip():
+            raise ValidationError(
+                'Your submission could not be processed. Please try again.'
+            )
+        # Timing: reject only when a valid token proves the form was submitted
+        # faster than a person could. Missing/tampered/expired tokens fail open.
+        token = self.data.get(FORM_TIMESTAMP_FIELD) if self.is_bound else None
+        if token:
+            try:
+                loaded_at = signing.loads(
+                    token, salt=_TIMESTAMP_SALT, max_age=MAX_FORM_AGE_SECONDS
+                )
+                elapsed = time.time() - float(loaded_at)
+            except (signing.BadSignature, signing.SignatureExpired, TypeError, ValueError):
+                elapsed = None
+            if elapsed is not None and elapsed < MIN_FORM_FILL_SECONDS:
+                raise ValidationError(
+                    'Your submission came through too quickly. Please try again.'
+                )
+        return cleaned
 
 
 class ContactValidationMixin:
@@ -31,7 +104,7 @@ class ContactValidationMixin:
 MAX_SELF_SERVE_QUANTITY = 24
 
 
-class OrderForm(ContactValidationMixin, forms.ModelForm):
+class OrderForm(AntiSpamMixin, ContactValidationMixin, forms.ModelForm):
     """Form for placing honey orders"""
 
     # Address fields are only required when the order is being shipped/delivered;
@@ -101,7 +174,7 @@ class OrderForm(ContactValidationMixin, forms.ModelForm):
         }
 
 
-class NukeRequestForm(ContactValidationMixin, forms.ModelForm):
+class NukeRequestForm(AntiSpamMixin, ContactValidationMixin, forms.ModelForm):
     """Form for submitting nuc (bee starter kit) requests"""
     class Meta:
         model = NukeRequest
@@ -127,7 +200,7 @@ class NukeRequestForm(ContactValidationMixin, forms.ModelForm):
         }
 
 
-class PollinationRequestForm(ContactValidationMixin, forms.ModelForm):
+class PollinationRequestForm(AntiSpamMixin, ContactValidationMixin, forms.ModelForm):
     """Form for submitting pollination service requests"""
     class Meta:
         model = PollinationRequest
@@ -157,7 +230,7 @@ class PollinationRequestForm(ContactValidationMixin, forms.ModelForm):
         }
 
 
-class BeeRemovalRequestForm(ContactValidationMixin, forms.ModelForm):
+class BeeRemovalRequestForm(AntiSpamMixin, ContactValidationMixin, forms.ModelForm):
     """Form for submitting bee removal/relocation requests"""
     class Meta:
         model = BeeRemovalRequest
@@ -191,7 +264,7 @@ class BeeRemovalRequestForm(ContactValidationMixin, forms.ModelForm):
         }
 
 
-class CallbackRequestForm(ContactValidationMixin, forms.ModelForm):
+class CallbackRequestForm(AntiSpamMixin, ContactValidationMixin, forms.ModelForm):
     """Simple form for requesting a callback"""
     class Meta:
         model = CallbackRequest
