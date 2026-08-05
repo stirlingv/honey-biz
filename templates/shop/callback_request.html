@@ -13,6 +13,7 @@
             
             <form method="post">
                 {% csrf_token %}
+                {% include 'shop/_anti_spam_fields.html' %}
                 
                 <div class="form-group" style="margin-bottom: 1.5rem;">
                     <label for="id_name" style="display: block; margin-bottom: 0.5rem; font-weight: 600;">Your Name *</label>
