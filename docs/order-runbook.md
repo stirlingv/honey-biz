@@ -83,6 +83,15 @@ status).
   See `docs/promotions.md`.
 - **Postage** is not stored or calculated. Delivery orders show "before
   postage" and it's added by hand on the invoice; pickup orders show no postage.
+- **Free shipping on large gift jar orders.** A delivered order of
+  `FREE_SHIPPING_MIN_QUANTITY` (24, in `shop/models.py`) or more of a
+  `category='gift'` product ships free (`Order.ships_free`). Full-size honey
+  never qualifies. Because the self-serve cap is also 24, an online order
+  qualifies at exactly 24; bigger orders go through the callback flow and are
+  quoted by hand. The gift section, the "24" quantity option, the order
+  summary, the live total, and the confirmation page all say so, and the Slack
+  alert/admin email carry a **FREE SHIPPING** flag so postage is left off the
+  invoice. Like the promo, nothing stored changes — it's applied by hand.
 - The order form shows a **live running total** (JS) as product/quantity change,
   including the promo discount — purely informational.
 
@@ -94,6 +103,8 @@ status).
   either **"Ship to: <address>"** (delivery) or **"Local pickup — arrange a
   pickup time"** (pickup), plus a nudge to send the QuickBooks invoice.
 - A `📞 CALL BACK REQUESTED` flag appears when `prefer_callback` is set.
+- A `🚚 FREE SHIPPING — don't add postage to the invoice` line appears when
+  `order.ships_free` (see Pricing above).
 
 ### 5. Status tracking via Slack reactions (`shop/services/slack_events.py`)
 The family drives status by adding emoji **reactions** to the order's Slack

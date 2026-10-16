@@ -65,6 +65,8 @@ async function initAddressAutocomplete() {
 (function () {
     const prices = {{ product_prices|safe }};
     const promoPerJar = {{ promo_discount_per_jar }};
+    const freeShippingProducts = {{ free_shipping_products|safe }};
+    const freeShippingMin = {{ free_shipping_min }};
 
     const productField = document.getElementById('id_product');
     const quantityField = document.getElementById('id_quantity');
@@ -98,7 +100,15 @@ async function initAddressAutocomplete() {
         if (discount > 0) {
             note = 'includes ' + money(discount) + ' promo discount (applied on your invoice) · ';
         }
-        note += selectedFulfillment() === 'pickup' ? 'free local pickup' : '+ postage';
+        if (selectedFulfillment() === 'pickup') {
+            note += 'free local pickup';
+        } else if (freeShippingProducts.indexOf(productField.value) === -1) {
+            note += '+ postage';
+        } else if (qty >= freeShippingMin) {
+            note += '🚚 free shipping';
+        } else {
+            note += '+ postage · free shipping at ' + freeShippingMin + ' jars';
+        }
         totalNote.textContent = note;
         totalBox.hidden = false;
     }
@@ -150,6 +160,9 @@ async function initAddressAutocomplete() {
                         <p class="order-summary-meta" style="color:#b3261e; font-weight:600;">🎆 ${{ promo_discount|floatformat:"-2" }}/jar 4th of July discount, applied on your invoice</p>
                         {% else %}
                         <p class="order-summary-meta">{{ selected_product.size }} · ${{ selected_product.price }} each <span style="color:#888; font-weight:400;">+ postage</span></p>
+                        {% endif %}
+                        {% if selected_product.offers_free_shipping %}
+                        <p class="order-summary-meta free-shipping-note">🚚 Free shipping on {{ free_shipping_min }}+ jars</p>
                         {% endif %}
                         <a href="{% url 'product_detail' selected_product.pk %}" class="order-summary-link">View product details →</a>
                     </div>

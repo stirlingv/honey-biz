@@ -19,6 +19,7 @@ from .forms import (
     PollinationRequestForm,
 )
 from .models import (
+    FREE_SHIPPING_MIN_QUANTITY,
     CallbackRequest,
     Order,
     Product,
@@ -83,13 +84,34 @@ def terms_of_service(request):
     return render(request, 'shop/terms.html')
 
 
+# Example custom jars shown in the swipeable gallery above the gift jar order
+# cards. To add a photo: drop it in static/images/live_photos/ (resized to
+# ~1200px on the long side) and add an entry here.
+GIFT_JAR_GALLERY = [
+    {'image': 'images/live_photos/mini-jar-blue-ribbon.jpg',
+     'alt': 'Honey jar with a gold lid, custom printed lid label, blue satin bow, and wooden honey dipper',
+     'caption': 'Custom lid label & ribbon color'},
+    {'image': 'images/live_photos/mini-jar-wedding.jpeg',
+     'alt': 'Mini honey favor jar wrapped in burlap with a pink ribbon, dried flowers, and honey dipper',
+     'caption': 'Burlap & pink ribbon wedding favor'},
+    {'image': 'images/live_photos/tiny_honey_ornaments2.jpg',
+     'alt': 'Mini honey jar with a burlap top, black ribbon, pink dried flowers, and honey dipper',
+     'caption': 'Burlap & black ribbon with dried flowers'},
+    {'image': 'images/live_photos/mini-jar-holidays.jpeg',
+     'alt': 'Two mini holiday honey jars with red plaid bows, holly, gold bells, and honey dippers',
+     'caption': 'Holiday jars with bows & bells'},
+]
+
+
 def products(request):
     """Products listing page"""
     return render(request, 'shop/products.html', {
         'products': Product.objects.filter(in_stock=True, category='honey'),
         'gift_products': Product.objects.filter(in_stock=True, category='gift').order_by('name'),
+        'gift_gallery': GIFT_JAR_GALLERY,
         'gift_quantity_range': range(1, MAX_SELF_SERVE_QUANTITY + 1),
         'gift_max_quantity': MAX_SELF_SERVE_QUANTITY,
+        'free_shipping_min': FREE_SHIPPING_MIN_QUANTITY,
     })
 
 
@@ -149,14 +171,15 @@ def order_honey(request):
     # Prices for every orderable product, so the form can show a live running
     # total as the customer changes product/quantity (display-only; the invoice
     # remains the financial source of truth).
-    product_prices = {
-        str(p.pk): float(p.price)
-        for p in Product.objects.filter(in_stock=True)
-    }
+    orderable = list(Product.objects.filter(in_stock=True))
+    product_prices = {str(p.pk): float(p.price) for p in orderable}
+    free_shipping_products = [str(p.pk) for p in orderable if p.offers_free_shipping]
     return render(request, 'shop/order_honey.html', {
         'form': form,
         'selected_product': selected_product,
         'product_prices': json.dumps(product_prices),
+        'free_shipping_products': json.dumps(free_shipping_products),
+        'free_shipping_min': FREE_SHIPPING_MIN_QUANTITY,
         'promo_discount_per_jar': float(promo_discount_per_jar()),
         'google_maps_api_key': settings.GOOGLE_MAPS_API_KEY,
     })
