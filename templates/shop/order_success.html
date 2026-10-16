@@ -20,7 +20,9 @@
                 <span>🎆 4th of July discount</span>
                 <span>−${{ order_discount|floatformat:"-2" }}</span>
             </div>
-            <p class="order-confirmation-note">Your holiday discount will be applied on the invoice we email you.{% if not order.is_pickup %} Total shown is before postage.{% endif %}</p>
+            <p class="order-confirmation-note">Your holiday discount will be applied on the invoice we email you.{% if order.ships_free %} 🚚 Your order ships free.{% elif not order.is_pickup %} Total shown is before postage.{% endif %}</p>
+            {% elif order.ships_free %}
+            <p class="order-confirmation-note">🚚 Your order ships free — no postage will be added.</p>
             {% elif not order.is_pickup %}
             <p class="order-confirmation-note">Total shown is before postage.</p>
             {% endif %}

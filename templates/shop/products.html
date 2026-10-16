@@ -8,6 +8,63 @@
 {% load static %}
 {% load promo_extras %}
 
+{% block extra_js %}
+<script>
+// Gift jar gallery: native swipe/scroll-snap does the moving; this adds the
+// arrow buttons, dots, and keeps them in sync with wherever the user scrolled.
+// Without JS the track is still a plain horizontally scrollable strip.
+document.querySelectorAll('[data-gallery]').forEach(function (gallery) {
+    const track = gallery.querySelector('.gift-gallery-track');
+    const slides = track.querySelectorAll('.gift-gallery-slide');
+    const prev = gallery.querySelector('.gift-gallery-prev');
+    const next = gallery.querySelector('.gift-gallery-next');
+    const dotsBox = gallery.querySelector('.gift-gallery-dots');
+    const dots = dotsBox.querySelectorAll('button');
+    if (slides.length < 2) return;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let current = 0;
+
+    function step() {
+        return slides[1].offsetLeft - slides[0].offsetLeft;
+    }
+
+    function goTo(index) {
+        index = Math.max(0, Math.min(slides.length - 1, index));
+        track.scrollTo({ left: index * step(), behavior: reduceMotion ? 'auto' : 'smooth' });
+    }
+
+    function sync() {
+        current = Math.max(0, Math.min(slides.length - 1, Math.round(track.scrollLeft / step())));
+        prev.disabled = current === 0;
+        next.disabled = current === slides.length - 1;
+        dots.forEach(function (dot, i) {
+            if (i === current) dot.setAttribute('aria-current', 'true');
+            else dot.removeAttribute('aria-current');
+        });
+    }
+
+    prev.addEventListener('click', function () { goTo(current - 1); });
+    next.addEventListener('click', function () { goTo(current + 1); });
+    dots.forEach(function (dot, i) {
+        dot.addEventListener('click', function () { goTo(i); });
+    });
+
+    let ticking = false;
+    track.addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { sync(); ticking = false; });
+    }, { passive: true });
+    window.addEventListener('resize', sync);
+
+    gallery.classList.add('is-enhanced');
+    prev.hidden = next.hidden = dotsBox.hidden = false;
+    sync();
+});
+</script>
+{% endblock %}
+
 {% block content %}
 <section class="products">
     <div class="container">
@@ -68,7 +125,29 @@
         <div class="section-header">
             <h2>Gift &amp; Specialty Jars</h2>
             <p>Adorable mini jars of our raw wildflower honey — sweet favors and gifts for weddings, showers, birthdays, parties, holidays, and thank-yous. $10 each, with bulk discounts available. Choose a quantity below, or request a callback for larger orders.</p>
+            <p class="free-shipping-badge">🚚 Free shipping on orders of {{ free_shipping_min }}+ jars</p>
         </div>
+
+        {% if gift_gallery %}
+        <div class="gift-gallery" data-gallery role="region" aria-roledescription="carousel" aria-label="Examples of our custom gift jars">
+            <div class="gift-gallery-track" tabindex="0">
+                {% for photo in gift_gallery %}
+                <figure class="gift-gallery-slide" role="group" aria-roledescription="slide" aria-label="{{ forloop.counter }} of {{ gift_gallery|length }}">
+                    <img src="{% static photo.image %}" alt="{{ photo.alt }}" loading="lazy" decoding="async">
+                    <figcaption>{{ photo.caption }}</figcaption>
+                </figure>
+                {% endfor %}
+            </div>
+            <button type="button" class="gift-gallery-btn gift-gallery-prev" aria-label="Previous photo" hidden>&#8249;</button>
+            <button type="button" class="gift-gallery-btn gift-gallery-next" aria-label="Next photo" hidden>&#8250;</button>
+            <div class="gift-gallery-dots" hidden>
+                {% for photo in gift_gallery %}
+                <button type="button" aria-label="Show photo {{ forloop.counter }}"></button>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
         <div class="proof-grid">
             {% for p in gift_products %}
             <div class="proof-card">
@@ -94,7 +173,7 @@
                         <input type="hidden" name="product" value="{{ p.pk }}">
                         <label style="font-weight: 600; color: #333;">Qty
                             <select name="quantity" class="form-control" style="width: auto; display: inline-block; margin-left: 0.4rem;">
-                                {% for n in gift_quantity_range %}<option value="{{ n }}">{{ n }}</option>{% endfor %}
+                                {% for n in gift_quantity_range %}<option value="{{ n }}">{{ n }}{% if n >= free_shipping_min %} — free shipping{% endif %}</option>{% endfor %}
                             </select>
                         </label>
                         <button type="submit" class="btn">Order Now</button>

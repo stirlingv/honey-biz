@@ -213,6 +213,9 @@ def notify_new_order(order):
         if order.is_pickup
         else f"*Ship to:* {order.full_address}\n"
     )
+    free_shipping_line = (
+        "🚚 *FREE SHIPPING* — don't add postage to the invoice\n" if order.ships_free else ""
+    )
     post_message(
         f"🍯 *New Honey Order #{order.id}*\n"
         f"{callback_flag}"
@@ -220,6 +223,7 @@ def notify_new_order(order):
         f"*Phone:* {order.phone}   *Email:* {order.email}\n"
         f"*Product:* {order.product.name} ({order.product.size}) × {order.quantity} = *${order.total_price}*\n"
         f"{fulfillment_line}"
+        f"{free_shipping_line}"
         f"➡️ Send QuickBooks invoice to {order.email}",
         link_to=order,
     )
@@ -335,6 +339,7 @@ def _order_email_body(order):
         f"Prefers Callback: {'YES' if order.prefer_callback else 'No'}\n\n"
         f"Product: {order.product.name} ({order.product.size})\n"
         f"Quantity: {order.quantity}\nTotal: ${order.total_price}\n\n"
-        f"{'Fulfillment: Local pickup — arrange a pickup time' if order.is_pickup else 'Ship to:' + chr(10) + order.full_address}\n\n"
+        f"{'Fulfillment: Local pickup — arrange a pickup time' if order.is_pickup else 'Ship to:' + chr(10) + order.full_address}\n"
+        f"{'FREE SHIPPING — do not add postage to the invoice' + chr(10) if order.ships_free else ''}\n"
         f"Notes: {order.notes or 'None'}"
     )

@@ -4,6 +4,11 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.urls import reverse
 
+# Gift/mini jar orders of at least this many jars ship free: the site says so
+# and the family leaves postage off the QuickBooks invoice. Full-size honey jars
+# never qualify (24 of them is far too heavy to ship free).
+FREE_SHIPPING_MIN_QUANTITY = 24
+
 
 class Product(models.Model):
     """Model for honey products"""
@@ -35,6 +40,14 @@ class Product(models.Model):
 
     def get_absolute_url(self):
         return reverse('product_detail', args=[self.pk])
+
+    @property
+    def offers_free_shipping(self):
+        """Whether a large enough order of this product ships free."""
+        return self.category == 'gift'
+
+    def ships_free(self, quantity):
+        return self.offers_free_shipping and quantity >= FREE_SHIPPING_MIN_QUANTITY
 
 
 class Order(models.Model):
@@ -107,6 +120,11 @@ class Order(models.Model):
         if self.is_pickup:
             return "Local pickup — no shipping address"
         return f"{self.address}, {self.city}, {self.state} {self.zip_code}"
+
+    @property
+    def ships_free(self):
+        """Delivered gift-jar order big enough for free shipping (pickup has no postage anyway)."""
+        return not self.is_pickup and self.product.ships_free(self.quantity)
 
     def save(self, *args, **kwargs):
         # Calculate total price
