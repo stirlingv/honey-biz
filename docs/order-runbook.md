@@ -76,7 +76,13 @@ status).
 
 ### 3. Pricing (display-only in the app; QuickBooks is the source of truth)
 - `Order.total_price` is `product.price × quantity` at **list price**, computed
-  in `Order.save()`.
+  in `Order.save()` when the order is placed or its product/quantity changes.
+  Re-saving an order otherwise (e.g. a status change in the admin) keeps the
+  total it was placed at, so a later price change never rewrites old orders.
+- **Changing a price:** prices live on the `Product` rows, so change them with a
+  data migration (see `0018_gift_jars_eight_dollars.py`, which set gift jars to
+  $8). Storefront "$N each" copy reads the price, and descriptions don't repeat
+  it, so nothing else needs editing.
 - A **seasonal promo** discount is display-only: the site shows the reduced
   price and the confirmation page shows the discount, but the stored total is
   **not** recomputed. The family applies the discount by hand on the invoice.

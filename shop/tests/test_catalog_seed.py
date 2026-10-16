@@ -20,9 +20,10 @@ class SeedLiveCatalogTests(TestCase):
             {("Mini Favor Jar", "Mini"), ("Mini Holiday Jar", "Mini")},
         )
 
-    def test_gift_jars_priced_at_ten(self):
+    def test_gift_jars_priced_at_eight(self):
+        # Seeded at $10 by 0011, repriced to $8 by 0018.
         for name in ("Mini Favor Jar", "Mini Holiday Jar"):
-            self.assertEqual(str(Product.objects.get(name=name).price), "10.00")
+            self.assertEqual(str(Product.objects.get(name=name).price), "8.00")
 
     def test_placeholder_varietals_not_in_storefront(self):
         for name in ("Clover Honey", "Spring Blossom Honey", "Autumn Harvest Honey", "Raw Honeycomb"):
