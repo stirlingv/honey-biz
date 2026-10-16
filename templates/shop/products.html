@@ -150,12 +150,8 @@ document.querySelectorAll('[data-gallery]').forEach(function (gallery) {
 
         <div class="proof-grid">
             {% for p in gift_products %}
+            {# No photo here: every jar photo lives in the gallery above. #}
             <div class="proof-card">
-                {% if 'Holiday' in p.name %}
-                <img src="{% static 'images/live_photos/mini-jar-holidays.jpeg' %}" alt="Mini holiday honey jars from Bear Creek Apiaries" loading="lazy" decoding="async">
-                {% else %}
-                <img src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="Mini honey favor jars from Bear Creek Apiaries" loading="lazy" decoding="async">
-                {% endif %}
                 <div class="proof-card-body">
                     <h3>{{ p.name }}</h3>
                     <p>{{ p.description }}</p>

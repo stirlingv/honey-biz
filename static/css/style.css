@@ -521,14 +521,6 @@ header {
     display: block;
 }
 
-/* Gift jar photos: show the whole jar instead of a cropped zoom */
-.gift-jars .proof-card img {
-    height: 300px;
-    object-fit: contain;
-    background: #faf8f4;
-    padding: 0.75rem;
-}
-
 .free-shipping-badge {
     display: inline-block;
     margin-top: 1rem;

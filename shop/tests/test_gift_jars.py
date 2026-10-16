@@ -154,3 +154,15 @@ class GiftSectionTests(GiftJarBase):
             with self.subTest(image=photo["image"]):
                 self.assertIsNotNone(finders.find(photo["image"]), "missing static file")
                 self.assertTrue(photo["alt"].strip())
+
+    def test_order_cards_have_no_photo_all_photos_live_in_gallery(self):
+        # Card photos duplicated gallery slides and cost ~a screen of scrolling
+        # each on phones; the cards are just name, price, quantity, Order Now.
+        html = self.resp.content.decode()
+        cards = html[html.index('<div class="proof-grid">'):]
+        cards = cards[:cards.index("</section>")]
+        self.assertIn("Order Now", cards)
+        self.assertNotIn("<img", cards)
+        gallery_images = [p["image"] for p in GIFT_JAR_GALLERY]
+        for image in ("images/live_photos/mini-jar-wedding.jpeg", "images/live_photos/mini-jar-holidays.jpeg"):
+            self.assertIn(image, gallery_images)
