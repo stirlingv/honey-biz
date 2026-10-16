@@ -66,7 +66,7 @@ def home(request):
     The home page presents three category tiles (honey, honeycomb, gift jars)
     that route to the shop, rather than listing individual products.
     """
-    return render(request, 'shop/home.html')
+    return render(request, 'shop/home.html', {'gift_jar_price': _gift_jar_price()})
 
 
 def about(request):
@@ -103,11 +103,18 @@ GIFT_JAR_GALLERY = [
 ]
 
 
+def _gift_jar_price():
+    """Lowest in-stock gift jar price, for "$N each" copy (None if none in stock)."""
+    cheapest = Product.objects.filter(in_stock=True, category='gift').order_by('price').first()
+    return cheapest.price if cheapest else None
+
+
 def products(request):
     """Products listing page"""
     return render(request, 'shop/products.html', {
         'products': Product.objects.filter(in_stock=True, category='honey'),
         'gift_products': Product.objects.filter(in_stock=True, category='gift').order_by('name'),
+        'gift_jar_price': _gift_jar_price(),
         'gift_gallery': GIFT_JAR_GALLERY,
         'gift_quantity_range': range(1, MAX_SELF_SERVE_QUANTITY + 1),
         'gift_max_quantity': MAX_SELF_SERVE_QUANTITY,

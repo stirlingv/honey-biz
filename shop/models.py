@@ -127,10 +127,19 @@ class Order(models.Model):
         return not self.is_pickup and self.product.ships_free(self.quantity)
 
     def save(self, *args, **kwargs):
-        # Calculate total price
-        if self.product and self.quantity:
+        # Price the order when it's placed, or when what was ordered changes.
+        # Re-saving an existing order (e.g. a status change in the admin) keeps
+        # the total it was placed at even if the product's price has changed
+        # since — the admin invoice details copied into QuickBooks read it.
+        if self.product_id and self.quantity and self._ordered_items_changed():
             self.total_price = self.product.price * self.quantity
         super().save(*args, **kwargs)
+
+    def _ordered_items_changed(self):
+        if self._state.adding:
+            return True
+        saved = Order.objects.filter(pk=self.pk).values('product_id', 'quantity').first()
+        return saved != {'product_id': self.product_id, 'quantity': self.quantity}
 
 
 class NukeRequest(models.Model):

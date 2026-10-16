@@ -100,7 +100,7 @@
                 </div>
                 <div class="product-info">
                     <h3>Gift &amp; Favor Jars</h3>
-                    <p>Petite jars for weddings, showers, parties, and the holidays — $10 each, with bulk discounts.</p>
+                    <p>Petite jars for weddings, showers, parties, and the holidays{% if gift_jar_price %} — ${{ gift_jar_price|floatformat:"-2" }} each, with bulk discounts{% else %}, with bulk discounts{% endif %}.</p>
                     <a href="{% url 'products' %}" class="btn">See Gift Jars</a>
                 </div>
             </div>

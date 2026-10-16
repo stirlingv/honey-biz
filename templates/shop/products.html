@@ -124,7 +124,7 @@ document.querySelectorAll('[data-gallery]').forEach(function (gallery) {
     <div class="container">
         <div class="section-header">
             <h2>Gift &amp; Specialty Jars</h2>
-            <p>Adorable mini jars of our raw wildflower honey — sweet favors and gifts for weddings, showers, birthdays, parties, holidays, and thank-yous. $10 each, with bulk discounts available. Choose a quantity below, or request a callback for larger orders.</p>
+            <p>Adorable mini jars of our raw wildflower honey — sweet favors and gifts for weddings, showers, birthdays, parties, holidays, and thank-yous.{% if gift_jar_price %} ${{ gift_jar_price|floatformat:"-2" }} each, with bulk discounts available.{% else %} Bulk discounts available.{% endif %} Choose a quantity below, or request a callback for larger orders.</p>
             <p class="free-shipping-badge">🚚 Free shipping on orders of {{ free_shipping_min }}+ jars</p>
         </div>
 
