@@ -154,6 +154,7 @@ document.querySelectorAll('[data-gallery]').forEach(function (gallery) {
             <div class="proof-card">
                 <div class="proof-card-body">
                     <h3>{{ p.name }}</h3>
+                    <p class="size">{{ p.size }}</p>
                     <p>{{ p.description }}</p>
                     {% if promo_active and promo_discount %}
                     <p class="price" style="font-weight: 700; font-size: 1.2rem;">
