@@ -10,6 +10,8 @@ it off where the image is the page's main content (product detail, order form).
     <img src="{{ product.image.url }}" alt="{{ product.name }}"{% if lazy %} loading="lazy" decoding="async"{% endif %}>
 {% elif 'Holiday' in product.name %}
     <img src="{% static 'images/live_photos/mini-jar-holidays.jpeg' %}" alt="{{ product.name }} from Bear Creek Apiaries"{% if lazy %} loading="lazy" decoding="async"{% endif %}>
+{% elif product.category == 'gift' and product.size == '4 oz' %}
+    <img src="{% static 'images/live_photos/mini-jar-blue-ribbon.jpg' %}" alt="{{ product.name }} from Bear Creek Apiaries"{% if lazy %} loading="lazy" decoding="async"{% endif %}>
 {% elif product.category == 'gift' %}
     <img src="{% static 'images/live_photos/mini-jar-wedding.jpeg' %}" alt="{{ product.name }} from Bear Creek Apiaries"{% if lazy %} loading="lazy" decoding="async"{% endif %}>
 {% else %}
