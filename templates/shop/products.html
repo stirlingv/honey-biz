@@ -149,25 +149,35 @@ document.querySelectorAll('[data-gallery]').forEach(function (gallery) {
         {% endif %}
 
         <div class="proof-grid">
-            {% for p in gift_products %}
-            {# No photo here: every jar photo lives in the gallery above. #}
+            {% for card in gift_cards %}
+            {# No photo here: every jar photo lives in the gallery above. Jars that #}
+            {# differ only in decoration share a card with a style choice.         #}
             <div class="proof-card">
                 <div class="proof-card-body">
-                    <h3>{{ p.name }}</h3>
-                    <p class="size">{{ p.size }}</p>
-                    <p>{{ p.description }}</p>
+                    <h3>{{ card.title }}</h3>
+                    <p class="size">{{ card.size }}</p>
+                    <p>{{ card.description }}</p>
                     {% if promo_active and promo_discount %}
                     <p class="price" style="font-weight: 700; font-size: 1.2rem;">
-                        <span class="price-original">${{ p.price|floatformat:"-2" }}</span>
-                        <span class="price-sale">${{ p.price|sale_price:promo_discount|floatformat:"-2" }}</span>
+                        <span class="price-original">${{ card.price|floatformat:"-2" }}</span>
+                        <span class="price-sale">${{ card.price|sale_price:promo_discount|floatformat:"-2" }}</span>
                         <span style="font-size: 0.9rem; font-weight: 600; color: #333;">each</span>
                         <span class="promo-tag">${{ promo_discount|floatformat:"-2" }} off</span>
                     </p>
                     {% else %}
-                    <p class="price" style="color: #f6a326; font-weight: 700; font-size: 1.2rem;">${{ p.price }} each</p>
+                    <p class="price" style="color: #f6a326; font-weight: 700; font-size: 1.2rem;">${{ card.price }} each</p>
                     {% endif %}
                     <form method="get" action="{% url 'order_honey' %}" style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
-                        <input type="hidden" name="product" value="{{ p.pk }}">
+                        {% if card.styles %}
+                        <fieldset class="style-choice">
+                            <legend>Style</legend>
+                            {% for product, label in card.styles %}
+                            <label class="style-option"><input type="radio" name="product" value="{{ product.pk }}" required{% if forloop.first %} checked{% endif %}> <span>{{ label }}</span></label>
+                            {% endfor %}
+                        </fieldset>
+                        {% else %}
+                        <input type="hidden" name="product" value="{{ card.products.0.pk }}">
+                        {% endif %}
                         <label style="font-weight: 600; color: #333;">Qty
                             <select name="quantity" class="form-control" style="width: auto; display: inline-block; margin-left: 0.4rem;">
                                 {% for n in gift_quantity_range %}<option value="{{ n }}">{{ n }}{% if n >= free_shipping_min %} — free shipping{% endif %}</option>{% endfor %}
@@ -177,7 +187,7 @@ document.querySelectorAll('[data-gallery]').forEach(function (gallery) {
                     </form>
                     <p style="margin-top: 0.75rem; margin-bottom: 0; font-size: 0.9rem; color: #666;">
                         Need more than {{ gift_max_quantity }}?
-                        <a href="{% url 'callback_request' %}?interest=honey&amp;message=Interested+in+a+bulk+order+of+{{ p.name|urlencode }}" style="color: #f6a326;">Request a callback</a>
+                        <a href="{% url 'callback_request' %}?interest=honey&amp;message=Interested+in+a+bulk+order+of+{{ card.title|urlencode }}" style="color: #f6a326;">Request a callback</a>
                         for bulk pricing.
                     </p>
                 </div>
