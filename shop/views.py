@@ -114,11 +114,47 @@ def _gift_jar_pricing():
     }
 
 
+GIFT_STYLE_CARD_DESCRIPTION = (
+    "The same petite jar of our raw wildflower honey, decorated in your choice of style "
+    "— see them in the photos above. Bulk discounts available on larger orders."
+)
+
+
+def _gift_cards(gift_products):
+    """One order card per (size, price). Gift jars that differ only in decoration
+    (e.g. the $8 Mini Favor and Mini Holiday jars) share a card with a style
+    choice; each style is still its own Product, so the order, Slack alert and
+    invoice name the exact style. Keeps the input order (cheapest first)."""
+    groups = {}
+    for product in gift_products:
+        groups.setdefault((product.size, product.price), []).append(product)
+
+    cards = []
+    for (size, price), group in groups.items():
+        if len(group) == 1:
+            product = group[0]
+            cards.append({
+                'title': product.name, 'size': size, 'price': price,
+                'description': product.description, 'products': group, 'styles': [],
+            })
+            continue
+        styles = []
+        for product in group:
+            label = product.name.removeprefix(f'{size} ').removesuffix(' Jar')
+            styles.append((product, label))
+        cards.append({
+            'title': f'{size} Gift Jars', 'size': size, 'price': price,
+            'description': GIFT_STYLE_CARD_DESCRIPTION, 'products': group, 'styles': styles,
+        })
+    return cards
+
+
 def products(request):
     """Products listing page"""
+    gift_products = Product.objects.filter(in_stock=True, category='gift').order_by('price', 'name')
     return render(request, 'shop/products.html', {
         'products': Product.objects.filter(in_stock=True, category='honey'),
-        'gift_products': Product.objects.filter(in_stock=True, category='gift').order_by('price', 'name'),
+        'gift_cards': _gift_cards(gift_products),
         **_gift_jar_pricing(),
         'gift_gallery': GIFT_JAR_GALLERY,
         'gift_quantity_range': range(1, MAX_SELF_SERVE_QUANTITY + 1),
