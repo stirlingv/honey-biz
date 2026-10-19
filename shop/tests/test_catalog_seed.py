@@ -17,7 +17,7 @@ class SeedLiveCatalogTests(TestCase):
         gift = Product.objects.filter(in_stock=True, category="gift")
         self.assertEqual(
             set(gift.values_list("name", "size")),
-            {("Mini Favor Jar", "Mini"), ("Mini Holiday Jar", "Mini")},
+            {("Mini Favor Jar", "Mini"), ("Mini Holiday Jar", "Mini"), ("4 oz Gift Jar", "4 oz")},
         )
 
     def test_gift_jars_priced_at_eight(self):

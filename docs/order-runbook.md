@@ -83,6 +83,11 @@ status).
   data migration (see `0018_gift_jars_eight_dollars.py`, which set gift jars to
   $8). Storefront "$N each" copy reads the price, and descriptions don't repeat
   it, so nothing else needs editing.
+- **Gift jar lineup:** Mini Favor Jar and Mini Holiday Jar (size "Mini", $8)
+  and the larger **4 oz Gift Jar** ($10, added by
+  `0019_add_four_oz_gift_jar.py`). When gift prices differ, the storefront copy
+  reads "from $<lowest> each". A gift product with size "4 oz" falls back to the
+  blue-ribbon photo in `_product_image.html`.
 - A **seasonal promo** discount is display-only: the site shows the reduced
   price and the confirmation page shows the discount, but the stored total is
   **not** recomputed. The family applies the discount by hand on the invoice.

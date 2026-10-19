@@ -66,7 +66,7 @@ def home(request):
     The home page presents three category tiles (honey, honeycomb, gift jars)
     that route to the shop, rather than listing individual products.
     """
-    return render(request, 'shop/home.html', {'gift_jar_price': _gift_jar_price()})
+    return render(request, 'shop/home.html', _gift_jar_pricing())
 
 
 def about(request):
@@ -90,31 +90,36 @@ def terms_of_service(request):
 GIFT_JAR_GALLERY = [
     {'image': 'images/live_photos/mini-jar-blue-ribbon.jpg',
      'alt': 'Honey jar with a gold lid, custom printed lid label, blue satin bow, and wooden honey dipper',
-     'caption': 'Custom lid label & ribbon color'},
+     'caption': '4 oz jar · gold lid, lid label & ribbon bow'},
     {'image': 'images/live_photos/mini-jar-wedding.jpeg',
      'alt': 'Mini honey favor jar wrapped in burlap with a pink ribbon, dried flowers, and honey dipper',
-     'caption': 'Burlap & pink ribbon wedding favor'},
+     'caption': 'Mini favor jar · burlap & pink ribbon'},
     {'image': 'images/live_photos/tiny_honey_ornaments2.jpg',
      'alt': 'Mini honey jar with a burlap top, black ribbon, pink dried flowers, and honey dipper',
-     'caption': 'Burlap & black ribbon with dried flowers'},
+     'caption': 'Mini favor jar · burlap, black ribbon & dried flowers'},
     {'image': 'images/live_photos/mini-jar-holidays.jpeg',
      'alt': 'Two mini holiday honey jars with red plaid bows, holly, gold bells, and honey dippers',
-     'caption': 'Holiday jars with bows & bells'},
+     'caption': 'Mini holiday jars · bows & bells'},
 ]
 
 
-def _gift_jar_price():
-    """Lowest in-stock gift jar price, for "$N each" copy (None if none in stock)."""
-    cheapest = Product.objects.filter(in_stock=True, category='gift').order_by('price').first()
-    return cheapest.price if cheapest else None
+def _gift_jar_pricing():
+    """Price summary for "$N each" copy: the lowest in-stock gift jar price, and
+    whether some gift jars cost more (so the copy says "from $N each")."""
+    prices = Product.objects.filter(in_stock=True, category='gift').values_list('price', flat=True)
+    lowest = min(prices, default=None)
+    return {
+        'gift_jar_price': lowest,
+        'gift_jar_prices_vary': lowest is not None and max(prices) != lowest,
+    }
 
 
 def products(request):
     """Products listing page"""
     return render(request, 'shop/products.html', {
         'products': Product.objects.filter(in_stock=True, category='honey'),
-        'gift_products': Product.objects.filter(in_stock=True, category='gift').order_by('name'),
-        'gift_jar_price': _gift_jar_price(),
+        'gift_products': Product.objects.filter(in_stock=True, category='gift').order_by('price', 'name'),
+        **_gift_jar_pricing(),
         'gift_gallery': GIFT_JAR_GALLERY,
         'gift_quantity_range': range(1, MAX_SELF_SERVE_QUANTITY + 1),
         'gift_max_quantity': MAX_SELF_SERVE_QUANTITY,

@@ -1,6 +1,6 @@
-"""Gift/mini jars sell for $8 each. The price lives on the seeded Product rows
-(data migration), and every surface reads it from there — no hardcoded "$10"
-copy left behind.
+"""Gift jar pricing: the small (mini) favor and holiday jars are $8 each; the
+larger 4 oz gift jar is $10. Prices live on the seeded Product rows (data
+migrations), and every surface reads them from there — no hardcoded prices.
 """
 
 from decimal import Decimal
@@ -45,18 +45,74 @@ class GiftJarPriceTests(TestCase):
             notifications.notify_new_order(self._order(quantity=24))
         self.assertIn("$192.00", post.call_args.args[0])
 
-    def test_storefront_copy_shows_eight_dollars(self):
+    def test_storefront_copy_says_from_eight_dollars(self):
+        # Not every gift jar is $8 any more, so the summary copy says "from".
         for name in ("home", "products"):
             with self.subTest(page=name):
                 resp = self.client.get(reverse(name))
-                self.assertContains(resp, "$8 each")
-                self.assertNotContains(resp, "$10")
+                self.assertContains(resp, "from $8 each")
+                self.assertNotContains(resp, "$10 each")
 
     def test_product_page_and_feed_advertise_eight_dollars(self):
         detail = self.client.get(reverse("product_detail", args=[self.favor.pk]))
         self.assertContains(detail, "$8.00")
         self.assertContains(detail, '"price": "8.00"')
         self.assertContains(self.client.get(reverse("product_feed")), "8.00 USD")
+
+
+class FourOunceGiftJarTests(TestCase):
+    """The larger 4 oz jar (gold lid, custom lid label, ribbon) is its own
+    product at $10, so its price is shown and invoiced separately."""
+
+    def setUp(self):
+        self.jar = Product.objects.get(name="4 oz Gift Jar")
+
+    def test_seeded_at_ten_dollars_four_ounces_in_gift_section(self):
+        self.assertEqual(self.jar.price, Decimal("10.00"))
+        self.assertEqual(self.jar.size, "4 oz")
+        self.assertEqual(self.jar.category, "gift")
+        self.assertTrue(self.jar.in_stock)
+        self.assertNotIn("$", self.jar.description)
+
+    def test_order_total_and_free_shipping(self):
+        order = Order.objects.create(
+            first_name="Jane", last_name="Doe", email="jane@example.com", phone="(850) 555-1234",
+            address="1 Honey Ln", city="Tallahassee", state="FL", zip_code="32301",
+            product=self.jar, quantity=24, total_price=Decimal("0"),
+        )
+        self.assertEqual(order.total_price, Decimal("240.00"))
+        self.assertTrue(order.ships_free)
+
+    def test_gift_section_lists_each_jar_with_its_size_and_price(self):
+        html = self.client.get(reverse("products")).content.decode()
+        cards = html[html.index('<div class="proof-grid">'):]
+        cards = cards[:cards.index("</section>")]
+        for name, size, price in (
+            ("Mini Favor Jar", "Mini", "$8.00 each"),
+            ("Mini Holiday Jar", "Mini", "$8.00 each"),
+            ("4 oz Gift Jar", "4 oz", "$10.00 each"),
+        ):
+            with self.subTest(name=name):
+                card = cards[cards.index(f"<h3>{name}</h3>"):]
+                card = card[:card.index("</form>")]
+                self.assertIn(f'<p class="size">{size}</p>', card)
+                self.assertIn(price, card)
+        # Small $8 jars first, the $10 jar last.
+        self.assertLess(cards.index("Mini Holiday Jar"), cards.index("4 oz Gift Jar"))
+
+    def test_product_page_uses_its_own_photo_and_price(self):
+        resp = self.client.get(reverse("product_detail", args=[self.jar.pk]))
+        self.assertContains(resp, "images/live_photos/mini-jar-blue-ribbon.jpg")
+        self.assertContains(resp, '"price": "10.00"')
+
+    def test_gallery_captions_tell_mini_from_four_ounce(self):
+        from shop.views import GIFT_JAR_GALLERY
+        captions = {p["image"]: p["caption"] for p in GIFT_JAR_GALLERY}
+        self.assertTrue(captions["images/live_photos/mini-jar-blue-ribbon.jpg"].startswith("4 oz jar"))
+        for image, caption in captions.items():
+            if image != "images/live_photos/mini-jar-blue-ribbon.jpg":
+                with self.subTest(image=image):
+                    self.assertTrue(caption.startswith("Mini"), caption)
 
 
 class OrderRepricingTests(TestCase):

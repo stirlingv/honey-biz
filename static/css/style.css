@@ -685,7 +685,8 @@ header {
     color: #333;
 }
 
-.product-info .size {
+.product-info .size,
+.proof-card-body .size {
     color: #666;
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
